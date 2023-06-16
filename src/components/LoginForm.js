@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { userDetailsContext } from "../App";
 import {
   TextField,
   Button,
@@ -7,8 +8,16 @@ import {
   Link,
   Container,
   Grid,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
+import {
+  Visibility as VisibilityIcon,
+  VisibilityOff as VisibilityOffIcon,
+} from "@material-ui/icons";
 import "./LoginForm.css";
+
+const Login = require("../api/Login.js");
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -19,10 +28,15 @@ const useStyles = makeStyles((theme) => ({
 const LoginForm = () => {
   const classes = useStyles();
   const [showConferenceForm, setShowConferenceForm] = useState(false);
-  const [webAccount, setWebAccount] = useState("");
-  const [password, setPassword] = useState("");
-  const [conferenceId, setConferenceId] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
+
+  const webAccount = useContext(userDetailsContext).webAccount;
+  const setWebAccount = useContext(userDetailsContext).setWebAccount;
+  const password = useContext(userDetailsContext).password;
+  const setPassword = useContext(userDetailsContext).setPassword;
+  const conferenceId = useContext(userDetailsContext).conferenceId;
+  const setConferenceId = useContext(userDetailsContext).setConferenceId;
 
   const handleJoinConference = () => {
     setShowConferenceForm(true);
@@ -36,12 +50,17 @@ const LoginForm = () => {
     // Do something with the submitted login information
     console.log("Web Account:", webAccount);
     console.log("Password:", password);
+    Login("V3R8C30", "WEB", webAccount, password);
   };
 
   const handleJoin = () => {
     // Do something with the submitted conference information
     console.log("Conference ID:", conferenceId);
     console.log("Conference Password:", conferencePassword);
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -65,10 +84,26 @@ const LoginForm = () => {
             <Grid item xs={12}>
               <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleTogglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -97,7 +132,7 @@ const LoginForm = () => {
                 fullWidth
                 onClick={handleJoinConference}
               >
-                Join Conference
+                Join Using Conference ID
               </Button>
             </Grid>
           </>
