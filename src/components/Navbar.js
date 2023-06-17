@@ -14,7 +14,9 @@ const Navbar = () => {
       <Container>
         <Toolbar>
           <div className="title">
-            <div className="logo" />
+            <div className="logo">
+              <img src="" alt="" />
+            </div>
             <Typography sx={{ fontSize: 24 }} className="titleText">
               MULTIMEDIA VIDEO
               <br /> CONFERENCING SERVICE
