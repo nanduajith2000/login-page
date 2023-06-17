@@ -9,7 +9,8 @@
 .logo {
   background-image: url("../images/logo.jpg");
   margin-right: 16px;
-  size: 24px;
+  background-color: black;
+  width: 16px;
 }
 
 .title {

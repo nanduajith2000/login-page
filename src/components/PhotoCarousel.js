@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
   image: {
     position: "absolute",
     borderRadius: "10px",
-    boxShadow: "0px 0px 3px 0px rgba(0,0,0,0.75)",
+    boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.5)",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
