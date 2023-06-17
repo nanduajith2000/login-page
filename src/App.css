@@ -2,13 +2,20 @@
   text-align: center;
   display: flex;
   flex-direction: column;
+  background-color: #e5e5e5;
 }
 
 .login {
   display: flex;
   justify-content: space-around;
-  gap: 20vh;
-  height: 80vh;
+  gap: 4vh;
+  height: 100vh;
   align-items: center;
-  margin: 0 20vh;
+  margin: 1vh 10vh;
+}
+.login-form {
+  flex-grow: 2;
+}
+.carousel {
+  flex-grow: 3;
 }

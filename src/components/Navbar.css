@@ -1,8 +1,13 @@
 .navbar {
-  box-shadow: none;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  padding-left: 10vh;
+  padding-right: 10vh;
+  padding-top: 8vh;
 }
 
 .logo {
+  background-image: url("../images/logo.jpg");
   margin-right: 16px;
   size: 24px;
 }
