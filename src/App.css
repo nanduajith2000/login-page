@@ -1,8 +1,14 @@
 .App {
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .login {
   display: flex;
   justify-content: space-around;
+  gap: 20vh;
+  height: 80vh;
+  align-items: center;
+  margin: 0 20vh;
 }

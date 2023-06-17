@@ -15,6 +15,7 @@
 
 .titleText {
   font-size: 24px;
+  color: #0161b0;
 }
 
 .buttonsWrapper {
@@ -29,6 +30,6 @@
 .separator {
   height: 30px;
   width: 1px;
-  background-color: #e0e0e0;
+  background-color: black;
   margin: 0 16px;
 }

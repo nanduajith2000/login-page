@@ -8,13 +8,7 @@ import {
   Link,
   Container,
   Grid,
-  InputAdornment,
-  IconButton,
 } from "@material-ui/core";
-import {
-  Visibility as VisibilityIcon,
-  VisibilityOff as VisibilityOffIcon,
-} from "@material-ui/icons";
 import "./LoginForm.css";
 
 const Login = require("../api/Login.js");
@@ -28,7 +22,6 @@ const useStyles = makeStyles((theme) => ({
 const LoginForm = () => {
   const classes = useStyles();
   const [showConferenceForm, setShowConferenceForm] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
 
   const webAccount = useContext(userDetailsContext).webAccount;
@@ -59,10 +52,6 @@ const LoginForm = () => {
     console.log("Conference Password:", conferencePassword);
   };
 
-  const handleTogglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Grid container spacing={2}>
@@ -84,26 +73,10 @@ const LoginForm = () => {
             <Grid item xs={12}>
               <TextField
                 label="Password"
-                type={showPassword ? "text" : "password"}
+                type="password"
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={handleTogglePasswordVisibility}
-                        edge="end"
-                      >
-                        {showPassword ? (
-                          <VisibilityIcon />
-                        ) : (
-                          <VisibilityOffIcon />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
               />
             </Grid>
             <Grid item xs={12}>

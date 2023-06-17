@@ -1,10 +1,23 @@
-.carousel {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.carousel-container {
+  position: relative;
+  width: 100%;
   height: 300px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   border-radius: 10px;
-  margin: 20vh;
+  /* margin: 20vh ; */
+}
+
+.carousel-container .image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.carousel-container .hiddenImage {
+  opacity: 0;
 }

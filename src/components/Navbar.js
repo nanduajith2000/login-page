@@ -10,7 +10,7 @@ import "./Navbar.css";
 
 const Navbar = () => {
   return (
-    <AppBar position="static" className="navbar">
+    <AppBar className="navbar">
       <Container>
         <Toolbar>
           <div className="title">
@@ -21,15 +21,15 @@ const Navbar = () => {
             </Typography>
           </div>
           <div className="buttonsWrapper">
-            <Button sx={{ fontSize: 24 }} color="inherit" className="button">
+            <Button sx={{ fontSize: 24 }} color="black" className="button">
               Home
             </Button>
             <div className="separator" />
-            <Button sx={{ fontSize: 24 }} color="inherit" className="button">
+            <Button sx={{ fontSize: 24 }} color="black" className="button">
               Download
             </Button>
             <div className="separator" />
-            <Button sx={{ fontSize: 24 }} color="inherit" className="button">
+            <Button sx={{ fontSize: 24 }} color="black" className="button">
               About
             </Button>
           </div>

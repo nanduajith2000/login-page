@@ -8,11 +8,25 @@ import photo3 from "../images/photo3.jpg";
 import "./PhotoCarousel.css";
 
 const useStyles = makeStyles(() => ({
+  carouselContainer: {
+    position: "relative",
+    width: "100%",
+    height: "300px",
+    overflow: "hidden",
+    borderRadius: "10px",
+  },
   image: {
+    position: "absolute",
+    top: 0,
+    left: 0,
     width: "100%",
     height: "100%",
     objectFit: "cover",
-    borderRadius: "10px",
+    opacity: 1,
+    transition: "opacity 0.5s ease",
+  },
+  hiddenImage: {
+    opacity: 0,
   },
 }));
 
@@ -33,12 +47,17 @@ const Carousel = () => {
   }, []);
 
   return (
-    <div className="carousel">
-      <img
-        className={classes.image}
-        src={photos[currentIndex]}
-        alt={`Photo ${currentIndex + 1}`}
-      />
+    <div className={`${classes.carouselContainer} carousel-container`}>
+      {photos.map((photo, index) => (
+        <img
+          key={index}
+          className={`${classes.image} ${
+            index === currentIndex ? "" : classes.hiddenImage
+          }`}
+          src={photo}
+          alt=""
+        />
+      ))}
     </div>
   );
 };

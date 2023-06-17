@@ -11,7 +11,7 @@ function App() {
   const [password, setPassword] = useState("");
   const [conferenceId, setConferenceId] = useState("");
   return (
-    <div className="App">
+    <div position="static" className="App">
       <Navbar />
       <div className="login">
         <userDetailsContext.Provider
@@ -24,9 +24,9 @@ function App() {
             setConferenceId,
           }}
         >
-          <LoginForm />
+          <LoginForm className="login-form" />
         </userDetailsContext.Provider>
-        <PhotoCarousel />
+        <PhotoCarousel className="carousel" />
       </div>
     </div>
   );
