@@ -1,11 +1,5 @@
 .carousel-container {
-  position: relative;
-  width: 150vh;
-  height: 100vh;
-  overflow: hidden;
-  border-radius: 10px;
   background-color: #0161b0;
-  /* margin: 20vh ; */
 }
 
 .carousel-container .image {

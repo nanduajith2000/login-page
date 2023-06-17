@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
   carouselContainer: {
     position: "relative",
     width: "100%",
-    height: "80vh",
+    height: "100vh",
     overflow: "hidden",
     borderRadius: "10px",
   },

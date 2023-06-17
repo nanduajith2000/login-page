@@ -28,6 +28,7 @@ function App() {
         </userDetailsContext.Provider>
         <PhotoCarousel className="carousel" />
       </div>
+      <div className="footer-text">Copyright © Bsnl. 2008-2013.</div>
     </div>
   );
 }
