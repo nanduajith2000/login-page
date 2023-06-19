@@ -5,6 +5,7 @@ import PhotoCarousel from "./PhotoCarousel.js";
 import "./LoginPage.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import About from "./About.js";
+import Download from "./Download.js";
 
 export const userDetailsContext = React.createContext();
 
@@ -40,6 +41,7 @@ function LoginPage() {
             }
           ></Route>
           <Route path="about" element={<About />}></Route>
+          <Route path="download" element={<Download />}></Route>
         </Routes>
         <div className="footer-text">Copyright © Bsnl. 2008-2013.</div>
       </div>
