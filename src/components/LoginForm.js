@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { userDetailsContext } from "../App";
+import { userDetailsContext } from "./LoginPage.js";
 import {
   TextField,
   Button,
@@ -15,7 +15,20 @@ const Login = require("../api/Login.js");
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    marginTop: theme.spacing(8),
+    fontFamily: "Poppins, sans-serif",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: "10vh",
+    paddingRight: "10vh",
+  },
+  button: {
+    textTransform: "capitalize",
+    fontFamily: "Poppins, sans-serif",
+  },
+  textField: {
+    fontFamily: "Poppins, sans-serif",
   },
 }));
 
@@ -56,7 +69,7 @@ const LoginForm = () => {
     <Container maxWidth="xs" className={classes.container}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h5" align="center">
+          <Typography variant="h5" align="center" className={classes.textField}>
             Login
           </Typography>
         </Grid>
@@ -64,14 +77,18 @@ const LoginForm = () => {
           <>
             <Grid item xs={12}>
               <TextField
+                variant="outlined"
                 label="Web Account"
                 fullWidth
                 value={webAccount}
+                className={classes.textField}
                 onChange={(e) => setWebAccount(e.target.value)}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
+                variant="outlined"
+                className={classes.textField}
                 label="Password"
                 type="password"
                 fullWidth
@@ -85,17 +102,28 @@ const LoginForm = () => {
                 color="primary"
                 fullWidth
                 onClick={handleLogin}
+                className={classes.button}
               >
                 Login
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body2" align="center">
-                <Link href="#">Forgot Password?</Link>
+              <Typography
+                variant="body2"
+                align="center"
+                className={classes.textField}
+              >
+                <Link href="#" className={classes.text}>
+                  Forgot Password?
+                </Link>
               </Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="body2" align="center">
+              <Typography
+                variant="body2"
+                align="center"
+                className={classes.textField}
+              >
                 Use a conference ID to join a conference
               </Typography>
             </Grid>
@@ -104,6 +132,7 @@ const LoginForm = () => {
                 variant="outlined"
                 fullWidth
                 onClick={handleJoinConference}
+                className={classes.button}
               >
                 Join Using Conference ID
               </Button>
@@ -113,7 +142,9 @@ const LoginForm = () => {
           <>
             <Grid item xs={12}>
               <TextField
+                variant="outlined"
                 label="Conference ID"
+                className={classes.textField}
                 fullWidth
                 value={conferenceId}
                 onChange={(e) => setConferenceId(e.target.value)}
@@ -121,6 +152,8 @@ const LoginForm = () => {
             </Grid>
             <Grid item xs={12}>
               <TextField
+                variant="outlined"
+                className={classes.textField}
                 label="Password"
                 type="password"
                 fullWidth
@@ -134,12 +167,18 @@ const LoginForm = () => {
                 color="primary"
                 fullWidth
                 onClick={handleJoin}
+                className={classes.button}
               >
                 Join
               </Button>
             </Grid>
             <Grid item xs={12}>
-              <Button variant="outlined" fullWidth onClick={handleBackToLogin}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleBackToLogin}
+                className={classes.button}
+              >
                 Back to Login
               </Button>
             </Grid>

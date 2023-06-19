@@ -13,7 +13,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
     height: "100vh",
     overflow: "hidden",
-    borderRadius: "10px",
+    borderRadius: "15px",
   },
   image: {
     position: "absolute",
