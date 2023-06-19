@@ -83,6 +83,17 @@ const LoginForm = () => {
                 value={webAccount}
                 className={classes.textField}
                 onChange={(e) => setWebAccount(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -94,6 +105,17 @@ const LoginForm = () => {
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,6 +170,17 @@ const LoginForm = () => {
                 fullWidth
                 value={conferenceId}
                 onChange={(e) => setConferenceId(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -159,6 +192,17 @@ const LoginForm = () => {
                 fullWidth
                 value={conferencePassword}
                 onChange={(e) => setConferencePassword(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
