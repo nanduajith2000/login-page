@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar.js";
 import React, { useState } from "react";
 import PhotoCarousel from "../components/PhotoCarousel.js";
 import "./LoginPage.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import About from "../components/About.js";
 import Download from "../components/Download.js";
 
@@ -14,38 +14,36 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [conferenceId, setConferenceId] = useState("");
   return (
-    <BrowserRouter>
-      <div className="container">
-        <Navbar />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <div className="login">
-                  <userDetailsContext.Provider
-                    value={{
-                      webAccount,
-                      setWebAccount,
-                      password,
-                      setPassword,
-                      conferenceId,
-                      setConferenceId,
-                    }}
-                  >
-                    <LoginForm className="login-form" />
-                  </userDetailsContext.Provider>
-                  <PhotoCarousel className="carousel" />
-                </div>
-              </>
-            }
-          ></Route>
-          <Route path="about" element={<About />}></Route>
-          <Route path="download" element={<Download />}></Route>
-        </Routes>
-        <div className="footer-text">Copyright © Bsnl. 2008-2013.</div>
-      </div>
-    </BrowserRouter>
+    <div className="container">
+      <Navbar />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <div className="login">
+                <userDetailsContext.Provider
+                  value={{
+                    webAccount,
+                    setWebAccount,
+                    password,
+                    setPassword,
+                    conferenceId,
+                    setConferenceId,
+                  }}
+                >
+                  <LoginForm className="login-form" />
+                </userDetailsContext.Provider>
+                <PhotoCarousel className="carousel" />
+              </div>
+            </>
+          }
+        ></Route>
+        <Route path="about" element={<About />}></Route>
+        <Route path="download" element={<Download />}></Route>
+      </Routes>
+      <div className="footer-text">Copyright © Bsnl. 2008-2013.</div>
+    </div>
   );
 }
 
