@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
     width: "16vw",
-    height: "100vw",
+    height: "100vh",
     marginRight: "auto",
     backgroundColor: "#0161b0",
     borderRadius: "0 20px 20px 0",
