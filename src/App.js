@@ -1,14 +1,12 @@
 import "./App.css";
-import Homenavbar from "./components/Homenavbar";
-import LoginPage from "./components/LoginPage";
-import Sidenav from "./components/Sidenav";
+import Home from "./pages/Home";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   return (
     <div className="App">
       {/* <LoginPage /> */}
-      {/* <Sidenav /> */}
-      <Homenavbar />
+      <Home />
     </div>
   );
 }

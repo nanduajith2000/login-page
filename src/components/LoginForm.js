@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { userDetailsContext } from "./LoginPage.js";
+import { userDetailsContext } from "../pages/LoginPage.js";
 import {
   TextField,
   Button,
@@ -9,6 +9,7 @@ import {
   Container,
   Grid,
 } from "@material-ui/core";
+import { useHistory } from "react-router-dom";
 import "./LoginForm.css";
 
 const Login = require("../api/Login.js");

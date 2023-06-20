@@ -1,11 +1,11 @@
-import LoginForm from "./LoginForm.js";
-import Navbar from "./Navbar.js";
+import LoginForm from "../components/LoginForm.js";
+import Navbar from "../components/Navbar.js";
 import React, { useState } from "react";
-import PhotoCarousel from "./PhotoCarousel.js";
+import PhotoCarousel from "../components/PhotoCarousel.js";
 import "./LoginPage.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import About from "./About.js";
-import Download from "./Download.js";
+import About from "../components/About.js";
+import Download from "../components/Download.js";
 
 export const userDetailsContext = React.createContext();
 
