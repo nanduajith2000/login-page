@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { userDetailsContext } from "./LoginPage.js";
+import { userDetailsContext } from "../pages/LoginPage.js";
 import {
   TextField,
   Button,
@@ -9,6 +9,7 @@ import {
   Container,
   Grid,
 } from "@material-ui/core";
+import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 
 const Login = require("../api/Login.js");
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginForm = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [showConferenceForm, setShowConferenceForm] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
 
@@ -56,7 +58,11 @@ const LoginForm = () => {
     // Do something with the submitted login information
     console.log("Web Account:", webAccount);
     console.log("Password:", password);
-    Login("V3R8C30", "WEB", webAccount, password);
+    const result = Login("V3R8C30", "WEB", webAccount, password);
+    if (result.message === "success") {
+      navigate("/dashboard");
+      console.log(result.token);
+    } else alert("Invalid Credentials");
   };
 
   const handleJoin = () => {
@@ -83,6 +89,17 @@ const LoginForm = () => {
                 value={webAccount}
                 className={classes.textField}
                 onChange={(e) => setWebAccount(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -94,6 +111,17 @@ const LoginForm = () => {
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -148,6 +176,17 @@ const LoginForm = () => {
                 fullWidth
                 value={conferenceId}
                 onChange={(e) => setConferenceId(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -159,6 +198,17 @@ const LoginForm = () => {
                 fullWidth
                 value={conferencePassword}
                 onChange={(e) => setConferencePassword(e.target.value)}
+                InputProps={{
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
+                InputLabelProps={{
+                  component: Typography,
+                  style: {
+                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                  },
+                }}
               />
             </Grid>
             <Grid item xs={12}>

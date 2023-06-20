@@ -47,13 +47,13 @@ function Login(
       //     }
       //   });
       console.log(data);
+      return data;
     })
     .catch((error) => {
       // Handle any errors that occur during the request
       console.error(error);
+      return error;
     });
-
-  return 0;
 }
 
 module.exports = Login;

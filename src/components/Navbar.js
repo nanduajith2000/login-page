@@ -2,12 +2,12 @@ import React from "react";
 import {
   AppBar,
   Toolbar,
-  Button,
   Typography,
   Container,
   makeStyles,
+  Link,
 } from "@material-ui/core";
-import AlarmIcon from "@material-ui/icons/Alarm";
+import logo from "../images/bsnl-logo.jpeg";
 import "./Navbar.css";
 
 const useStyles = makeStyles({
@@ -23,9 +23,15 @@ const useStyles = makeStyles({
     color: "#0161b0",
   },
   logo: {
-    backgroundImage: "url('../images/logo.jpg')",
     marginRight: 16,
-    width: 24,
+    width: 52,
+  },
+  link: {
+    color: "black",
+    textTransform: "capitalize",
+    margin: "0 8px",
+    fontFamily: "Poppins, sans-serif",
+    fontSize: 18,
   },
 });
 
@@ -36,23 +42,24 @@ const Navbar = () => {
       <Container>
         <Toolbar>
           <div className="title">
-            <AlarmIcon className={classes.logo} />
+            <img src={logo} alt="" className={classes.logo} />
             <Typography className={classes.titleText}>
               MULTIMEDIA VIDEO
               <br /> CONFERENCING SERVICE
             </Typography>
           </div>
           <div className="buttonsWrapper">
-            <Button className={classes.button}>Home</Button>
+            <Link href="/" underline="none" className={classes.link}>
+              Home
+            </Link>
             <div className="separator" />
-            <Button className={classes.button}>Download</Button>
+            <Link href="/download" underline="none" className={classes.link}>
+              Download
+            </Link>
             <div className="separator" />
-            <Button
-              sx={{ fontSize: 24, color: "black" }}
-              className={classes.button}
-            >
+            <Link href="/about" underline="none" className={classes.link}>
               About
-            </Button>
+            </Link>
           </div>
         </Toolbar>
       </Container>
