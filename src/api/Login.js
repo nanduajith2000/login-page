@@ -1,43 +1,41 @@
+const { Email } = require("@material-ui/icons");
+
 function Login(
-  version,
-  accountType,
+  // version,
+  // accountType,
   accountName,
   password,
-  token,
-  ipaddr,
-  pinCode,
-  authToken,
-  authTokenType
+  token
+  // ipaddr,
+  // pinCode,
+  // authToken,
+  // authTokenType
 ) {
-  const url = `https://conference.ngn.bsnl.co.in/rest/${version}/login?accountType=${accountType}&accountName=${accountName}&password=${password}`; // Replace with your API endpoint
+  const url = `http://127.0.0.1:8000/user/login`; // Replace with your API endpoint
 
   const headers = {
-    "Content-Type": "application/xml",
+    "Content-Type": "application/json",
   };
 
   if (token != null) {
-    const headers = {
-      Authorization: `Basic ${token}`, // Replace with any necessary authentication headers
-    };
+    headers.Authorization = `Basic ${token}`; // Replace with any necessary authentication headers
   }
 
-  const xmlBody = `<?xml version="1.0" encoding="UTF-8"?>
-  <account>
-  <ipaddr>${ipaddr}</ipaddr>
-  <pinCode>${pinCode}</pinCode>
-  <authToken>${authToken}</authToken>
-  <authTokenType>${authTokenType}</authTokenType>
-  </account>`;
+  const requestBody = {
+    email: `${accountName}`,
+    password: `${password}`,
+  };
 
   const requestOptions = {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: headers,
-    body: xmlBody,
+    body: JSON.stringify(requestBody),
   };
 
-  fetch(url, requestOptions)
-    .then((response) => response.text()) // Parse the response as text
-    .then((data) => {
+  return fetch(url, requestOptions)
+    .then((response) => response.json()) // Parse the response as JSON
+
+    .then((data) =>data //{
       // Process the returned XML data
       //   fs.writeFile("output.xml", data, (error) => {
       //     if (error) {
@@ -46,14 +44,19 @@ function Login(
       //       console.log("Data saved to file: output.xml");
       //     }
       //   });
-      console.log(data);
-      return data;
-    })
+      // console.log(data);
+      // console.log(typeof JSON.stringify(data));
+      
+    //   console.log(data);
+    //   data.JSON();
+    
+    // }
+    )
     .catch((error) => {
       // Handle any errors that occur during the request
       console.error(error);
-      return error;
     });
 }
 
 module.exports = Login;
+// Login("Test_Bsnl", "Bsnl~1234");

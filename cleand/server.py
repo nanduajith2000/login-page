@@ -27,16 +27,14 @@ app.add_middleware(
 @app.post("/user/login", tags=["user"])
 def user_login(user: UsersLoginSchema = Body(default=None)):
     dict1=ssl1.login(user.email, user.password)
-    try:
-        if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
-            redis_client.set(dict1["loginResult"]["profile"]["token"],signJWT(user.email)["access token"])
-            return {"message": "success",
-                    "token":redis_client.get(dict1["loginResult"]["profile"]["token"])
-                    }
-        else:
-            return{"Message":"Invalid username or password"}
-    except:
-        return{"Message":"Not found"}
+    # try:
+    if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
+        redis_client.set(dict1["loginResult"]["profile"]["token"],signJWT(user.email)["access token"])
+        return {"message": "success"}
+    else:
+        return{"Message":"Invalid username or password"}
+    # except:
+    #     return{"Message":"Not found"}
 
    
 #Route : To logout

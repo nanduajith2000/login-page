@@ -58,11 +58,14 @@ const LoginForm = () => {
     // Do something with the submitted login information
     console.log("Web Account:", webAccount);
     console.log("Password:", password);
-    const result = Login("V3R8C30", "WEB", webAccount, password);
-    if (result.message === "success") {
-      navigate("/dashboard");
-      console.log(result.token);
-    } else alert("Invalid Credentials");
+
+    Login(webAccount, password).then((res) => {
+      console.log(res);
+
+      if (res.message === "success") {
+        navigate("/dashboard");
+      } else alert("Invalid Credentials");
+    });
   };
 
   const handleJoin = () => {
