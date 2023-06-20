@@ -17,7 +17,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,7 +26,8 @@ app.add_middleware(
 
 @app.post("/user/login", tags=["user"])
 def user_login(user: UsersLoginSchema = Body(default=None)):
-    dict1=ssl1.login(user.email, user.password)
+    URL = "login?accountType=WEB&accountName="+user.email+"&password="+user.password
+    dict1=ssl1.login(URL,user)
     # try:
     if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
         redis_client.set(dict1["loginResult"]["profile"]["token"],signJWT(user.email)["access token"])
