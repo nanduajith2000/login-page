@@ -7,13 +7,10 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 const Logout = require("../api/Api.js");
-=======
-import { useNavigate } from "react-router-dom";
->>>>>>> 7edb57da5ad835dedf209150a6e4aa4f0fe96d9c
+
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -55,14 +52,17 @@ const useStyles = makeStyles(() => ({
 export default function Sidenav() {
   const navigate = useNavigate();
   const classes = useStyles();
-  const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("dashboard");
 
   const handleClick = (button) => {
     setActiveButton(button);
-<<<<<<< HEAD
-    if(button==="logOut"){
-      console.log(document.cookie);
+  };
+
+  const handleLogout = () => {
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    // window.location.reload();
+    console.log(document.cookie);
       function getCookie(cookieName) {
         const cookieString = document.cookie;
         const cookies = cookieString.split(";");
@@ -79,17 +79,18 @@ export default function Sidenav() {
       const token = getCookie("user");
       // console.log(cookieValue);
       console.log(Logout(token));
+      function clearAllCookies() {
+        var cookies = document.cookie.split(";");
+      
+        for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i];
+          var eqPos = cookie.indexOf("=");
+          var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+        }
+      }
+      clearAllCookies();
       navigate("/");
-    }
-=======
-    navigate(`/${button}`);
-  };
-
-  const handleLogout = () => {
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("user");
-    // window.location.reload();
->>>>>>> 7edb57da5ad835dedf209150a6e4aa4f0fe96d9c
   };
 
   return (
