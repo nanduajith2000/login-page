@@ -63,9 +63,13 @@ const LoginForm = () => {
       console.log(res);
 
       if (res.message === "success") {
+<<<<<<< HEAD
         // console.log(res.token);
         document.cookie = "user=" + res.token+";";
         console.log(document.cookie)
+=======
+        console.log("token: " + res.token);
+>>>>>>> 7edb57da5ad835dedf209150a6e4aa4f0fe96d9c
         navigate("/dashboard");
       } else alert("Invalid Credentials");
     });
