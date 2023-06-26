@@ -1,5 +1,3 @@
-const { Email } = require("@material-ui/icons");
-
 function Login(
   // version,
   // accountType,
@@ -35,23 +33,7 @@ function Login(
   return fetch(url, requestOptions)
     .then((response) => response.json()) // Parse the response as JSON
 
-    .then((data) =>data //{
-      // Process the returned XML data
-      //   fs.writeFile("output.xml", data, (error) => {
-      //     if (error) {
-      //       console.error("Error writing file:", error);
-      //     } else {
-      //       console.log("Data saved to file: output.xml");
-      //     }
-      //   });
-      // console.log(data);
-      // console.log(typeof JSON.stringify(data));
-      
-    //   console.log(data);
-    //   data.JSON();
-    
-    // }
-    )
+    .then((data) => data)
     .catch((error) => {
       // Handle any errors that occur during the request
       console.error(error);

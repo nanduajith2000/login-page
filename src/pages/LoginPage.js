@@ -18,7 +18,7 @@ function LoginPage() {
       <Navbar />
       <Routes>
         <Route
-          path="/"
+          path="*"
           element={
             <>
               <div className="login">

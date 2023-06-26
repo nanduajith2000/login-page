@@ -54,6 +54,12 @@ export default function Sidenav() {
     setActiveButton(button);
   };
 
+  const handleLogout = () => {
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    // window.location.reload();
+  };
+
   return (
     <div className={classes.sidenavContainer}>
       <Button
@@ -112,7 +118,7 @@ export default function Sidenav() {
         className={`${classes.button} ${
           activeButton === "logOut" && classes.activeButton
         }`}
-        onClick={() => handleClick("logOut")}
+        onClick={() => handleLogout()}
       >
         <LogoutIcon className={classes.icon} />
         Log Out
