@@ -1,4 +1,4 @@
-from fastapi import FastAPI,Body,Depends
+from fastapi import FastAPI,Body,Depends,Header
 from pydan import LogoutToken
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
@@ -28,14 +28,18 @@ app.add_middleware(
 def user_login(user: UsersLoginSchema = Body(default=None)):
     URL = "login?accountType=WEB&accountName="+user.email+"&password="+user.password
     dict1=ssl1.login(URL,user)
-    # try:
-    if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
-        redis_client.set(dict1["loginResult"]["profile"]["token"],signJWT(user.email)["access token"])
-        return {"message": "success"}
-    else:
-        return{"Message":"Invalid username or password"}
-    # except:
-    #     return{"Message":"Not found"}
+    print(dict1)
+    try:
+        if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
+            redis_client.set(dict1["loginResult"]["profile"]["token"],signJWT(user.email)["access token"])
+            return {"message": "success",
+                    "token":dict1["loginResult"]["profile"]["token"]
+            }
+    except:
+        if dict1["result"]["resultDesc"]=="NOT_FOUND":
+            return{"message":"Invalid username or password"}
+        else:
+            return{"message":"some error has occurred"}
 
    
 #Route : To logout

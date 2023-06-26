@@ -11,7 +11,7 @@ function Login(
   // authToken,
   // authTokenType
 ) {
-  const url = `http://127.0.0.1:8000/user/login`; // Replace with your API endpoint
+  const url = `http://35.154.233.185:8000/user/login`; // Replace with your API endpoint
 
   const headers = {
     "Content-Type": "application/json",
@@ -35,7 +35,8 @@ function Login(
   return fetch(url, requestOptions)
     .then((response) => response.json()) // Parse the response as JSON
 
-    .then((data) =>data //{
+    .then(
+      (data) => data //{
       // Process the returned XML data
       //   fs.writeFile("output.xml", data, (error) => {
       //     if (error) {
@@ -46,11 +47,11 @@ function Login(
       //   });
       // console.log(data);
       // console.log(typeof JSON.stringify(data));
-      
-    //   console.log(data);
-    //   data.JSON();
-    
-    // }
+
+      //   console.log(data);
+      //   data.JSON();
+
+      // }
     )
     .catch((error) => {
       // Handle any errors that occur during the request
