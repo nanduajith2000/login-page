@@ -63,7 +63,7 @@ const LoginForm = () => {
       console.log(res);
 
       if (res.message === "success") {
-        console.log(res.token);
+        console.log("token: " + res.token);
         navigate("/dashboard");
       } else alert("Invalid Credentials");
     });

@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "auto",
     borderRadius: 10,
     padding: "10px 20px",
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
   },
   headerRow: {
     backgroundColor: "#0161b0",
@@ -73,12 +73,24 @@ const PreviousConferences = () => {
       <Table>
         <TableHead>
           <TableRow className={classes.headerRow}>
-            <TableCell>Creator</TableCell>
-            <TableCell>Subject</TableCell>
-            <TableCell>Conference ID</TableCell>
-            <TableCell>No of Participants</TableCell>
-            <TableCell>Start Time</TableCell>
-            <TableCell>Duration</TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              Creator
+            </TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              Subject
+            </TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              Conference ID
+            </TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              No of Participants
+            </TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              Start Time
+            </TableCell>
+            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+              Duration
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody className={classes.tableBody}>
@@ -87,12 +99,24 @@ const PreviousConferences = () => {
               key={conference.id}
               className={index % 2 === 0 ? classes.evenRow : classes.oddRow}
             >
-              <TableCell>{conference.creator}</TableCell>
-              <TableCell>{conference.subject}</TableCell>
-              <TableCell>{conference.conferenceId}</TableCell>
-              <TableCell>{conference.participants}</TableCell>
-              <TableCell>{conference.startTime}</TableCell>
-              <TableCell>{conference.duration}</TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.creator}
+              </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.subject}
+              </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.conferenceId}
+              </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.participants}
+              </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.startTime}
+              </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {conference.duration}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
