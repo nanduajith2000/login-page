@@ -7,7 +7,7 @@ import ContactsIcon from "@mui/icons-material/Contacts";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -48,10 +48,12 @@ const useStyles = makeStyles(() => ({
 
 export default function Sidenav() {
   const classes = useStyles();
+  const navigate = useNavigate();
   const [activeButton, setActiveButton] = useState("dashboard");
 
   const handleClick = (button) => {
     setActiveButton(button);
+    navigate(`/${button}`);
   };
 
   const handleLogout = () => {

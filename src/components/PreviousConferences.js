@@ -13,6 +13,7 @@ import {
 const useStyles = makeStyles((theme) => ({
   root: {
     borderRadius: 20,
+    width: "100%",
   },
   title: {
     backgroundColor: "#D9D9D9",
@@ -20,11 +21,15 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     padding: "10px 20px",
     fontFamily: "Poppins, sans-serif",
+    fontWeight: "bold",
   },
   headerRow: {
     backgroundColor: "#0161b0",
     color: "white",
     borderRadius: 20,
+    "& .MuiTableCell-head": {
+      color: "white", // Override text color
+    },
   },
   tableBody: {
     overflowY: "auto",

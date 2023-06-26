@@ -13,6 +13,8 @@ const useStyles = makeStyles((theme) => ({
     height: 370,
     width: "35vw",
     backgroundColor: "#D9D9D9",
+    borderRadius: 10,
+    overflow: "hidden",
   },
   loadingContainer: {
     display: "flex",
@@ -126,7 +128,14 @@ const MeetingCalendar = () => {
       endAccessor="end"
       style={{ height: "100%" }}
       eventPropGetter={() => ({
-        className: classes.customEventWrapper,
+        style: {
+          backgroundColor: "#0161b0",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          padding: "4px",
+          cursor: "pointer",
+        },
       })}
       components={{
         toolbar: CustomCalendarHeader,

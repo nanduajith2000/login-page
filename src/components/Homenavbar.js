@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { ArrowBack, ArrowForward, Search } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,6 +43,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Homenavbar = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+  const handleForward = () => {
+    navigate(1);
+  };
 
   return (
     <AppBar position="static" className={classes.root}>
@@ -51,6 +60,7 @@ const Homenavbar = () => {
           className={classes.backButton}
           color="secondaryk"
           aria-label="back"
+          onClick={handleBack}
         >
           <ArrowBack />
         </IconButton>
@@ -59,6 +69,7 @@ const Homenavbar = () => {
           className={classes.forwardButton}
           color="secondary"
           aria-label="forward"
+          onClick={handleForward}
         >
           <ArrowForward />
         </IconButton>
