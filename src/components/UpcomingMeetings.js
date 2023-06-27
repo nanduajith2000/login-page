@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
   listItemSecondaryText: {
     fontFamily: "Poppins, sans-serif",
-    fontSize: 6,
+    fontSize: 8,
     color: "white",
     lineHeight: 2,
   },
