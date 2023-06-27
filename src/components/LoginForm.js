@@ -67,7 +67,7 @@ const LoginForm = () => {
         // console.log(res.token);
         document.cookie = "user=" + res.token+";";
         console.log(document.cookie)
-        navigate("/dashboard");
+        navigate("/home");
       } else alert("Invalid Credentials");
     });
   };
