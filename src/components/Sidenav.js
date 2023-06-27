@@ -53,7 +53,11 @@ export default function Sidenav() {
 
   const handleClick = (button) => {
     setActiveButton(button);
-    navigate(`/${button}`);
+    if (button === "dashboard") {
+      navigate("/home");
+    } else {
+      navigate(`/home/${button}`);
+    }
   };
 
   const handleLogout = () => {
