@@ -4,13 +4,14 @@ import {
   Grid,
   TextField,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Button,
   Container,
+  IconButton,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import ClearIcon from "@material-ui/icons/Clear";
 import Homenavbar from "./Homenavbar";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,12 +34,20 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "left",
     fontWeight: "bold",
   },
-  formControl: {
-    backgroundColor: "white", // Change the background color to white
-  },
+  // formControl: {
+  //   backgroundColor: "white", // Change the background color to white
+  // },
   select: {
     display: "flex",
     alignItems: "center", // Vertically center the values
+  },
+  timeSection: {
+    display: "flex",
+    alignItems: "center", // Align items horizontally
+    justifyContent: "space-between", // Distribute space evenly
+  },
+  timeInput: {
+    width: "45%", // Adjust the width of each time input
   },
 }));
 
@@ -49,8 +58,14 @@ const CreateConference = () => {
     month: "",
     year: "",
   });
-  const [startTime, setStartTime] = useState("");
-  const [duration, setDuration] = useState("");
+  const [startTime, setStartTime] = useState({
+    hours: "",
+    minutes: "",
+  });
+  const [duration, setDuration] = useState({
+    hours: "",
+    minutes: "",
+  });
   const [participants, setParticipants] = useState(1);
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
@@ -64,12 +79,22 @@ const CreateConference = () => {
 
   const handleAddParticipant = () => {
     const participant = addContacts || addGroups;
+    const newParticipant = {
+      id: new Date().getTime(), // Unique ID for each participant
+      name: participant,
+    };
     setAddedParticipants((prevParticipants) => [
       ...prevParticipants,
-      participant,
+      newParticipant,
     ]);
     setAddContacts("");
     setAddGroups("");
+  };
+
+  const handleDeleteParticipant = (id) => {
+    setAddedParticipants((prevParticipants) =>
+      prevParticipants.filter((participant) => participant.id !== id)
+    );
   };
 
   const handleDayChange = (event) => {
@@ -158,6 +183,19 @@ const CreateConference = () => {
     ));
   };
 
+  const generateTimeOptions = (isHours) => {
+    const max = isHours ? 23 : 59;
+    const options = Array.from({ length: max + 1 }, (_, i) => {
+      const value = i.toString().padStart(2, "0");
+      return (
+        <MenuItem key={value} value={value}>
+          {value}
+        </MenuItem>
+      );
+    });
+    return options;
+  };
+
   return (
     <div className={classes.root}>
       <Homenavbar />
@@ -175,7 +213,7 @@ const CreateConference = () => {
               onChange={(e) => setSubject(e.target.value)}
               fullWidth
               variant="filled"
-              style={{ backgroundColor: "white" }}
+              // style={{ backgroundColor: "white" }}
             />
 
             <Typography variant="subtitle1" className={classes.subtitle}>
@@ -239,14 +277,36 @@ const CreateConference = () => {
                   variant="filled"
                   className={classes.formControl}
                 >
-                  <Select
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    className={classes.select}
-                  >
-                    <MenuItem value="09:00">09:00</MenuItem>
-                    {/* Add other start time options */}
-                  </Select>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Select
+                        value={startTime.hours}
+                        onChange={(e) =>
+                          setStartTime((prevTime) => ({
+                            ...prevTime,
+                            hours: e.target.value,
+                          }))
+                        }
+                        className={classes.select}
+                      >
+                        {generateTimeOptions(true)}
+                      </Select>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Select
+                        value={startTime.minutes}
+                        onChange={(e) =>
+                          setStartTime((prevTime) => ({
+                            ...prevTime,
+                            minutes: e.target.value,
+                          }))
+                        }
+                        className={classes.select}
+                      >
+                        {generateTimeOptions(false)}
+                      </Select>
+                    </Grid>
+                  </Grid>
                 </FormControl>
               </Grid>
             </Grid>
@@ -261,14 +321,36 @@ const CreateConference = () => {
                   variant="filled"
                   className={classes.formControl}
                 >
-                  <Select
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
-                    className={classes.select}
-                  >
-                    <MenuItem value="1 hour">1 hour</MenuItem>
-                    {/* Add other duration options */}
-                  </Select>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6}>
+                      <Select
+                        value={duration.hours}
+                        onChange={(e) =>
+                          setDuration((prevDuration) => ({
+                            ...prevDuration,
+                            hours: e.target.value,
+                          }))
+                        }
+                        className={classes.select}
+                      >
+                        {generateTimeOptions(true)}
+                      </Select>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Select
+                        value={duration.minutes}
+                        onChange={(e) =>
+                          setDuration((prevDuration) => ({
+                            ...prevDuration,
+                            minutes: e.target.value,
+                          }))
+                        }
+                        className={classes.select}
+                      >
+                        {generateTimeOptions(false)}
+                      </Select>
+                    </Grid>
+                  </Grid>
                 </FormControl>
               </Grid>
             </Grid>
@@ -336,18 +418,6 @@ const CreateConference = () => {
               </Select>
             </FormControl>
 
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Participants:
-            </Typography>
-            {addedParticipants.length === 0 ? (
-              <Typography style={{ fontFamily: "Poppins, sans-serif" }}>
-                No participants added yet
-              </Typography>
-            ) : (
-              addedParticipants.map((participant, index) => (
-                <Typography key={index}>{participant}</Typography>
-              ))
-            )}
             <Button
               variant="contained"
               color="primary"
@@ -356,6 +426,23 @@ const CreateConference = () => {
             >
               Add Participant
             </Button>
+
+            <Typography variant="subtitle1" className={classes.subtitle}>
+              Participants:
+            </Typography>
+            <ul>
+              {addedParticipants.map((participant) => (
+                <li key={participant.id}>
+                  {participant.name}
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDeleteParticipant(participant.id)}
+                  >
+                    <ClearIcon />
+                  </IconButton>
+                </li>
+              ))}
+            </ul>
           </Grid>
         </Grid>
       </Container>
