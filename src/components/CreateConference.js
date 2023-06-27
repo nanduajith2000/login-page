@@ -9,9 +9,11 @@ import {
   Button,
   Container,
   IconButton,
+  Fab,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import ClearIcon from "@material-ui/icons/Clear";
+import AddIcon from "@material-ui/icons/Add";
 import Homenavbar from "./Homenavbar";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,16 +25,24 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 20,
     marginTop: 20,
   },
+  fab: {
+    position: "fixed",
+    bottom: theme.spacing(4),
+    right: theme.spacing(4),
+  },
   button: {
     backgroundColor: "#0161b0",
     color: "white",
     fontFamily: "Poppins, sans-serif",
     textTransform: "none",
+    marginTop: 20,
+    marginBottom: 20,
   },
   subtitle: {
     fontFamily: "Poppins, sans-serif",
     textAlign: "left",
     fontWeight: "bold",
+    marginTop: 20,
   },
   // formControl: {
   //   backgroundColor: "white", // Change the background color to white
@@ -368,18 +378,21 @@ const CreateConference = () => {
                 onChange={(e) => setParticipants(e.target.value)}
                 className={classes.select}
               >
-                <MenuItem value={1}>1</MenuItem>
-                {/* Add other number of participant options */}
+                {Array.from({ length: 50 }, (_, i) => i + 1).map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <Button
-              variant="contained"
+            <Fab
               color="primary"
+              aria-label="add"
+              className={classes.fab}
               onClick={handleSchedule}
-              className={classes.button}
             >
-              Schedule
-            </Button>
+              <AddIcon />
+            </Fab>
           </Grid>
           <Grid item xs={6}>
             <Typography variant="subtitle1" className={classes.subtitle}>
