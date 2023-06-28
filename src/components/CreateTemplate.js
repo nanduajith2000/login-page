@@ -61,17 +61,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CreateConference = () => {
+const CreateTemplate = () => {
   const [subject, setSubject] = useState("");
   const [date, setDate] = useState({
     day: "",
     month: "",
     year: "",
   });
-  const [startTime, setStartTime] = useState({
-    hours: "",
-    minutes: "",
-  });
+  //   const [startTime, setStartTime] = useState({
+  //     hours: "",
+  //     minutes: "",
+  //   });
   const [duration, setDuration] = useState({
     hours: "",
     minutes: "",
@@ -83,8 +83,8 @@ const CreateConference = () => {
 
   const classes = useStyles();
 
-  const handleSchedule = () => {
-    // Logic to schedule the conference
+  const handleCreateTemplate = () => {
+    // Logic to create the conference template
   };
 
   const handleAddParticipant = () => {
@@ -211,7 +211,7 @@ const CreateConference = () => {
       <Homenavbarlite />
       <Container>
         <Typography variant="h5" className={classes.title}>
-          Create Conference
+          Create Conference Template
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={6}>
@@ -226,7 +226,7 @@ const CreateConference = () => {
               // style={{ backgroundColor: "white" }}
             />
 
-            <Typography variant="subtitle1" className={classes.subtitle}>
+            {/* <Typography variant="subtitle1" className={classes.subtitle}>
               Date:
             </Typography>
             <Grid container spacing={2}>
@@ -275,9 +275,9 @@ const CreateConference = () => {
                   </Select>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
 
-            <Typography variant="subtitle1" className={classes.subtitle}>
+            {/* <Typography variant="subtitle1" className={classes.subtitle}>
               Start Time:
             </Typography>
             <Grid container spacing={2}>
@@ -319,7 +319,7 @@ const CreateConference = () => {
                   </Grid>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
 
             <Typography variant="subtitle1" className={classes.subtitle}>
               Duration:
@@ -389,7 +389,7 @@ const CreateConference = () => {
               color="primary"
               aria-label="add"
               className={classes.fab}
-              onClick={handleSchedule}
+              onClick={handleCreateTemplate}
             >
               <AddIcon />
             </Fab>
@@ -463,4 +463,4 @@ const CreateConference = () => {
   );
 };
 
-export default CreateConference;
+export default CreateTemplate;
