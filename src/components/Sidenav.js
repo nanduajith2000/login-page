@@ -8,6 +8,8 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+const Logout = require("../api/Api.js");
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -47,11 +49,53 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Sidenav() {
+  const navigate = useNavigate();
   const classes = useStyles();
   const [activeButton, setActiveButton] = useState("dashboard");
 
   const handleClick = (button) => {
     setActiveButton(button);
+    if (button === "dashboard") {
+      navigate("/home");
+    } else {
+      navigate(`/home/${button}`);
+    }
+  };
+
+  const handleLogout = () => {
+    // localStorage.removeItem("token");
+    // localStorage.removeItem("user");
+    // window.location.reload();
+    console.log(document.cookie);
+    function getCookie(cookieName) {
+      const cookieString = document.cookie;
+      const cookies = cookieString.split(";");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + "=")) {
+          return cookie.substring(cookieName.length + 1);
+        }
+      }
+
+      return null; // Return null if the cookie is not found
+    }
+    const token = getCookie("user");
+    // console.log(cookieValue);
+    console.log(Logout(token));
+    function clearAllCookies() {
+      var cookies = document.cookie.split(";");
+
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        var eqPos = cookie.indexOf("=");
+        var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie =
+          name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      }
+    }
+    clearAllCookies();
+    navigate("/");
   };
 
   return (
@@ -112,7 +156,7 @@ export default function Sidenav() {
         className={`${classes.button} ${
           activeButton === "logOut" && classes.activeButton
         }`}
-        onClick={() => handleClick("logOut")}
+        onClick={() => handleLogout()}
       >
         <LogoutIcon className={classes.icon} />
         Log Out
