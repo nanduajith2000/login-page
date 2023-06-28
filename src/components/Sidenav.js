@@ -9,7 +9,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-const Logout = require("../api/Api.js");
+const Logout = require("../api/Logout.js");
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
