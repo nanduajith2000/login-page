@@ -7,7 +7,7 @@ from app.auth.jwt_bearer import jwtBearer
 from fastapi.middleware.cors import CORSMiddleware
 import redis
 import ssl1 
-
+# from json2xml import json2xml
 redis_client = redis.Redis(host='localhost',port=6379,db=0)
 
 
@@ -43,12 +43,23 @@ def user_login(user: UsersLoginSchema = Body(default=None)):
 
    
 #Route : To logout
-@app.delete("/user/logout", dependencies=[Depends(jwtBearer())], tags=["user"])
+# @app.delete("/user/logout", dependencies=[Depends(jwtBearer())], tags=["user"])
+@app.delete("/user/logout", tags=["user"])
+
 def logout(logout_token: LogoutToken= Body(default=None)):
-    user = decodeJWT(logout_token.token)
-    if user:
-        redis_client.expire(logout_token.token,1)
+    URL="/logout"
+    # logout_token=json2xml(logout_token).to_xml()
+    dict1=ssl1.login(URL,logout_token)
+    print(dict1)
+    try:
+        if dict1["result"]["resultDesc"]=="SUCCESS":
+            user = decodeJWT(logout_token.token)
+            redis_client.expire(logout_token.token,1)
+            return {"message": "success"}
+    except:
+        return{"message":"some error has occurred"}
+    # if user:
         # user["expiry"] = time.time() 
     # Perform additional logout actions, such as removing the token from a blacklist or invalidating the token
-    return {"message": "User has been logged out"}
+    # return {"message": "User has been logged out"}
 

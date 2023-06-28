@@ -61,17 +61,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CreateConference = () => {
+const CreateTemplate = () => {
   const [subject, setSubject] = useState("");
-  const [date, setDate] = useState({
-    day: "",
-    month: "",
-    year: "",
-  });
-  const [startTime, setStartTime] = useState({
-    hours: "",
-    minutes: "",
-  });
+  //   const [date, setDate] = useState({
+  //     day: "",
+  //     month: "",
+  //     year: "",
+  //   });
+  //   const [startTime, setStartTime] = useState({
+  //     hours: "",
+  //     minutes: "",
+  //   });
   const [duration, setDuration] = useState({
     hours: "",
     minutes: "",
@@ -83,8 +83,8 @@ const CreateConference = () => {
 
   const classes = useStyles();
 
-  const handleSchedule = () => {
-    // Logic to schedule the conference
+  const handleCreateTemplate = () => {
+    // Logic to create the conference template
   };
 
   const handleAddParticipant = () => {
@@ -107,91 +107,91 @@ const CreateConference = () => {
     );
   };
 
-  const handleDayChange = (event) => {
-    setDate((prevDate) => ({
-      ...prevDate,
-      day: event.target.value,
-    }));
-  };
+  //   const handleDayChange = (event) => {
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       day: event.target.value,
+  //     }));
+  //   };
 
-  const handleMonthChange = (event) => {
-    const { value } = event.target;
-    let updatedDay = date.day;
-    if (value === "February" && date.day > 28) {
-      updatedDay = 28;
-    }
-    setDate((prevDate) => ({
-      ...prevDate,
-      month: value,
-      day: updatedDay,
-    }));
-  };
+  //   const handleMonthChange = (event) => {
+  //     const { value } = event.target;
+  //     let updatedDay = date.day;
+  //     if (value === "February" && date.day > 28) {
+  //       updatedDay = 28;
+  //     }
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       month: value,
+  //       day: updatedDay,
+  //     }));
+  //   };
 
-  const handleYearChange = (event) => {
-    setDate((prevDate) => ({
-      ...prevDate,
-      year: event.target.value,
-    }));
-  };
+  //   const handleYearChange = (event) => {
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       year: event.target.value,
+  //     }));
+  //   };
 
-  const getCurrentYear = () => {
-    return new Date().getFullYear();
-  };
+  //   const getCurrentYear = () => {
+  //     return new Date().getFullYear();
+  //   };
 
-  const generateMonthOptions = () => {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    return months.map((month, index) => (
-      <MenuItem key={index} value={month}>
-        {month}
-      </MenuItem>
-    ));
-  };
+  //   const generateMonthOptions = () => {
+  //     const months = [
+  //       "January",
+  //       "February",
+  //       "March",
+  //       "April",
+  //       "May",
+  //       "June",
+  //       "July",
+  //       "August",
+  //       "September",
+  //       "October",
+  //       "November",
+  //       "December",
+  //     ];
+  //     return months.map((month, index) => (
+  //       <MenuItem key={index} value={month}>
+  //         {month}
+  //       </MenuItem>
+  //     ));
+  //   };
 
-  const generateDayOptions = () => {
-    const selectedMonth = date.month;
-    let days = [];
-    if (selectedMonth === "February") {
-      const isLeapYear =
-        (date.year % 4 === 0 && date.year % 100 !== 0) || date.year % 400 === 0;
-      days = isLeapYear
-        ? Array.from({ length: 29 }, (_, i) => i + 1)
-        : Array.from({ length: 28 }, (_, i) => i + 1);
-    } else if (
-      ["April", "June", "September", "November"].includes(selectedMonth)
-    ) {
-      days = Array.from({ length: 30 }, (_, i) => i + 1);
-    } else {
-      days = Array.from({ length: 31 }, (_, i) => i + 1);
-    }
-    return days.map((day) => (
-      <MenuItem key={day} value={day}>
-        {day}
-      </MenuItem>
-    ));
-  };
+  //   const generateDayOptions = () => {
+  //     const selectedMonth = date.month;
+  //     let days = [];
+  //     if (selectedMonth === "February") {
+  //       const isLeapYear =
+  //         (date.year % 4 === 0 && date.year % 100 !== 0) || date.year % 400 === 0;
+  //       days = isLeapYear
+  //         ? Array.from({ length: 29 }, (_, i) => i + 1)
+  //         : Array.from({ length: 28 }, (_, i) => i + 1);
+  //     } else if (
+  //       ["April", "June", "September", "November"].includes(selectedMonth)
+  //     ) {
+  //       days = Array.from({ length: 30 }, (_, i) => i + 1);
+  //     } else {
+  //       days = Array.from({ length: 31 }, (_, i) => i + 1);
+  //     }
+  //     return days.map((day) => (
+  //       <MenuItem key={day} value={day}>
+  //         {day}
+  //       </MenuItem>
+  //     ));
+  //   };
 
-  const generateYearOptions = () => {
-    const currentYear = getCurrentYear();
-    const years = Array.from({ length: 11 }, (_, i) => currentYear + i);
-    return years.map((year) => (
-      <MenuItem key={year} value={year}>
-        {year}
-      </MenuItem>
-    ));
-  };
+  //   const generateYearOptions = () => {
+  //     const currentYear = getCurrentYear();
+  //     const years = Array.from({ length: 11 }, (_, i) => currentYear + i);
+  //     return years.map((year) => (
+  //       <MenuItem key={year} value={year}>
+  //         {year}
+  //       </MenuItem>
+  //     ));
+  //   };
 
   const generateTimeOptions = (isHours) => {
     const max = isHours ? 23 : 59;
@@ -211,7 +211,7 @@ const CreateConference = () => {
       <Homenavbarlite />
       <Container>
         <Typography variant="h5" className={classes.title}>
-          Create Conference
+          Create Conference Template
         </Typography>
         <Grid container spacing={3}>
           <Grid item xs={6}>
@@ -226,7 +226,7 @@ const CreateConference = () => {
               // style={{ backgroundColor: "white" }}
             />
 
-            <Typography variant="subtitle1" className={classes.subtitle}>
+            {/* <Typography variant="subtitle1" className={classes.subtitle}>
               Date:
             </Typography>
             <Grid container spacing={2}>
@@ -275,9 +275,9 @@ const CreateConference = () => {
                   </Select>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
 
-            <Typography variant="subtitle1" className={classes.subtitle}>
+            {/* <Typography variant="subtitle1" className={classes.subtitle}>
               Start Time:
             </Typography>
             <Grid container spacing={2}>
@@ -319,7 +319,7 @@ const CreateConference = () => {
                   </Grid>
                 </FormControl>
               </Grid>
-            </Grid>
+            </Grid> */}
 
             <Typography variant="subtitle1" className={classes.subtitle}>
               Duration:
@@ -389,7 +389,7 @@ const CreateConference = () => {
               color="primary"
               aria-label="add"
               className={classes.fab}
-              onClick={handleSchedule}
+              onClick={handleCreateTemplate}
             >
               <AddIcon />
             </Fab>
@@ -463,4 +463,4 @@ const CreateConference = () => {
   );
 };
 
-export default CreateConference;
+export default CreateTemplate;

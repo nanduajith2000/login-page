@@ -1,12 +1,6 @@
 import React from "react";
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Button,
-  TextField,
-} from "@material-ui/core";
-import { ArrowBack, ArrowForward, Search } from "@material-ui/icons";
+import { AppBar, Toolbar, IconButton, Button } from "@material-ui/core";
+import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 
@@ -30,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Poppins, sans-serif",
     textTransform: "capitalize",
     fontSize: "1vw",
-    margin: "0 auto",
+    margin: "0 40px",
     padding: "2vh 2vw",
   },
   searchInput: {
@@ -81,18 +75,6 @@ const Homenavbar = () => {
         >
           Start Conference Now
         </Button>
-        <TextField
-          placeholder="Search..."
-          className={`${classes.searchInput}`}
-          InputProps={{
-            startAdornment: <Search />,
-            disableUnderline: true,
-            style: {
-              fontFamily: "Poppins,sans-serif",
-              fontSize: "1vw", // Change the font here
-            },
-          }}
-        />
       </Toolbar>
     </AppBar>
   );
