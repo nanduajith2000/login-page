@@ -1,13 +1,11 @@
 import { Button, Divider, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
-import "./Sidenav.css";
 import HomeIcon from "@mui/icons-material/Home";
 import PhoneIcon from "@mui/icons-material/Phone";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 const Logout = require("../api/Api.js");
 

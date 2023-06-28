@@ -63,11 +63,11 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateTemplate = () => {
   const [subject, setSubject] = useState("");
-  const [date, setDate] = useState({
-    day: "",
-    month: "",
-    year: "",
-  });
+  //   const [date, setDate] = useState({
+  //     day: "",
+  //     month: "",
+  //     year: "",
+  //   });
   //   const [startTime, setStartTime] = useState({
   //     hours: "",
   //     minutes: "",
@@ -107,91 +107,91 @@ const CreateTemplate = () => {
     );
   };
 
-  const handleDayChange = (event) => {
-    setDate((prevDate) => ({
-      ...prevDate,
-      day: event.target.value,
-    }));
-  };
+  //   const handleDayChange = (event) => {
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       day: event.target.value,
+  //     }));
+  //   };
 
-  const handleMonthChange = (event) => {
-    const { value } = event.target;
-    let updatedDay = date.day;
-    if (value === "February" && date.day > 28) {
-      updatedDay = 28;
-    }
-    setDate((prevDate) => ({
-      ...prevDate,
-      month: value,
-      day: updatedDay,
-    }));
-  };
+  //   const handleMonthChange = (event) => {
+  //     const { value } = event.target;
+  //     let updatedDay = date.day;
+  //     if (value === "February" && date.day > 28) {
+  //       updatedDay = 28;
+  //     }
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       month: value,
+  //       day: updatedDay,
+  //     }));
+  //   };
 
-  const handleYearChange = (event) => {
-    setDate((prevDate) => ({
-      ...prevDate,
-      year: event.target.value,
-    }));
-  };
+  //   const handleYearChange = (event) => {
+  //     setDate((prevDate) => ({
+  //       ...prevDate,
+  //       year: event.target.value,
+  //     }));
+  //   };
 
-  const getCurrentYear = () => {
-    return new Date().getFullYear();
-  };
+  //   const getCurrentYear = () => {
+  //     return new Date().getFullYear();
+  //   };
 
-  const generateMonthOptions = () => {
-    const months = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-    return months.map((month, index) => (
-      <MenuItem key={index} value={month}>
-        {month}
-      </MenuItem>
-    ));
-  };
+  //   const generateMonthOptions = () => {
+  //     const months = [
+  //       "January",
+  //       "February",
+  //       "March",
+  //       "April",
+  //       "May",
+  //       "June",
+  //       "July",
+  //       "August",
+  //       "September",
+  //       "October",
+  //       "November",
+  //       "December",
+  //     ];
+  //     return months.map((month, index) => (
+  //       <MenuItem key={index} value={month}>
+  //         {month}
+  //       </MenuItem>
+  //     ));
+  //   };
 
-  const generateDayOptions = () => {
-    const selectedMonth = date.month;
-    let days = [];
-    if (selectedMonth === "February") {
-      const isLeapYear =
-        (date.year % 4 === 0 && date.year % 100 !== 0) || date.year % 400 === 0;
-      days = isLeapYear
-        ? Array.from({ length: 29 }, (_, i) => i + 1)
-        : Array.from({ length: 28 }, (_, i) => i + 1);
-    } else if (
-      ["April", "June", "September", "November"].includes(selectedMonth)
-    ) {
-      days = Array.from({ length: 30 }, (_, i) => i + 1);
-    } else {
-      days = Array.from({ length: 31 }, (_, i) => i + 1);
-    }
-    return days.map((day) => (
-      <MenuItem key={day} value={day}>
-        {day}
-      </MenuItem>
-    ));
-  };
+  //   const generateDayOptions = () => {
+  //     const selectedMonth = date.month;
+  //     let days = [];
+  //     if (selectedMonth === "February") {
+  //       const isLeapYear =
+  //         (date.year % 4 === 0 && date.year % 100 !== 0) || date.year % 400 === 0;
+  //       days = isLeapYear
+  //         ? Array.from({ length: 29 }, (_, i) => i + 1)
+  //         : Array.from({ length: 28 }, (_, i) => i + 1);
+  //     } else if (
+  //       ["April", "June", "September", "November"].includes(selectedMonth)
+  //     ) {
+  //       days = Array.from({ length: 30 }, (_, i) => i + 1);
+  //     } else {
+  //       days = Array.from({ length: 31 }, (_, i) => i + 1);
+  //     }
+  //     return days.map((day) => (
+  //       <MenuItem key={day} value={day}>
+  //         {day}
+  //       </MenuItem>
+  //     ));
+  //   };
 
-  const generateYearOptions = () => {
-    const currentYear = getCurrentYear();
-    const years = Array.from({ length: 11 }, (_, i) => currentYear + i);
-    return years.map((year) => (
-      <MenuItem key={year} value={year}>
-        {year}
-      </MenuItem>
-    ));
-  };
+  //   const generateYearOptions = () => {
+  //     const currentYear = getCurrentYear();
+  //     const years = Array.from({ length: 11 }, (_, i) => currentYear + i);
+  //     return years.map((year) => (
+  //       <MenuItem key={year} value={year}>
+  //         {year}
+  //       </MenuItem>
+  //     ));
+  //   };
 
   const generateTimeOptions = (isHours) => {
     const max = isHours ? 23 : 59;

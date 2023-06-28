@@ -23,6 +23,7 @@ import templateData from "../data/templateData.json";
 import { Add, Edit, Delete, Search, InfoOutlined } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
+import InstantConferenceSidenav from "./InstantConferenceSidenav";
 
 const useStyles = makeStyles((theme) => ({
   root: {
