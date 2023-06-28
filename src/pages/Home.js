@@ -12,7 +12,7 @@ import "./Home.css";
 export default function Home() {
   return (
     <div className="home-container">
-      {/* <Sidenav /> */}
+      <Sidenav />
       <Routes>
         <Route path="/" element={<Dashboard />}></Route>
         <Route path="/createConference" element={<CreateConference />}></Route>
