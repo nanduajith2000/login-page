@@ -12,14 +12,16 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Mic, Call, Search } from "@material-ui/icons";
+import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import InstantConferenceSidenav from "../components/InstantConferenceSidenav";
+import participantsData from "../data/participantsData.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     gap: theme.spacing(2),
     display: "flex",
+    width: "100%",
   },
   container: {
     width: "84vw",
@@ -28,8 +30,13 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: "bold",
     fontFamily: "Poppins, sans-serif",
     textAlign: "left",
-    marginBottom: 40,
+    marginBottom: 10,
     marginTop: 40,
+  },
+  subtitle: {
+    fontFamily: "Poppins, sans-serif",
+    textAlign: "left",
+    marginBottom: 30,
   },
   section: {
     display: "flex",
@@ -51,10 +58,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#0161b0",
     color: "white",
     fontWeight: "bold",
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
   },
+
   tableCell: {
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
   },
   tableRow: {
     "&:nth-child(even)": {
@@ -64,28 +72,89 @@ const useStyles = makeStyles((theme) => ({
       backgroundColor: "white",
     },
   },
+  disconnectedCall: {
+    color: "red",
+  },
+  mutedMic: {
+    color: "gray",
+  },
+  message: {
+    fontFamily: "Poppins, sans-serif",
+    fontSize: "1.2vw",
+    textAlign: "center",
+  },
 }));
 
-const ConferenceTemplates = () => {
+const InstantConference = () => {
   const classes = useStyles();
 
-  const handleCheckedUser = () => {
-    //logic to check user
+  const [participants, setParticipants] = useState(participantsData);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleCheckedUser = (participantId) => {
+    setParticipants((prevParticipants) => {
+      const updatedParticipants = prevParticipants.map((participant) => {
+        if (participant.id === participantId) {
+          return {
+            ...participant,
+            selected: !participant.selected,
+          };
+        }
+        return participant;
+      });
+      return updatedParticipants;
+    });
   };
 
-  const handleMute = () => {
-    //logic to mute participant
+  const handleMute = (participantId) => {
+    setParticipants((prevParticipants) => {
+      const updatedParticipants = prevParticipants.map((participant) => {
+        if (participant.id === participantId) {
+          return {
+            ...participant,
+            muted: !participant.muted,
+          };
+        }
+        return participant;
+      });
+      return updatedParticipants;
+    });
   };
-  const handleCall = () => {
-    //logic to call participant
+
+  const handleCall = (participantId) => {
+    setParticipants((prevParticipants) => {
+      const updatedParticipants = prevParticipants.map((participant) => {
+        if (participant.id === participantId) {
+          return {
+            ...participant,
+            connected: !participant.connected,
+          };
+        }
+        return participant;
+      });
+      return updatedParticipants;
+    });
   };
+
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  // Filter participants based on search query
+  const filteredParticipants = participants.filter((participant) =>
+    participant.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className={classes.root}>
-      <InstantConferenceSidenav />
+      <InstantConferenceSidenav participants={participants} />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
           Admin's Conference
+        </Typography>
+        <Typography variant="subtitle2" className={classes.subtitle}>
+          {participants.filter((participant) => participant.connected).length}/
+          {participants.length} on call
         </Typography>
         <div className={classes.section}>
           <TextField
@@ -95,14 +164,16 @@ const ConferenceTemplates = () => {
               startAdornment: <Search />,
               disableUnderline: true,
               style: {
-                fontFamily: "Poppins,sans-serif",
-                fontSize: "1vw", // Change the font here
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "1vw",
               },
             }}
+            value={searchQuery}
+            onChange={handleSearch}
           />
         </div>
         <TableContainer className={classes.tableContainer}>
-          <Table>
+          <Table className={classes.table}>
             <TableHead className={classes.tableHead}>
               <TableRow>
                 <TableCell className={classes.tableHeaderCell}>
@@ -113,26 +184,72 @@ const ConferenceTemplates = () => {
                   Number
                 </TableCell>
                 <TableCell className={classes.tableHeaderCell}></TableCell>
+                <TableCell className={classes.tableHeaderCell}></TableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
-              <TableRow>
-                <TableCell className={classes.tableCell}>
-                  <Checkbox onChange={handleCheckedUser} />
-                </TableCell>
-                <TableCell className={classes.tableCell}></TableCell>
-                <TableCell className={classes.tableCell}></TableCell>
-                <TableCell className={classes.tableCell}>
-                  <IconButton onClick={handleCall}>
-                    <Call />
-                  </IconButton>
-                </TableCell>
-                <TableCell className={classes.tableCell}>
-                  <IconButton onClick={handleMute}>
-                    <Mic />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
+            <TableBody className={classes.tableBody}>
+              {filteredParticipants.length > 0 ? (
+                filteredParticipants.map((participant) => (
+                  <TableRow key={participant.id} className={classes.tableRow}>
+                    <TableCell className={classes.tableCell}>
+                      <Checkbox
+                        checked={participant.selected}
+                        onChange={() => handleCheckedUser(participant.id)}
+                      />
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      {participant.name}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      {participant.number}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      <IconButton
+                        onClick={() => handleCall(participant.id)}
+                        disabled={
+                          !participant.connected && participant.selected
+                        }
+                      >
+                        {participant.connected ? (
+                          <CallEnd
+                            className={
+                              participant.connected
+                                ? classes.disconnectedCall
+                                : ""
+                            }
+                          />
+                        ) : (
+                          <Call />
+                        )}
+                      </IconButton>
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      <IconButton
+                        onClick={() => handleMute(participant.id)}
+                        disabled={
+                          !participant.connected && participant.selected
+                        }
+                      >
+                        {participant.muted ? (
+                          <MicOff
+                            className={
+                              participant.muted ? classes.mutedMic : ""
+                            }
+                          />
+                        ) : (
+                          <Mic />
+                        )}
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell className={classes.message} colSpan={5}>
+                    No participants found.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -141,4 +258,4 @@ const ConferenceTemplates = () => {
   );
 };
 
-export default ConferenceTemplates;
+export default InstantConference;

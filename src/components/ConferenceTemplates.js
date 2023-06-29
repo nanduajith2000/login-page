@@ -18,12 +18,11 @@ import {
   List,
   ListItem,
 } from "@material-ui/core";
-import Homenavbarlite from "./Homenavbarlite";
-import templateData from "../data/templateData.json";
 import { Add, Edit, Delete, Search, InfoOutlined } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
-import InstantConferenceSidenav from "./InstantConferenceSidenav";
+import Homenavbarlite from "./Homenavbarlite";
+import templateData from "../data/templateData.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,10 +58,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#0161b0",
     color: "white",
     fontWeight: "bold",
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
   },
   tableCell: {
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
   },
   tableRow: {
     "&:nth-child(even)": {
@@ -75,14 +74,14 @@ const useStyles = makeStyles((theme) => ({
   startButton: {
     backgroundColor: "#0161b0",
     color: "white",
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
     textTransform: "capitalize",
     borderRadius: 15,
   },
   scheduleButton: {
     backgroundColor: "#0ce23b",
     color: "white",
-    fontFamily: "Poppins,sans-serif",
+    fontFamily: "Poppins, sans-serif",
     textTransform: "capitalize",
     marginLeft: 20,
     marginRight: 20,
@@ -98,7 +97,19 @@ const useStyles = makeStyles((theme) => ({
 const ConferenceTemplates = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredTemplates, setFilteredTemplates] = useState(templateData);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
+
+  const handleSearchInputChange = (event) => {
+    const query = event.target.value;
+    setSearchQuery(query);
+
+    const filtered = templateData.filter((template) =>
+      template.name.toLowerCase().includes(query.toLowerCase())
+    );
+    setFilteredTemplates(filtered);
+  };
 
   const handleParticipantInfo = (template) => {
     setSelectedTemplate(template);
@@ -138,13 +149,15 @@ const ConferenceTemplates = () => {
         <div className={classes.section}>
           <TextField
             placeholder="Search..."
-            className={`${classes.searchInput}`}
+            className={classes.searchInput}
+            value={searchQuery}
+            onChange={handleSearchInputChange}
             InputProps={{
               startAdornment: <Search />,
               disableUnderline: true,
               style: {
-                fontFamily: "Poppins,sans-serif",
-                fontSize: "1vw", // Change the font here
+                fontFamily: "Poppins, sans-serif",
+                fontSize: "1vw",
               },
             }}
           />
@@ -154,7 +167,7 @@ const ConferenceTemplates = () => {
             style={{
               backgroundColor: "#0161b0",
               color: "white",
-              fontFamily: "Poppins,sans-serif",
+              fontFamily: "Poppins, sans-serif",
               fontSize: "0.9vw",
               borderRadius: 20,
               padding: "1vh 1vw",
@@ -181,52 +194,63 @@ const ConferenceTemplates = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {templateData.map((template, index) => (
-                <TableRow
-                  key={index}
-                  className={
-                    index % 2 === 0 ? classes.tableRowEven : classes.tableRowOdd
-                  }
-                >
-                  <TableCell className={classes.tableCell}>
-                    {template.name}
-                  </TableCell>
-                  <TableCell className={classes.tableCell}>
-                    {template.duration}
-                  </TableCell>
-                  <TableCell className={classes.tableCell}>
-                    {template.participants.length}{" "}
-                    <IconButton
-                      className={classes.infoButton}
-                      onClick={() => handleParticipantInfo(template)}
-                    >
-                      <InfoOutlined />
-                    </IconButton>
-                  </TableCell>
-                  <TableCell className={classes.tableCellButtons}>
-                    <Button
-                      variant="contained"
-                      className={classes.startButton}
-                      onClick={handleStartNow}
-                    >
-                      Start now
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={classes.scheduleButton}
-                      onClick={handleSchedule}
-                    >
-                      Schedule
-                    </Button>
-                    <IconButton onClick={handleEditTemplate}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={handleDeleteTemplate}>
-                      <Delete />
-                    </IconButton>
+              {filteredTemplates.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className={classes.tableCell}
+                    style={{
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: "1.2vw",
+                      textAlign: "center",
+                    }}
+                  >
+                    No templates found
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                filteredTemplates.map((template, index) => (
+                  <TableRow key={index} className={classes.tableRow}>
+                    <TableCell className={classes.tableCell}>
+                      {template.name}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      {template.duration}
+                    </TableCell>
+                    <TableCell className={classes.tableCell}>
+                      {template.participants.length}{" "}
+                      <IconButton
+                        className={classes.infoButton}
+                        onClick={() => handleParticipantInfo(template)}
+                      >
+                        <InfoOutlined />
+                      </IconButton>
+                    </TableCell>
+                    <TableCell className={classes.tableCellButtons}>
+                      <Button
+                        variant="contained"
+                        className={classes.startButton}
+                        onClick={handleStartNow}
+                      >
+                        Start now
+                      </Button>
+                      <Button
+                        variant="contained"
+                        className={classes.scheduleButton}
+                        onClick={handleSchedule}
+                      >
+                        Schedule
+                      </Button>
+                      <IconButton onClick={handleEditTemplate}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton onClick={handleDeleteTemplate}>
+                        <Delete />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>

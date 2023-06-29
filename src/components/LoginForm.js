@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { userDetailsContext } from "../pages/LoginPage.js";
+import { userDetailsContextTwo } from "../pages/LoginPage.js";
 import {
   TextField,
   Button,
@@ -39,12 +39,12 @@ const LoginForm = () => {
   const [showConferenceForm, setShowConferenceForm] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
 
-  const webAccount = useContext(userDetailsContext).webAccount;
-  const setWebAccount = useContext(userDetailsContext).setWebAccount;
-  const password = useContext(userDetailsContext).password;
-  const setPassword = useContext(userDetailsContext).setPassword;
-  const conferenceId = useContext(userDetailsContext).conferenceId;
-  const setConferenceId = useContext(userDetailsContext).setConferenceId;
+  const webAccount = useContext(userDetailsContextTwo).webAccount;
+  const setWebAccount = useContext(userDetailsContextTwo).setWebAccount;
+  const password = useContext(userDetailsContextTwo).password;
+  const setPassword = useContext(userDetailsContextTwo).setPassword;
+  const conferenceId = useContext(userDetailsContextTwo).conferenceId;
+  const setConferenceId = useContext(userDetailsContextTwo).setConferenceId;
 
   const handleJoinConference = () => {
     setShowConferenceForm(true);

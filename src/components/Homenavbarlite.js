@@ -47,6 +47,10 @@ const Homenavbar = () => {
     navigate(1);
   };
 
+  const handleStartConference = () => {
+    window.open("/home/instantConference", "_blank");
+  };
+
   return (
     <AppBar position="static" className={classes.root}>
       <Toolbar>
@@ -71,6 +75,7 @@ const Homenavbar = () => {
         <Button
           variant="contained"
           color="primary"
+          onClick={handleStartConference}
           className={classes.startButton}
         >
           Start Conference Now

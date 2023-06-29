@@ -49,8 +49,13 @@ const Homenavbar = () => {
   const handleBack = () => {
     navigate(-1);
   };
+
   const handleForward = () => {
     navigate(1);
+  };
+
+  const handleStartConference = () => {
+    window.open("/home/instantConference", "_blank");
   };
 
   return (
@@ -78,6 +83,7 @@ const Homenavbar = () => {
           variant="contained"
           color="primary"
           className={classes.startButton}
+          onClick={handleStartConference}
         >
           Start Conference Now
         </Button>
