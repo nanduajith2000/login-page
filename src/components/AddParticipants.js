@@ -6,6 +6,13 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     gap: "1rem",
+    padding: "1rem",
+  },
+  button: {
+    backgroundColor: "#0161b0",
+    color: "white",
+    textTransform: "capitalize",
+    fontFamily: "Poppins, sans-serif",
   },
 }));
 
@@ -18,7 +25,7 @@ export default function AddParticipants({ onAddParticipant }) {
     e.preventDefault();
     const participant = {
       id: Date.now(),
-      name,
+      name: name,
       number: phoneNumber,
       selected: false,
       connected: false,
@@ -43,7 +50,7 @@ export default function AddParticipants({ onAddParticipant }) {
         value={phoneNumber}
         onChange={(e) => setPhoneNumber(e.target.value)}
       />
-      <Button variant="contained" color="primary" type="submit">
+      <Button variant="contained" className={classes.button} type="submit">
         Submit
       </Button>
     </form>

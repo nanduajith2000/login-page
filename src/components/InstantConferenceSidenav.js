@@ -5,9 +5,11 @@ import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import GroupIcon from "@material-ui/icons/Group";
 import CallIcon from "@material-ui/icons/Call";
 import MicIcon from "@material-ui/icons/Mic";
-
 import MicOffIcon from "@material-ui/icons/MicOff";
-import { SubdirectoryArrowRight } from "@mui/icons-material";
+import {
+  SubdirectoryArrowRight,
+  CallEnd as CallEndIcon,
+} from "@mui/icons-material";
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -43,8 +45,9 @@ const useStyles = makeStyles(() => ({
 
 export default function Sidenav(props) {
   const [areAllParticipantsMuted, setAreAllParticipantsMuted] = useState(false);
-
   const [isAddParticipantsOpen, setIsAddParticipantsOpen] = useState(false);
+  const [areAllParticipantsConnected, setAreAllParticipantsConnected] =
+    useState(false);
   const classes = useStyles();
 
   const handleAddParticipants = (participant) => {
@@ -54,7 +57,7 @@ export default function Sidenav(props) {
   };
 
   const handleAddGroups = () => {
-    //logic to add groups
+    // logic to add groups
   };
 
   const handleCallAbsent = () => {
@@ -87,7 +90,18 @@ export default function Sidenav(props) {
   };
 
   const handleCreateSubconference = () => {
-    //logic to create subconference
+    // logic to create subconference
+  };
+
+  const handleEndAll = () => {
+    props.setParticipants((prevParticipants) => {
+      const updatedParticipants = prevParticipants.map((participant) => ({
+        ...participant,
+        connected: false,
+      }));
+      return updatedParticipants;
+    });
+    setAreAllParticipantsConnected(false);
   };
 
   return (
@@ -128,7 +142,6 @@ export default function Sidenav(props) {
         )}
         {areAllParticipantsMuted ? "Unmute All" : "Mute All"}
       </Button>
-
       <Button
         variant="text"
         className={`${classes.button} `}
@@ -137,7 +150,16 @@ export default function Sidenav(props) {
         <SubdirectoryArrowRight className={classes.icon} />
         Create Sub Conference
       </Button>
+      <Button
+        variant="text"
+        className={`${classes.button} `}
+        onClick={handleEndAll}
+      >
+        <CallEndIcon className={classes.icon} />
+        End All
+      </Button>
       <Dialog
+        className={classes.dialog}
         open={isAddParticipantsOpen}
         onClose={() => setIsAddParticipantsOpen(false)}
       >

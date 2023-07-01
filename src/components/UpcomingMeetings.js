@@ -2,13 +2,13 @@ import React, { useState, useEffect } from "react";
 import {
   List,
   ListItem,
-  ListItemText,
   Divider,
   Container,
   Typography,
   Button,
   makeStyles,
 } from "@material-ui/core";
+import meetings from "../data/meetingsList.json";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,34 +105,6 @@ const useStyles = makeStyles((theme) => ({
 
 const UpcomingMeetings = () => {
   const classes = useStyles();
-  const [meetings, setMeetings] = useState([
-    {
-      id: 1,
-      title: "Meeting 1",
-      startTime: "2023-06-22T10:00:00Z",
-      endTime: "2023-06-22T11:30:00Z",
-      creator: "John Doe",
-      accessNumber: "123456789",
-      conferenceId: "ABC123",
-      chairpersonPassword: "password1",
-      guestPassword: "password2",
-      numParticipants: 10,
-      active: true,
-    },
-    {
-      id: 2,
-      title: "Meeting 2",
-      startTime: "2023-06-23T14:00:00Z",
-      endTime: "2023-06-23T15:30:00Z",
-      creator: "Jane Smith",
-      accessNumber: "123456789",
-      conferenceId: "ABC123",
-      chairpersonPassword: "password1",
-      guestPassword: "password2",
-      numParticipants: 10,
-      active: false,
-    },
-  ]);
 
   const handleJoinConference = (meeting) => {
     console.log("Joining meeting: ", meeting);

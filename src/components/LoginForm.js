@@ -77,6 +77,16 @@ const LoginForm = () => {
     console.log("Conference Password:", conferencePassword);
   };
 
+  const handleTextFieldKeyPress = (event) => {
+    if (event.key === "Enter") {
+      if (!showConferenceForm) {
+        handleLogin();
+      } else {
+        handleJoin();
+      }
+    }
+  };
+
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Grid container spacing={2}>
@@ -97,15 +107,16 @@ const LoginForm = () => {
                 onChange={(e) => setWebAccount(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -119,15 +130,16 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -184,15 +196,16 @@ const LoginForm = () => {
                 onChange={(e) => setConferenceId(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -206,15 +219,16 @@ const LoginForm = () => {
                 onChange={(e) => setConferencePassword(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
