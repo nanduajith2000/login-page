@@ -1,12 +1,13 @@
-import { Button, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
+import AddParticipants from "./AddParticipants";
+import { Button, makeStyles, Dialog, DialogTitle } from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import GroupIcon from "@material-ui/icons/Group";
 import CallIcon from "@material-ui/icons/Call";
+import MicIcon from "@material-ui/icons/Mic";
+
 import MicOffIcon from "@material-ui/icons/MicOff";
 import { SubdirectoryArrowRight } from "@mui/icons-material";
-
-import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -40,22 +41,51 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-export default function Sidenav() {
-  const navigate = useNavigate();
+export default function Sidenav(props) {
+  const [areAllParticipantsMuted, setAreAllParticipantsMuted] = useState(false);
+
+  const [isAddParticipantsOpen, setIsAddParticipantsOpen] = useState(false);
   const classes = useStyles();
+
+  const handleAddParticipants = (participant) => {
+    // Append participant data to participantsData.json or perform necessary operations
+    console.log(participant);
+    setIsAddParticipantsOpen(false);
+  };
 
   const handleAddGroups = () => {
     //logic to add groups
   };
-  const handleAddParticipants = () => {
-    //logic to add participants
-  };
+
   const handleCallAbsent = () => {
-    //logic to call absent
+    setIsAddParticipantsOpen(false);
+    props.setParticipants((prevParticipants) => {
+      const updatedParticipants = prevParticipants.map((participant) => ({
+        ...participant,
+        connected: true,
+      }));
+      return updatedParticipants;
+    });
   };
+
+  const handleUnmuteAll = () => {
+    const updatedParticipants = props.participants.map((participant) => ({
+      ...participant,
+      muted: false,
+    }));
+    props.setParticipants(updatedParticipants);
+    setAreAllParticipantsMuted(false);
+  };
+
   const handleMuteAll = () => {
-    //logic to mute all
+    const updatedParticipants = props.participants.map((participant) => ({
+      ...participant,
+      muted: true,
+    }));
+    props.setParticipants(updatedParticipants);
+    setAreAllParticipantsMuted(true);
   };
+
   const handleCreateSubconference = () => {
     //logic to create subconference
   };
@@ -65,7 +95,7 @@ export default function Sidenav() {
       <Button
         variant="text"
         className={`${classes.button} `}
-        onClick={handleAddParticipants}
+        onClick={() => setIsAddParticipantsOpen(true)}
       >
         <GroupAddIcon className={classes.icon} />
         Add Participants
@@ -89,11 +119,16 @@ export default function Sidenav() {
       <Button
         variant="text"
         className={`${classes.button} `}
-        onClick={handleMuteAll}
+        onClick={areAllParticipantsMuted ? handleUnmuteAll : handleMuteAll}
       >
-        <MicOffIcon className={classes.icon} />
-        Mute All
+        {areAllParticipantsMuted ? (
+          <MicIcon className={classes.icon} />
+        ) : (
+          <MicOffIcon className={classes.icon} />
+        )}
+        {areAllParticipantsMuted ? "Unmute All" : "Mute All"}
       </Button>
+
       <Button
         variant="text"
         className={`${classes.button} `}
@@ -102,6 +137,13 @@ export default function Sidenav() {
         <SubdirectoryArrowRight className={classes.icon} />
         Create Sub Conference
       </Button>
+      <Dialog
+        open={isAddParticipantsOpen}
+        onClose={() => setIsAddParticipantsOpen(false)}
+      >
+        <DialogTitle>Add Participants</DialogTitle>
+        <AddParticipants onAddParticipant={handleAddParticipants} />
+      </Dialog>
     </div>
   );
 }
