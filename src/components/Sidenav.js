@@ -1,12 +1,15 @@
 import { Button, Divider, makeStyles } from "@material-ui/core";
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
 import PhoneIcon from "@mui/icons-material/Phone";
 import ContactsIcon from "@mui/icons-material/Contacts";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useNavigate } from "react-router-dom";
+// import { userDetailsContextThree } from "../pages/Home";
+
+import logo from "../images/bsnl-logo.jpeg";
 const Logout = require("../api/Logout.js");
 
 const useStyles = makeStyles(() => ({
@@ -18,7 +21,7 @@ const useStyles = makeStyles(() => ({
     display: "flex",
     flexDirection: "column",
     gap: "2vh",
-    padding: "20vh 1vw",
+    padding: "10vh 1vw",
   },
   button: {
     color: "white",
@@ -42,14 +45,53 @@ const useStyles = makeStyles(() => ({
     marginRight: "0.8vw",
   },
   line: {
-    backgroundColor: "white",
+    backgroundColor: "#D9D9D9",
+  },
+  welcomeSection: {
+    display: "flex",
+    alignItems: "center",
+    marginBottom: "2vh",
+    marginTop: 0,
+    justifyContent: "center",
+  },
+  welcomeText: {
+    color: "white",
+    fontFamily: "Poppins, sans-serif",
+    fontSize: "1.1vw",
+    marginLeft: "1.2vw",
+  },
+  logo: {
+    width: "5vw",
+    height: "auto",
   },
 }));
 
-export default function Sidenav() {
+export default function Sidenav(props) {
+  const userID = localStorage.getItem("userID");
   const navigate = useNavigate();
+  const location = useLocation();
   const classes = useStyles();
-  const [activeButton, setActiveButton] = useState("dashboard");
+  const [activeButton, setActiveButton] = useState(
+    getActiveButtonFromPath(location.pathname)
+  );
+
+  function getActiveButtonFromPath(pathname) {
+    const pathSegments = pathname.split("/");
+
+    if (pathSegments.length === 2) {
+      return "dashboard";
+    } else if (pathSegments[2] === "createConference") {
+      return "createConference";
+    } else if (pathSegments[2] === "contacts") {
+      return "contacts";
+    } else if (pathSegments[2] === "conferenceTemplates") {
+      return "conferenceTemplates";
+    } else if (pathSegments[2] === "settings") {
+      return "settings";
+    } else {
+      return "";
+    }
+  }
 
   const handleClick = (button) => {
     setActiveButton(button);
@@ -98,6 +140,14 @@ export default function Sidenav() {
 
   return (
     <div className={classes.sidenavContainer}>
+      <div className={classes.welcomeSection}>
+        <img src={logo} alt="Logo" className={classes.logo} />
+        <span className={classes.welcomeText}>
+          Welcome, <br />
+          {userID}!
+        </span>
+      </div>
+      <Divider className={classes.line} />
       <Button
         variant="text"
         className={`${classes.button} ${

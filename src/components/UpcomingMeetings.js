@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import {
   List,
   ListItem,
@@ -9,8 +9,6 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import meetings from "../data/meetingsList.json";
-import InstantConference from "../pages/InstantConference";
-import { Routes, Route, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -107,7 +105,6 @@ const useStyles = makeStyles((theme) => ({
 
 const UpcomingMeetings = () => {
   const classes = useStyles();
-  const navigate = useNavigate();
 
   const handleJoinConference = (meeting) => {
     console.log("Joining meeting: ", meeting);

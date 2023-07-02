@@ -33,15 +33,15 @@ function createconference(
 
 module.exports = createconference;
 
-createconference(
-  "NzU0NDg5MTQ3NDUxNDI0MjA5OTMwMDAtMDAxMA==",
-  320000,
-  5,
-  48,
-  "en_US",
-  "meeting1",
-  "1688310002000",
-  "Voice"
-)
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+// createconference(
+//   "NzU0NDg5MTQ3NDUxNDI0MjA5OTMwMDAtMDAxMA==",
+//   320000,
+//   5,
+//   48,
+//   "en_US",
+//   "meeting1",
+//   "1688310002000",
+//   "Voice"
+// )
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));

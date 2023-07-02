@@ -85,6 +85,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InstantConference = (props) => {
+  const userID = localStorage.getItem("userID");
   const classes = useStyles();
   const [participants, setParticipants] = useState(props.participantsData);
   const [searchQuery, setSearchQuery] = useState("");
@@ -151,7 +152,7 @@ const InstantConference = (props) => {
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {props.creator}'s Conference
+          {userID}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
           {participants.filter((participant) => participant.connected).length}/

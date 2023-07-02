@@ -14,7 +14,7 @@ import "./Home.css";
 
 export const userDetailsContextThree = React.createContext();
 
-export default function Home() {
+export default function Home(props) {
   const webAccount = React.useContext(userDetailsContext).webAccount;
   const setWebAccount = React.useContext(userDetailsContext).setWebAccount;
   const location = useLocation();
@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <userDetailsContextThree.Provider value={{ webAccount, setWebAccount }}>
-        {!hideSidenav && <Sidenav />}
+        {!hideSidenav && <Sidenav userID={props.userID} />}
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/createConference" element={<CreateConference />} />

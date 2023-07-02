@@ -96,7 +96,7 @@ export default function ConferenceCreated(props) {
         </Typography>
         <Typography className={classes.text} ariant="body1">
           <span className={classes.detailHeader}>Access number:</span>{" "}
-          {props.subject}
+          {props.accessNumber}
         </Typography>
         <Typography className={classes.text} variant="body1">
           <span className={classes.detailHeader}>Chairperson password:</span>{" "}

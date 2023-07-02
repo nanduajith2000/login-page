@@ -16,7 +16,6 @@ import AddIcon from "@material-ui/icons/Add";
 import ConferenceCreated from "./ConferenceCreated";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
-import { format, utcToZonedTime } from "date-fns-tz";
 
 const createconference = require("../api/CreateConference.js");
 
@@ -92,8 +91,8 @@ const CreateConference = () => {
   const [guestPassword, setGuestPassword] = useState(null);
   const [conferenceID, setConferenceID] = useState(null);
   const [creator, setCreator] = useState("Admin");
+  const [accessNumber, setAccessNumber] = useState(null);
   const [openConfirmation, setOpenConfirmation] = useState(false);
-  const [startTimeUTC, setStartTimeUTC] = useState("hi");
 
   const classes = useStyles();
 
@@ -117,7 +116,6 @@ const CreateConference = () => {
     const utcTimestamp = selectedDate.getTime();
     const formattedStartTimeUTC = utcTimestamp.toString();
 
-    setStartTimeUTC(formattedStartTimeUTC);
     // console.log("UTC time: " + formattedStartTimeUTC);
     setOpenConfirmation(true);
 
@@ -136,6 +134,10 @@ const CreateConference = () => {
         setConferenceID(
           res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
         );
+        setAccessNumber(
+          res.scheduleConferenceResult.conferenceInfo.accessNumber
+        );
+        setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
         setChairpersonPassword(
           res.scheduleConferenceResult.conferenceInfo.passwords[0].password
         );
@@ -531,8 +533,11 @@ const CreateConference = () => {
           hours={startTime.hours}
           minutes={startTime.minutes}
           chairpersonPassword={chairpersonPassword}
+          conferenceID={conferenceID}
           guestPassword={guestPassword}
           creator={creator}
+          accessNumber={accessNumber}
+          // addedParticipants={addedParticipants}
           participants={participants}
         />
       )}

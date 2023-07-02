@@ -59,22 +59,54 @@ const LoginForm = () => {
     console.log("Web Account:", webAccount);
     console.log("Password:", password);
 
-    Login(webAccount, password).then((res) => {
-      console.log(res);
+    Login(webAccount, password, "WEB")
+      .then((res) => {
+        console.log(res);
 
-      if (res.message === "success") {
-        // console.log(res.token);
-        document.cookie = res.token;
-        console.log(document.cookie);
-        navigate("/home");
-      } else alert("Invalid Credentials");
-    });
+        if (res.message === "success") {
+          // console.log(res.token);
+          document.cookie = res.token;
+          localStorage.setItem("userID", webAccount);
+          console.log(document.cookie);
+          navigate("/home");
+        } else alert("Invalid Credentials");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong. Please try again.");
+      });
   };
 
   const handleJoin = () => {
     // Do something with the submitted conference information
     console.log("Conference ID:", conferenceId);
     console.log("Conference Password:", conferencePassword);
+
+    Login(conferenceId, conferencePassword, "ConferenceID")
+      .then((res) => {
+        console.log(res);
+        if (res.conferenceKey == null) {
+          alert(
+            "Conference does not exist. Please check your credentials and try again."
+          );
+        } else {
+          if (res.conferenceState === "Destroyed") {
+            alert(
+              "Conference has already ended. Please check your credentials and try again."
+            );
+          } else if (res.conferenceState === "Scheduled") {
+            alert(
+              "Conference has not started yet. Please check your credentials and try again."
+            );
+          } else if (res.conferenceState === "Created") {
+            navigate("/home/instantConference");
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong. Please try again.");
+      });
   };
 
   const handleTextFieldKeyPress = (event) => {
