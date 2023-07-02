@@ -15,6 +15,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import ConferenceCreated from "./ConferenceCreated";
 import Homenavbarlite from "./Homenavbarlite";
+import { useNavigate } from "react-router-dom";
+import { format, utcToZonedTime } from "date-fns-tz";
+
+const createconference = require("../api/CreateConference.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -65,6 +69,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const CreateConference = () => {
+  const navigate = useNavigate();
   const [subject, setSubject] = useState("");
   const [date, setDate] = useState({
     day: "",
@@ -83,22 +88,67 @@ const CreateConference = () => {
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
   const [addedParticipants, setAddedParticipants] = useState([]);
-  const [chairpersonPassword, setChairpersonPassword] = useState("123456");
-  const [guestPassword, setGuestPassword] = useState("123456");
+  const [chairpersonPassword, setChairpersonPassword] = useState(null);
+  const [guestPassword, setGuestPassword] = useState(null);
+  const [conferenceID, setConferenceID] = useState(null);
   const [creator, setCreator] = useState("Admin");
   const [openConfirmation, setOpenConfirmation] = useState(false);
+  const [startTimeUTC, setStartTimeUTC] = useState("hi");
 
   const classes = useStyles();
 
   const handleSchedule = () => {
-    console.log("Subject: ", subject);
-    console.log("Date: ", date);
-    console.log("Start Time: ", startTime);
-    console.log("Duration: ", duration);
-    console.log("Participants: ", participants);
-    console.log("Added Participants: ", addedParticipants);
+    // console.log("Subject: ", subject);
+    // console.log("Date: ", date);
+    // console.log("Start Time: ", startTime);
+    // console.log("Duration: ", duration);
+    // console.log("Participants: ", participants);
+    // console.log("Added Participants: ", addedParticipants);
 
+    const durationInHours = parseInt(duration.hours, 10);
+    const durationInMinutes = parseInt(duration.minutes, 10);
+
+    const durationInMilliseconds =
+      durationInHours * 60 * 60 * 1000 + durationInMinutes * 60 * 1000;
+
+    const selectedDate = new Date(
+      `${date.month} ${date.day}, ${date.year} ${startTime.hours}:${startTime.minutes}`
+    );
+    const utcTimestamp = selectedDate.getTime();
+    const formattedStartTimeUTC = utcTimestamp.toString();
+
+    setStartTimeUTC(formattedStartTimeUTC);
+    // console.log("UTC time: " + formattedStartTimeUTC);
     setOpenConfirmation(true);
+
+    createconference(
+      document.cookie,
+      durationInMilliseconds,
+      participants,
+      48,
+      "en_US",
+      subject,
+      formattedStartTimeUTC,
+      "Voice"
+    )
+      .then((res) => {
+        console.log(res);
+        setConferenceID(
+          res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
+        );
+        setChairpersonPassword(
+          res.scheduleConferenceResult.conferenceInfo.passwords[0].password
+        );
+        setGuestPassword(
+          res.scheduleConferenceResult.conferenceInfo.passwords[1].password
+        );
+      })
+
+      .catch((err) => {
+        console.log(err);
+        navigate("/home");
+        alert("Error in creating conference. Please try again.");
+      });
   };
 
   const handleAddParticipant = () => {
@@ -111,8 +161,6 @@ const CreateConference = () => {
       ...prevParticipants,
       newParticipant,
     ]);
-    setAddContacts("");
-    setAddGroups("");
   };
 
   const handleDeleteParticipant = (id) => {

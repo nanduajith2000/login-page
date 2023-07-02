@@ -1,6 +1,6 @@
 import React from "react";
 import Dashboard from "../components/Dashboard";
-import CreateConference from "../components/CreateConference";
+import CreateConference from "../components/CreateConferencePage";
 import Sidenav from "../components/Sidenav";
 import Contacts from "../components/Contacts";
 import ConferenceTemplates from "../components/ConferenceTemplates";
@@ -8,6 +8,7 @@ import CreateTemplate from "../components/CreateTemplate";
 import InstantConference from "./InstantConference";
 import Settings from "../components/Settings";
 import { Routes, Route, useLocation } from "react-router-dom";
+import participantsData from "../data/participantsData";
 import { userDetailsContext } from "../App";
 import "./Home.css";
 
@@ -33,7 +34,10 @@ export default function Home() {
           />
           <Route path="/createTemplate" element={<CreateTemplate />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/instantConference" element={<InstantConference />} />
+          <Route
+            path="/instantConference"
+            element={<InstantConference participantsData={participantsData} />}
+          />
         </Routes>
       </userDetailsContextThree.Provider>
     </div>

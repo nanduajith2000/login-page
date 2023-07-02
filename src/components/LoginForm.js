@@ -64,7 +64,7 @@ const LoginForm = () => {
 
       if (res.message === "success") {
         // console.log(res.token);
-        document.cookie = "user=" + res.token + ";";
+        document.cookie = res.token;
         console.log(document.cookie);
         navigate("/home");
       } else alert("Invalid Credentials");

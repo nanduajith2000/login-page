@@ -53,9 +53,9 @@ const Homenavbar = () => {
   const handleForward = () => {
     navigate(1);
   };
-
+  const creator = "user";
   const handleStartConference = () => {
-    window.open("/home/instantConference", "_blank");
+    window.open(`/home/instantConference?creator=${creator}`, "_blank");
   };
 
   return (

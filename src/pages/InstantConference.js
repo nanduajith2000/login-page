@@ -15,8 +15,6 @@ import {
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import InstantConferenceSidenav from "../components/InstantConferenceSidenav";
-import participantsData from "../data/participantsData.json";
-import { userDetailsContextThree } from "./Home";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -86,10 +84,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InstantConference = () => {
+const InstantConference = (props) => {
   const classes = useStyles();
-  const webAccount = React.useContext(userDetailsContextThree).webAccount;
-  const [participants, setParticipants] = useState(participantsData);
+  const [participants, setParticipants] = useState(props.participantsData);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCheckedUser = (participantId) => {
@@ -154,7 +151,7 @@ const InstantConference = () => {
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {webAccount}'s Conference
+          {props.creator}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
           {participants.filter((participant) => participant.connected).length}/

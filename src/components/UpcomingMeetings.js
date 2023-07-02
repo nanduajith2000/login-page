@@ -9,6 +9,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import meetings from "../data/meetingsList.json";
+import InstantConference from "../pages/InstantConference";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -105,9 +107,12 @@ const useStyles = makeStyles((theme) => ({
 
 const UpcomingMeetings = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const handleJoinConference = (meeting) => {
     console.log("Joining meeting: ", meeting);
+    const url = `/home/instantConference?creator=${meeting.creator}`;
+    window.open(url, "_blank");
   };
 
   const handleEndConference = (meeting) => {
@@ -127,7 +132,7 @@ const UpcomingMeetings = () => {
             End Time: {new Date(endTime).toLocaleString()}
           </Typography>
           <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Creator: {creator}
+            Creator: {meeting.creator}
           </Typography>
           <Typography variant="body2" className={classes.listItemSecondaryText}>
             Access Number: {meeting.accessNumber}
@@ -144,14 +149,6 @@ const UpcomingMeetings = () => {
           <Typography variant="body2" className={classes.listItemSecondaryText}>
             Participants: {meeting.numParticipants}
           </Typography>
-          {/* <div className={classes.buttonContainer}>
-            <Button variant="contained" className={classes.joinButton}>
-              Join
-            </Button>
-            <Button variant="contained" className={classes.endButton}>
-              End Now
-            </Button>
-          </div> */}
         </React.Fragment>
       );
     } else {
@@ -211,14 +208,14 @@ const UpcomingMeetings = () => {
                     <Button
                       variant="contained"
                       className={classes.joinButton}
-                      onClick={handleJoinConference()}
+                      onClick={() => handleJoinConference(meeting)}
                     >
                       Join
                     </Button>
                     <Button
                       variant="contained"
                       className={classes.endButton}
-                      onClick={handleEndConference()}
+                      onClick={() => handleEndConference(meeting)}
                     >
                       End Now
                     </Button>
