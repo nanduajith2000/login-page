@@ -85,23 +85,23 @@ const LoginForm = () => {
     Login(conferenceId, conferencePassword, "ConferenceID")
       .then((res) => {
         console.log(res);
-        if (res.conferenceKey == null) {
-          alert(
-            "Conference does not exist. Please check your credentials and try again."
-          );
-        } else {
-          if (res.conferenceState === "Destroyed") {
-            alert(
-              "Conference has already ended. Please check your credentials and try again."
-            );
-          } else if (res.conferenceState === "Scheduled") {
-            alert(
-              "Conference has not started yet. Please check your credentials and try again."
-            );
-          } else if (res.conferenceState === "Created") {
-            navigate("/home/instantConference");
-          }
-        }
+        // if (res.conferenceKey == null) {
+        //   alert(
+        //     "Conference does not exist. Please check your credentials and try again."
+        //   );
+        // } else {
+        //   if (res.conferenceState === "Destroyed") {
+        //     alert(
+        //       "Conference has already ended. Please check your credentials and try again."
+        //     );
+        //   } else if (res.conferenceState === "Scheduled") {
+        //     alert(
+        //       "Conference has not started yet. Please check your credentials and try again."
+        //     );
+        //   } else if (res.conferenceState === "Created") {
+        //     navigate("/home/instantConference");
+        //   }
+        // }
       })
       .catch((err) => {
         console.log(err);

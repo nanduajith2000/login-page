@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Poppins, sans-serif",
     textAlign: "left",
     marginBottom: 20,
-    marginTop: 20,
+    marginTop: 40,
   },
   fab: {
     position: "fixed",
