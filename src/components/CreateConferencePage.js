@@ -98,17 +98,22 @@ const CreateConference = () => {
 
   const handleSchedule = () => {
     // console.log("Subject: ", subject);
-    // console.log("Date: ", date);
-    // console.log("Start Time: ", startTime);
-    // console.log("Duration: ", duration);
+    // // console.log("Date: ", date);
+    // // console.log("Start Time: ", startTime);
+    // console.log("Duration: ", durationInMilliseconds);
     // console.log("Participants: ", participants);
-    // console.log("Added Participants: ", addedParticipants);
+    // // console.log("Added Participants: ", addedParticipants);
 
     const durationInHours = parseInt(duration.hours, 10);
     const durationInMinutes = parseInt(duration.minutes, 10);
+    // console.log(durationInHours);
+    // console.log(durationInMinutes);
+    
 
     const durationInMilliseconds =
       durationInHours * 60 * 60 * 1000 + durationInMinutes * 60 * 1000;
+    //   console.log(durationInMilliseconds);
+    
 
     const selectedDate = new Date(
       `${date.month} ${date.day}, ${date.year} ${startTime.hours}:${startTime.minutes}`
@@ -119,15 +124,39 @@ const CreateConference = () => {
     // console.log("UTC time: " + formattedStartTimeUTC);
     setOpenConfirmation(true);
 
+    function getCookie(cookieName) {
+      const cookieString = document.cookie;
+      const cookies = cookieString.split(":");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + "=")) {
+          return cookie.substring(cookieName.length + 1);
+        }
+      }
+
+      return null; // Return null if the cookie is not found
+    }
+    
+
+    var token = getCookie("user");
+    
+    // console.log(token);
+    // console.log("Subject: ", subject);
+    // // console.log("Date: ", date);
+    // // console.log("Start Time: ", startTime);
+    // console.log("Duration: ", durationInMilliseconds);
+    // console.log("Participants: ", participants);
+    // // console.log("Added Participants: ", addedParticipants);
+
     createconference(
-      document.cookie,
+      token,
       durationInMilliseconds,
       participants,
       48,
       "en_US",
       subject,
-      formattedStartTimeUTC,
-      "Voice"
+      formattedStartTimeUTC
     )
       .then((res) => {
         console.log(res);
