@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
     flexDirection: "column",
-    gap: theme.spacing(2),
     alignItems: "center",
   },
   title: {
@@ -36,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Poppins, sans-serif",
     textAlign: "left",
     marginBottom: 40,
-    marginTop: 20,
+    marginTop: 40,
   },
   section: {
     display: "flex",
@@ -169,7 +168,7 @@ const ConferenceTemplates = () => {
               color: "white",
               fontFamily: "Poppins, sans-serif",
               fontSize: "0.9vw",
-              borderRadius: 20,
+              borderRadius: 10,
               padding: "1vh 1vw",
               textTransform: "capitalize",
             }}
