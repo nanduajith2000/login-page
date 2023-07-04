@@ -67,6 +67,7 @@ const LoginForm = () => {
           // console.log(res.token);
           document.cookie = res.token;
           localStorage.setItem("userID", webAccount);
+          localStorage.setItem("userPassword", password);
           console.log(document.cookie);
           navigate("/home");
         } else alert("Invalid Credentials");

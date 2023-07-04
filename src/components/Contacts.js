@@ -109,7 +109,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     display: "flex",
     flexWrap: "wrap",
-    gap: 5,
+    gap: "0.1vw",
     overflowY: "scroll",
   },
   addedContact: {
@@ -117,7 +117,7 @@ const useStyles = makeStyles((theme) => ({
     height: "10vh",
     width: "10vw",
     borderRadius: 10,
-    margin: "5px 10px",
+    margin: "5px 8px",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
@@ -201,6 +201,14 @@ const ContactsPage = () => {
     handleCloseGroupDialog();
   };
 
+  const handleImportContacts = () => {
+    // logic to import contacts
+  };
+
+  const handleExportContacts = () => {
+    // logic to export contacts
+  };
+
   return (
     <div className={classes.root}>
       <Homenavbarlite />
@@ -243,6 +251,7 @@ const ContactsPage = () => {
               size="small"
               title="Import Contacts"
               className={classes.iconButton}
+              onClick={handleImportContacts}
             >
               <DownloadIcon />
             </IconButton>
@@ -252,6 +261,7 @@ const ContactsPage = () => {
               size="small"
               title="Export Contacts"
               className={classes.iconButton}
+              onClick={handleExportContacts}
             >
               <UploadIcon />
             </IconButton>

@@ -6,8 +6,11 @@ import {
   Container,
   Typography,
   Button,
+  IconButton,
   makeStyles,
 } from "@material-ui/core";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import meetings from "../data/meetingsList.json";
 
 const useStyles = makeStyles((theme) => ({
@@ -20,12 +23,17 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 10,
     margin: "2vh 0",
     width: "100%",
+    position: "relative",
   },
   heading: {
     fontFamily: "Poppins, sans-serif",
     paddingTop: 10,
     paddingBottom: 10,
     fontWeight: "bold",
+  },
+  meetingHeader: {
+    display: "flex",
+    alignItems: "center",
   },
   listItem: {
     backgroundColor: "#0161b0",
@@ -39,7 +47,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 14,
     color: "white",
     fontWeight: "bold",
-    marginBottom: 5,
   },
   listItemSecondaryText: {
     fontFamily: "Poppins, sans-serif",
@@ -81,10 +88,22 @@ const useStyles = makeStyles((theme) => ({
     padding: "6px 2px",
     textAlign: "center",
   },
+  meetingDetails: {
+    display: "flex",
+  },
   buttonContainer: {
-    marginLeft: "auto", // Align buttons to the right
     display: "flex",
     flexDirection: "column",
+    position: "absolute",
+    top: 16,
+    right: 16,
+  },
+  buttonContainerExpanded: {
+    display: "flex",
+    flexDirection: "column",
+    position: "absolute",
+    top: 64,
+    right: 16,
   },
   joinButton: {
     backgroundColor: "#0CE23B",
@@ -101,14 +120,36 @@ const useStyles = makeStyles((theme) => ({
     height: 30,
     textTransform: "capitalize",
   },
+  expandButton: {
+    color: "white",
+    marginRight: "auto",
+  },
+
+  secondaryText: {
+    display: "flex",
+    flexDirection: "column",
+  },
 }));
 
 const UpcomingMeetings = () => {
   const classes = useStyles();
+  const [expandedMeetings, setExpandedMeetings] = React.useState([]);
+
+  const handleToggleMeeting = (meetingId) => {
+    setExpandedMeetings((prevExpanded) =>
+      prevExpanded.includes(meetingId)
+        ? prevExpanded.filter((id) => id !== meetingId)
+        : [...prevExpanded, meetingId]
+    );
+  };
+
+  const isMeetingExpanded = (meetingId) => {
+    return expandedMeetings.includes(meetingId);
+  };
 
   const handleJoinConference = (meeting) => {
     console.log("Joining meeting: ", meeting);
-    const url = `/home/instantConference?creator=${meeting.creator}`;
+    const url = `/home/instantConference`;
     window.open(url, "_blank");
   };
 
@@ -117,52 +158,33 @@ const UpcomingMeetings = () => {
   };
 
   const renderMeetingDetails = (meeting) => {
-    const { startTime, endTime, creator, active } = meeting;
+    const {
+      accessNumber,
+      conferenceId,
+      chairpersonPassword,
+      guestPassword,
+      numParticipants,
+    } = meeting;
 
-    if (active) {
-      return (
-        <React.Fragment>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Start Time: {new Date(startTime).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            End Time: {new Date(endTime).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Creator: {meeting.creator}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Access Number: {meeting.accessNumber}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Conference ID: {meeting.conferenceId}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Chairperson Password: {meeting.chairpersonPassword}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Guest Password: {meeting.guestPassword}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Participants: {meeting.numParticipants}
-          </Typography>
-        </React.Fragment>
-      );
-    } else {
-      return (
-        <React.Fragment>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Start Time: {new Date(startTime).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            End Time: {new Date(endTime).toLocaleString()}
-          </Typography>
-          <Typography variant="body2" className={classes.listItemSecondaryText}>
-            Creator: {creator}
-          </Typography>
-        </React.Fragment>
-      );
-    }
+    return (
+      <React.Fragment className={classes.secondaryText}>
+        <Typography variant="body2" className={classes.listItemSecondaryText}>
+          Access Number: {accessNumber}
+        </Typography>
+        <Typography variant="body2" className={classes.listItemSecondaryText}>
+          Conference ID: {conferenceId}
+        </Typography>
+        <Typography variant="body2" className={classes.listItemSecondaryText}>
+          Chairperson Password: {chairpersonPassword}
+        </Typography>
+        <Typography variant="body2" className={classes.listItemSecondaryText}>
+          Guest Password: {guestPassword}
+        </Typography>
+        <Typography variant="body2" className={classes.listItemSecondaryText}>
+          Participants: {numParticipants}
+        </Typography>
+      </React.Fragment>
+    );
   };
 
   return (
@@ -194,14 +216,58 @@ const UpcomingMeetings = () => {
                     })}
                   </Typography>
                 </div>
-                <div>
-                  <Typography variant="body1" className={classes.listItemText}>
-                    {meeting.title}
+                <div className={classes.meetingContent}>
+                  <div className={classes.meetingHeader}>
+                    <Typography
+                      variant="body1"
+                      className={classes.listItemText}
+                    >
+                      {meeting.title}
+                    </Typography>
+                    <IconButton
+                      className={classes.expandButton}
+                      onClick={() => handleToggleMeeting(meeting.id)}
+                    >
+                      {isMeetingExpanded(meeting.id) ? (
+                        <ExpandLessIcon />
+                      ) : (
+                        <ExpandMoreIcon />
+                      )}
+                    </IconButton>
+                  </div>
+                  <Typography
+                    variant="body2"
+                    className={classes.listItemSecondaryText}
+                  >
+                    Start Time: {new Date(meeting.startTime).toLocaleString()}
                   </Typography>
-                  {renderMeetingDetails(meeting)}
-                </div>
-                {meeting.active && (
-                  <div className={classes.buttonContainer}>
+                  <Typography
+                    variant="body2"
+                    className={classes.listItemSecondaryText}
+                  >
+                    End Time: {new Date(meeting.endTime).toLocaleString()}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    className={classes.listItemSecondaryText}
+                  >
+                    Creator: {meeting.creator}
+                  </Typography>
+                  {isMeetingExpanded(meeting.id) && (
+                    <div className={classes.meetingDetails}>
+                      <Container disableGutters>
+                        {" "}
+                        {renderMeetingDetails(meeting)}
+                      </Container>
+                    </div>
+                  )}
+                  <div
+                    className={
+                      !isMeetingExpanded(meeting.id)
+                        ? classes.buttonContainer
+                        : classes.buttonContainerExpanded
+                    }
+                  >
                     <Button
                       variant="contained"
                       className={classes.joinButton}
@@ -214,11 +280,12 @@ const UpcomingMeetings = () => {
                       className={classes.endButton}
                       onClick={() => handleEndConference(meeting)}
                     >
-                      End Now
+                      End
                     </Button>
                   </div>
-                )}
+                </div>
               </ListItem>
+              <Divider />
             </React.Fragment>
           ))}
         </List>

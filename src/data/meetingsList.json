@@ -10,7 +10,7 @@
     "chairpersonPassword": "password1",
     "guestPassword": "password2",
     "numParticipants": 10,
-    "active": true
+    "active": false
   },
   {
     "id": 2,

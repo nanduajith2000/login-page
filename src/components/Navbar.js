@@ -44,7 +44,7 @@ const Navbar = () => {
           <div className="title">
             <img src={logo} alt="" className={classes.logo} />
             <Typography className={classes.titleText}>
-              MULTIMEDIA VIDEO
+              MULTIMEDIA AUDIO
               <br /> CONFERENCING SERVICE
             </Typography>
           </div>
