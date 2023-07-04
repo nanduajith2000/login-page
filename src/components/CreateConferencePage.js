@@ -66,24 +66,25 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5),
   },
 }));
+const userID = localStorage.getItem("userID");
 
 const CreateConference = () => {
   const navigate = useNavigate();
-  const [subject, setSubject] = useState("");
+  const [subject, setSubject] = useState(`${userID}'s Conference`);
   const [date, setDate] = useState({
     day: "",
     month: "",
     year: "",
   });
   const [startTime, setStartTime] = useState({
-    hours: "",
-    minutes: "",
+    hours: "11",
+    minutes: "00",
   });
   const [duration, setDuration] = useState({
-    hours: "",
-    minutes: "",
+    hours: "01",
+    minutes: "00",
   });
-  const [participants, setParticipants] = useState(1);
+  const [participants, setParticipants] = useState(3);
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
   const [addedParticipants, setAddedParticipants] = useState([]);
@@ -472,7 +473,7 @@ const CreateConference = () => {
                   onChange={(e) => setParticipants(e.target.value)}
                   className={classes.select}
                 >
-                  {Array.from({ length: 50 }, (_, i) => i + 1).map((value) => (
+                  {Array.from({ length: 48 }, (_, i) => i + 3).map((value) => (
                     <MenuItem key={value} value={value}>
                       {value}
                     </MenuItem>

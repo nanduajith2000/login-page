@@ -3,22 +3,53 @@ import {
   Box,
   Button,
   Checkbox,
+  Container,
   FormControl,
   FormControlLabel,
   Grid,
   Input,
   InputAdornment,
   InputLabel,
-  Paper,
   Select,
   TextField,
   Typography,
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "left",
+    fontFamily: "Poppins, sans-serif",
+  },
+  title: {
+    marginBottom: "2rem",
+    fontFamily: "Poppins, sans-serif",
+  },
+  subtitle: {
+    fontFamily: "Poppins, sans-serif",
+  },
+  inputField: {
+    marginBottom: "1rem",
+    fontFamily: "Poppins, sans-serif",
+  },
+  saveButton: {
+    marginRight: "1rem",
+    fontFamily: "Poppins, sans-serif",
+  },
+  passwordError: {
+    color: theme.palette.error.main,
+    fontFamily: "Poppins, sans-serif",
+  },
+}));
 
 function Settings() {
+  const classes = useStyles();
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(localStorage.getItem("userID"));
   const [pin, setPIN] = useState("1234");
   const [telephone, setTelephone] = useState("");
   const [email, setEmail] = useState("");
@@ -30,7 +61,9 @@ function Settings() {
   const [updatedAllowChairpersonView, setUpdatedAllowChairpersonView] =
     useState("Yes");
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState(
+    localStorage.getItem("userPassword")
+  );
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
@@ -97,94 +130,96 @@ function Settings() {
     console.log("Settings saved successfully!");
   };
 
-  const generateRandomString = () => {
-    return Math.random().toString(36).substring(2, 10);
-  };
-
-  const generateRandomNumber = () => {
-    return Math.floor(1000000000 + Math.random() * 9000000000).toString();
-  };
-
   // Set initial values for non-editable fields
-  useState(() => {
-    setName(generateRandomString());
-    setTelephone(generateRandomNumber());
-  }, []);
 
   return (
-    <Box display="flex" justifyContent="center" mt={4}>
-      <Paper elevation={3} style={{ padding: "2rem" }}>
-        <Typography
-          variant="h5"
-          align="center"
-          style={{ marginBottom: "2rem" }}
-        >
+    <Container maxWidth="sm" className={classes.root}>
+      <Box>
+        <Typography variant="h5" align="center" className={classes.title}>
           {showChangePassword ? "Change Password" : "Settings"}
         </Typography>
         {!showChangePassword ? (
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Web Account:</Typography>
-              <Typography variant="body1">{name}</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Web Account:
+              </Typography>
+              <Typography variant="body1">
+                {localStorage.getItem("userID")}
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Phone Account:</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Phone Account:
+              </Typography>
               <Typography variant="body1">{telephone}</Typography>
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Name:</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Name:
+              </Typography>
               {isEditing ? (
                 <TextField
                   fullWidth
                   variant="outlined"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  className={classes.inputField}
                 />
               ) : (
                 <Typography variant="body1">{name}</Typography>
               )}
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">PIN:</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                PIN:
+              </Typography>
               {isEditing ? (
                 <TextField
                   fullWidth
                   variant="outlined"
                   value={updatedPIN}
                   onChange={(e) => setUpdatedPIN(e.target.value)}
+                  className={classes.inputField}
                 />
               ) : (
                 <Typography variant="body1">{pin}</Typography>
               )}
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Telephone:</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Telephone:
+              </Typography>
               {isEditing ? (
                 <TextField
                   fullWidth
                   variant="outlined"
                   value={updatedTelephone}
                   onChange={(e) => setUpdatedTelephone(e.target.value)}
+                  className={classes.inputField}
                 />
               ) : (
                 <Typography variant="body1">{telephone}</Typography>
               )}
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">Email:</Typography>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Email:
+              </Typography>
               {isEditing ? (
                 <TextField
                   fullWidth
                   variant="outlined"
                   value={updatedEmail}
                   onChange={(e) => setUpdatedEmail(e.target.value)}
+                  className={classes.inputField}
                 />
               ) : (
                 <Typography variant="body1">{email}</Typography>
               )}
             </Grid>
             <Grid item xs={12}>
-              <Typography variant="subtitle1">
+              <Typography variant="subtitle1" className={classes.subtitle}>
                 Allow conference chairperson to view personal contacts:
               </Typography>
               {isEditing ? (
@@ -194,6 +229,7 @@ function Settings() {
                     onChange={(e) =>
                       setUpdatedAllowChairpersonView(e.target.value)
                     }
+                    className={classes.inputField}
                   >
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
@@ -209,6 +245,7 @@ function Settings() {
                   variant="contained"
                   color="primary"
                   onClick={handleSave}
+                  className={classes.saveButton}
                 >
                   Save
                 </Button>
@@ -217,6 +254,7 @@ function Settings() {
                   variant="contained"
                   color="primary"
                   onClick={toggleEditing}
+                  className={classes.saveButton}
                 >
                   Edit Details
                 </Button>
@@ -227,23 +265,14 @@ function Settings() {
                 variant="outlined"
                 color="primary"
                 onClick={handleChangePassword}
+                className={classes.saveButton}
               >
                 Change Password
               </Button>
             </Grid>
           </Grid>
         ) : (
-          <Paper
-            elevation={0}
-            style={{ marginTop: "2rem", padding: "2rem", maxWidth: "400px" }}
-          >
-            <Typography
-              variant="h5"
-              align="center"
-              style={{ marginBottom: "2rem" }}
-            >
-              Change Password
-            </Typography>
+          <Container>
             <FormControl
               fullWidth
               variant="outlined"
@@ -309,7 +338,7 @@ function Settings() {
               />
             </FormControl>
             {passwordMatchError && (
-              <Typography variant="body2" color="error">
+              <Typography variant="body2" className={classes.passwordError}>
                 The passwords do not match
               </Typography>
             )}
@@ -318,13 +347,14 @@ function Settings() {
               color="primary"
               onClick={handlePasswordSave}
               style={{ marginTop: "1rem" }}
+              className={classes.saveButton}
             >
               Save Changes
             </Button>
-          </Paper>
+          </Container>
         )}
-      </Paper>
-    </Box>
+      </Box>
+    </Container>
   );
 }
 
