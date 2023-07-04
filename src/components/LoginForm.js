@@ -58,6 +58,7 @@ const LoginForm = () => {
     // Do something with the submitted login information
     console.log("Web Account:", webAccount);
     console.log("Password:", password);
+    document.cookie = "";
 
     Login(webAccount, password, "WEB")
       .then((res) => {
@@ -65,7 +66,7 @@ const LoginForm = () => {
 
         if (res.message === "success") {
           // console.log(res.token);
-          document.cookie = res.token;
+          document.cookie = "user=" + res.token + ": userID=" + res.userID;
           localStorage.setItem("userID", webAccount);
           localStorage.setItem("userPassword", password);
           console.log(document.cookie);

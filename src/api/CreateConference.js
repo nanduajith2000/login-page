@@ -7,8 +7,7 @@ function createconference(
   timeZone,
   language,
   subject,
-  startTime,
-  mediaTypes
+  startTime
 ) {
   //attendee is a json file
   return fetch(url, {
@@ -24,24 +23,13 @@ function createconference(
       language: `${language}`,
       subject: `${subject}`,
       startTime: `${startTime}`,
-      mediaTypes: `${mediaTypes}`,
+      mediaTypes: `Voice`,
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => data);
+    .then((data) => {console.log(data)});
 }
 
 module.exports = createconference;
 
-// createconference(
-//   "NzU0NDg5MTQ3NDUxNDI0MjA5OTMwMDAtMDAxMA==",
-//   320000,
-//   5,
-//   48,
-//   "en_US",
-//   "meeting1",
-//   "1688310002000",
-//   "Voice"
-// )
-//   .then((res) => console.log(res))
-//   .catch((err) => console.log(err));
+// createconference('MjczOTk0MTQ5MDIwMDQxMzk3MDAwMDAtMDAxMA==','600000','3','56','en-US','tester',)

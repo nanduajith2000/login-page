@@ -109,7 +109,7 @@ export default function Sidenav(props) {
     console.log(document.cookie);
     function getCookie(cookieName) {
       const cookieString = document.cookie;
-      const cookies = cookieString.split(";");
+      const cookies = cookieString.split(":");
 
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
@@ -124,7 +124,7 @@ export default function Sidenav(props) {
     // console.log(cookieValue);
     console.log(Logout(token));
     function clearAllCookies() {
-      var cookies = document.cookie.split(";");
+      var cookies = document.cookie.split(":");
 
       for (var i = 0; i < cookies.length; i++) {
         var cookie = cookies[i];
