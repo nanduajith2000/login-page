@@ -196,7 +196,7 @@ const UpcomingMeetings = () => {
       </Container>
       <Divider />
       <Container>
-        <List style={{ maxHeight: "300px", overflow: "auto" }}>
+        <List style={{ maxHeight: "300px", overflowY: "scroll" }}>
           {meetings.map((meeting) => (
             <React.Fragment key={meeting.id}>
               <ListItem className={classes.listItem}>
