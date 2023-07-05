@@ -1,4 +1,32 @@
 const url = `http://35.154.233.185:8000/user/conferencelist`;
+function convertUTCMillisecondsToDate(utcMilliseconds) {
+  // Create a new Date object with the UTC milliseconds
+  var date = new Date(utcMilliseconds);
+
+  // Specify the time zone as 'Asia/Kolkata' for Indian time
+  var options = { timeZone: 'Asia/Kolkata' };
+
+  // Extract the different components of the date in Indian time
+  var year = date.toLocaleString('en-IN', { year: 'numeric', options });
+  var month = date.toLocaleString('en-IN', { month: '2-digit', options });
+  var day = date.toLocaleString('en-IN', { day: '2-digit', options });
+  var hours = date.toLocaleString('en-IN', { hour: '2-digit', hour12: false, options });
+  var minutes = date.toLocaleString('en-IN', { minute: '2-digit', options });
+
+  // Format the date and time string
+  var formattedDate = year + '-' + month + '-' + day;
+  var formattedTime = hours + ':' + minutes ;
+
+  // Return the formatted date and time
+  return formattedDate + ' ' + formattedTime;
+}
+
+function convertMillisecondsToHoursAndMinutes(milliseconds) {
+  var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+  return { hours: hours, minutes: minutes };
+}
 
 
 function queryConferenceList(token) {
@@ -43,12 +71,9 @@ function queryConferenceList(token) {
           console.log(i)
           console.log(data[`${i}`].subject)
           console.log(data[`${i}`].size)
-          console.log(data[`${i}`].length)
-          const utcTimestamp = data[`${i}`].startTime;
-          console.log(utcTimestamp)
-          
-         
-
+          console.log(convertMillisecondsToHoursAndMinutes(data[`${i}`].length))
+          const utcTimestamp = parseInt( data[`${i}`].startTime,10);
+          console.log(convertUTCMillisecondsToDate(utcTimestamp))
           console.log(data[`${i}`].conferenceKey["conferenceID"])
           console.log(data[`${i}`].accountID)
           console.log(data[`${i}`].chair)
@@ -60,4 +85,4 @@ function queryConferenceList(token) {
 
 module.exports = queryConferenceList;
 
-queryConferenceList("MTYwMTI2MTUwMTMzMTIzMTc1NTMwMDAtMDAxMA==");
+queryConferenceList("NzAwMDcwMTUwMjYyMDU4NTQxMDYwMDAtMDAxMA==");
