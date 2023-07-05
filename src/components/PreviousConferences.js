@@ -10,10 +10,13 @@ import {
   Typography,
 } from "@material-ui/core";
 
+const queryConferencehistory = require("../api/QueryConferenceHistory");
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    borderRadius: 20,
     width: "100%",
+    overflow: "auto", // Enable overflow scrolling
+    maxHeight: "70vh", // Set a specific height for the table container
   },
   title: {
     backgroundColor: "#D9D9D9",
@@ -32,8 +35,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   tableBody: {
-    overflowY: "auto",
-    maxHeight: "40vh",
     borderRadius: 20,
   },
   evenRow: {
@@ -46,86 +47,106 @@ const useStyles = makeStyles((theme) => ({
 
 const PreviousConferences = () => {
   const classes = useStyles();
+  const [meetings, setMeetings] = React.useState([]);
 
-  // Hardcoded conference data (replace with actual JSON data)
-  const conferences = [
-    {
-      id: 1,
-      creator: "John Doe",
-      subject: "Conference 1",
-      conferenceId: "ABC123",
-      participants: 50,
-      startTime: "2023-06-20T09:00:00Z",
-      duration: "1 hour",
-    },
-    {
-      id: 2,
-      creator: "Jane Smith",
-      subject: "Conference 2",
-      conferenceId: "DEF456",
-      participants: 80,
-      startTime: "2023-06-21T14:30:00Z",
-      duration: "1.5 hours",
-    },
-    // Add more conference objects as needed
-  ];
+  React.useEffect(() => {
+    function getCookie(cookieName) {
+      const cookieString = document.cookie;
+      const cookies = cookieString.split(":");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + "=")) {
+          return cookie.substring(cookieName.length + 1);
+        }
+      }
+
+      return null; // Return null if the cookie is not found
+    }
+
+    const token = getCookie("user");
+    queryConferencehistory(token)
+      .then((res) => {
+        const meetingArray = Object.values(res)
+          .filter((value) => typeof value === "object")
+          .map((meeting) => meeting);
+        setMeetings(meetingArray);
+      })
+      .catch((err) => {
+        alert("Could not fetch meeting details. Please try again later.");
+      });
+  }, []);
+
+  function convertMillisecondsToHoursAndMinutes(milliseconds) {
+    var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+    var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+    return { hours: hours, minutes: minutes };
+  }
 
   return (
-    <Container className={classes.root}>
+    <Container>
       <Typography variant="h6" className={classes.title}>
         Previous Conferences
       </Typography>
-      <Table>
-        <TableHead>
-          <TableRow className={classes.headerRow}>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              Creator
-            </TableCell>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              Subject
-            </TableCell>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              Conference ID
-            </TableCell>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              No of Participants
-            </TableCell>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              Start Time
-            </TableCell>
-            <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-              Duration
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody className={classes.tableBody}>
-          {conferences.map((conference, index) => (
-            <TableRow
-              key={conference.id}
-              className={index % 2 === 0 ? classes.evenRow : classes.oddRow}
-            >
+      <Container disableGutters className={classes.root}>
+        <Table className={classes.tableContainer}>
+          <TableHead>
+            <TableRow className={classes.headerRow}>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.creator}
+                Creator
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.subject}
+                Subject
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.conferenceId}
+                Conference ID
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.participants}
+                No of Participants
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.startTime}
+                Start Time
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {conference.duration}
+                Duration
               </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody className={classes.tableBody}>
+            {meetings.reverse().map((conference, index) => (
+              <TableRow
+                key={conference.id}
+                className={index % 2 === 0 ? classes.evenRow : classes.oddRow}
+              >
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {conference.scheduserName}
+                </TableCell>
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {conference.subject}
+                </TableCell>
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {conference.conferenceKey.conferenceID}
+                </TableCell>
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {conference.size}
+                </TableCell>
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {conference.startTime}
+                </TableCell>
+                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                  {convertMillisecondsToHoursAndMinutes(conference.length)
+                    .hours +
+                    "h " +
+                    convertMillisecondsToHoursAndMinutes(conference.length)
+                      .minutes +
+                    "m"}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </Container>
     </Container>
   );
 };

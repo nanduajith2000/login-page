@@ -15,7 +15,7 @@ const Logout = require("../api/Logout.js");
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
     width: "16vw",
-    height: "100vh",
+    height: "150vh",
     backgroundColor: "#0161b0",
     borderRadius: "0 20px 20px 0",
     display: "flex",

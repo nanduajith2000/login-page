@@ -11,7 +11,6 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import { set } from "date-fns";
 
 const queryConferenceList = require("../api/QueryConferenceList");
 
@@ -174,22 +173,16 @@ const UpcomingMeetings = () => {
     var formattedTime = hours + ":" + minutes;
 
     // Return the formatted date and time
-    return formattedDate + " " + formattedTime;
+    return {
+      year: year,
+      month: month,
+      day: day,
+      hours: hours,
+      minutes: minutes,
+      formattedDate: formattedDate,
+      formattedTime: formattedTime,
+    };
   }
-
-  // function getCookie(cookieName) {
-  //   const cookieString = document.cookie;
-  //   const cookies = cookieString.split(":");
-
-  //   for (let i = 0; i < cookies.length; i++) {
-  //     const cookie = cookies[i].trim();
-  //     if (cookie.startsWith(cookieName + "=")) {
-  //       return cookie.substring(cookieName.length + 1);
-  //     }
-  //   }
-
-  //   return null; // Return null if the cookie is not found
-  // }
 
   const [meetings, setMeetings] = React.useState([]);
 
@@ -220,7 +213,6 @@ const UpcomingMeetings = () => {
         alert("Could not fetch meeting details. Please try again later.");
       });
   }, []);
-  console.log("MEETING LIST: " + meetings);
 
   const handleToggleMeeting = (meetingId) => {
     setExpandedMeetings((prevExpanded) =>
@@ -283,18 +275,14 @@ const UpcomingMeetings = () => {
               <ListItem className={classes.listItem}>
                 <div className={classes.dateBox}>
                   <Typography variant="body2" className={classes.dateBoxDay}>
-                    {new Date(meeting.startTime).toLocaleDateString("en-US", {
-                      day: "numeric",
-                    })}
+                    {convertUTCMillisecondsToDate(meeting.startTime).day}
                   </Typography>
                   <Typography
                     variant="body2"
                     className={classes.dateBoxMonthYear}
                   >
-                    {new Date(meeting.startTime).toLocaleDateString("en-US", {
-                      month: "short",
-                      year: "numeric",
-                    })}
+                    {convertUTCMillisecondsToDate(meeting.startTime).month}+" "+
+                    {convertUTCMillisecondsToDate(meeting.startTime).year}
                   </Typography>
                 </div>
                 <div
@@ -327,16 +315,14 @@ const UpcomingMeetings = () => {
                     className={classes.listItemSecondaryText}
                   >
                     Start Time:{" "}
-                    {new Date(
-                      convertUTCMillisecondsToDate(meeting.startTime)
-                    ).toLocaleString()}
+                    {convertUTCMillisecondsToDate(meeting.startTime).hours}
                   </Typography>
-                  {/* <Typography
+                  <Typography
                     variant="body2"
                     className={classes.listItemSecondaryText}
                   >
-                    End Time: {new Date(meeting.endTime).toLocaleString()}
-                  </Typography> */}
+                    End Time:
+                  </Typography>
                   <Typography
                     variant="body2"
                     className={classes.listItemSecondaryText}

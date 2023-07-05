@@ -22,7 +22,6 @@ import { Add, Edit, Delete, Search, InfoOutlined } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import Homenavbarlite from "./Homenavbarlite";
-// import templateData from "../data/templateData.json";
 const ConferenceTemplateList = require("../api/ConferenceTemplateList");
 
 const useStyles = makeStyles((theme) => ({
@@ -53,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableContainer: {
     marginTop: 8,
-    maxHeight: 600,
+    maxHeight: "100vh",
   },
   tableBody: {
     overflowY: "auto",
@@ -116,10 +115,8 @@ const token = getCookie("user");
 const ConferenceTemplates = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
-  // const [filteredTemplates, setFilteredTemplates] = useState([]);
   const [templateData, setTemplateData] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     ConferenceTemplateList(token)
@@ -128,7 +125,6 @@ const ConferenceTemplates = () => {
           .filter((value) => typeof value === "object")
           .map((template) => template);
         setTemplateData(templateArray);
-        // setFilteredTemplates(templateArray);
       })
       .catch((err) => {
         console.log(
@@ -137,23 +133,15 @@ const ConferenceTemplates = () => {
       });
   }, []);
 
-  // const handleSearchInputChange = (event) => {
-  //   const query = event.target.value;
-  //   setSearchQuery(query);
-
-  //   const filtered = templateData.filter((template) =>
-  //     template.TemplateName.toLowerCase().includes(query.toLowerCase())
-  //   );
-  //   setFilteredTemplates(filtered);
-  // };
-
-  const handleParticipantInfo = (template) => {
-    setSelectedTemplate(template);
+  const handleSearch = (event) => {
+    setSearchQuery(event.target.value);
   };
 
-  const handleClosePopup = () => {
-    setSelectedTemplate(null);
-  };
+  const filteredTemplates = templateData.filter((template) => {
+    const templateName = template.TemplateName.toLowerCase();
+    const query = searchQuery.toLowerCase();
+    return templateName.includes(query);
+  });
 
   const handleCreateTemplate = () => {
     navigate("/home/createTemplate");
@@ -186,8 +174,6 @@ const ConferenceTemplates = () => {
           <TextField
             placeholder="Search..."
             className={classes.searchInput}
-            value={searchQuery}
-            // onChange={handleSearchInputChange}
             InputProps={{
               startAdornment: <Search />,
               disableUnderline: true,
@@ -196,6 +182,8 @@ const ConferenceTemplates = () => {
                 fontSize: "1vw",
               },
             }}
+            value={searchQuery}
+            onChange={handleSearch}
           />
           <Button
             variant="contained"
@@ -230,8 +218,14 @@ const ConferenceTemplates = () => {
               </TableRow>
             </TableHead>
             <TableBody className={classes.tableBody}>
-              {templateData.map((template, key) => {
-                return (
+              {filteredTemplates.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    No templates found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredTemplates.map((template, key) => (
                   <TableRow key={key} className={classes.tableRow}>
                     <TableCell className={classes.tableCell}>
                       {template.TemplateName}
@@ -241,10 +235,7 @@ const ConferenceTemplates = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       {template.Parties}{" "}
-                      <IconButton
-                        className={classes.infoButton}
-                        onClick={() => handleParticipantInfo(template)}
-                      >
+                      <IconButton className={classes.infoButton}>
                         <InfoOutlined />
                       </IconButton>
                     </TableCell>
@@ -271,29 +262,12 @@ const ConferenceTemplates = () => {
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                );
-              })}
+                ))
+              )}
             </TableBody>
           </Table>
         </TableContainer>
       </Container>
-      {/* <Dialog open={selectedTemplate !== null} onClose={handleClosePopup}>
-        <DialogTitle>Participant Info</DialogTitle>
-        <DialogContent>
-          {selectedTemplate && (
-            <List>
-              {selectedTemplate.participants.map((participant, index) => (
-                <ListItem key={index}>{participant}</ListItem>
-              ))}
-            </List>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClosePopup} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog> */}
     </div>
   );
 };

@@ -22,7 +22,15 @@ function convertUTCMillisecondsToDate(utcMilliseconds) {
   var formattedTime = hours + ":" + minutes;
 
   // Return the formatted date and time
-  return formattedDate + " " + formattedTime;
+  return {
+    year: year,
+    month: month,
+    day: day,
+    hours: hours,
+    minutes: minutes,
+    formattedDate: formattedDate,
+    formattedTime: formattedTime,
+  };
 }
 
 function convertMillisecondsToHoursAndMinutes(milliseconds) {
@@ -75,4 +83,4 @@ function queryConferenceList(token) {
 
 module.exports = queryConferenceList;
 
-queryConferenceList("MjA5NzQ2MTUwNDAxNjk0MzA5NTUwMDAtMDAxMg==");
+console.log(convertUTCMillisecondsToDate(1621536000000).hours);
