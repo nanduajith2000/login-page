@@ -70,22 +70,9 @@ function queryConferenceList(token) {
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => {
-      for (var i = 1; i <= data["total"]; i++) {
-        console.log(i);
-        console.log(data[`${i}`].subject);
-        console.log(data[`${i}`].size);
-        console.log(convertMillisecondsToHoursAndMinutes(data[`${i}`].length));
-        const utcTimestamp = parseInt(data[`${i}`].startTime, 10);
-        console.log(convertUTCMillisecondsToDate(utcTimestamp));
-        console.log(data[`${i}`].conferenceKey["conferenceID"]);
-        console.log(data[`${i}`].accountID);
-        console.log(data[`${i}`].chair);
-        console.log(data[`${i}`].general);
-      }
-    });
+    .then((data) => data);
 }
 
 module.exports = queryConferenceList;
 
-queryConferenceList("NzA5OTcxMTUwMzY5MTQ1OTg5NzMwMDAtMDAxMA==");
+queryConferenceList("MjA5NzQ2MTUwNDAxNjk0MzA5NTUwMDAtMDAxMg==");
