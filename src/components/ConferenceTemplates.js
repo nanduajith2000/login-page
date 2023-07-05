@@ -23,7 +23,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import Homenavbarlite from "./Homenavbarlite";
 import templateData from "../data/templateData.json";
-const createconferencetemplate = require("../api/CreateConferenceTemplate");
+const ConferenceTemplateList = require("../api/ConferenceTemplateList");
 
 const useStyles = makeStyles((theme) => ({
   root: {
