@@ -15,6 +15,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import ClearIcon from "@material-ui/icons/Clear";
 import AddIcon from "@material-ui/icons/Add";
 import Homenavbarlite from "./Homenavbarlite";
+import { useNavigate } from "react-router-dom";
+import TemplateCreated from "./TemplateCreated";
+
+const createconferencetemplate = require("../api/CreateConferenceTemplate");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -63,28 +67,64 @@ const useStyles = makeStyles((theme) => ({
 
 const CreateTemplate = () => {
   const [subject, setSubject] = useState("");
-  //   const [date, setDate] = useState({
-  //     day: "",
-  //     month: "",
-  //     year: "",
-  //   });
-  //   const [startTime, setStartTime] = useState({
-  //     hours: "",
-  //     minutes: "",
-  //   });
+
   const [duration, setDuration] = useState({
-    hours: "",
-    minutes: "",
+    hours: "01",
+    minutes: "00",
   });
-  const [participants, setParticipants] = useState(1);
+  const [participants, setParticipants] = useState(3);
+  const [userID, setUserID] = useState(localStorage.getItem("userID")); // [ADDED
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
   const [addedParticipants, setAddedParticipants] = useState([]);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const handleCreateTemplate = () => {
-    // Logic to create the conference template
+    const durationInHours = parseInt(duration.hours, 10);
+    const durationInMinutes = parseInt(duration.minutes, 10);
+
+    const durationInMilliseconds =
+      durationInHours * 60 * 60 * 1000 + durationInMinutes * 60 * 1000;
+
+    setOpenConfirmation(true);
+
+    function getCookie(cookieName) {
+      const cookieString = document.cookie;
+      const cookies = cookieString.split(":");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + "=")) {
+          return cookie.substring(cookieName.length + 1);
+        }
+      }
+
+      return null; // Return null if the cookie is not found
+    }
+
+    var token = getCookie("user");
+
+    createconferencetemplate(
+      token,
+      0,
+      durationInMilliseconds,
+      participants,
+      48,
+      "en_US",
+      subject
+    )
+      .then((res) => {
+        console.log(res);
+      })
+
+      .catch((err) => {
+        console.log(err);
+        navigate("/home");
+        alert("Error in creating template. Please try again.");
+      });
   };
 
   const handleAddParticipant = () => {
@@ -107,92 +147,6 @@ const CreateTemplate = () => {
     );
   };
 
-  //   const handleDayChange = (event) => {
-  //     setDate((prevDate) => ({
-  //       ...prevDate,
-  //       day: event.target.value,
-  //     }));
-  //   };
-
-  //   const handleMonthChange = (event) => {
-  //     const { value } = event.target;
-  //     let updatedDay = date.day;
-  //     if (value === "February" && date.day > 28) {
-  //       updatedDay = 28;
-  //     }
-  //     setDate((prevDate) => ({
-  //       ...prevDate,
-  //       month: value,
-  //       day: updatedDay,
-  //     }));
-  //   };
-
-  //   const handleYearChange = (event) => {
-  //     setDate((prevDate) => ({
-  //       ...prevDate,
-  //       year: event.target.value,
-  //     }));
-  //   };
-
-  //   const getCurrentYear = () => {
-  //     return new Date().getFullYear();
-  //   };
-
-  //   const generateMonthOptions = () => {
-  //     const months = [
-  //       "January",
-  //       "February",
-  //       "March",
-  //       "April",
-  //       "May",
-  //       "June",
-  //       "July",
-  //       "August",
-  //       "September",
-  //       "October",
-  //       "November",
-  //       "December",
-  //     ];
-  //     return months.map((month, index) => (
-  //       <MenuItem key={index} value={month}>
-  //         {month}
-  //       </MenuItem>
-  //     ));
-  //   };
-
-  //   const generateDayOptions = () => {
-  //     const selectedMonth = date.month;
-  //     let days = [];
-  //     if (selectedMonth === "February") {
-  //       const isLeapYear =
-  //         (date.year % 4 === 0 && date.year % 100 !== 0) || date.year % 400 === 0;
-  //       days = isLeapYear
-  //         ? Array.from({ length: 29 }, (_, i) => i + 1)
-  //         : Array.from({ length: 28 }, (_, i) => i + 1);
-  //     } else if (
-  //       ["April", "June", "September", "November"].includes(selectedMonth)
-  //     ) {
-  //       days = Array.from({ length: 30 }, (_, i) => i + 1);
-  //     } else {
-  //       days = Array.from({ length: 31 }, (_, i) => i + 1);
-  //     }
-  //     return days.map((day) => (
-  //       <MenuItem key={day} value={day}>
-  //         {day}
-  //       </MenuItem>
-  //     ));
-  //   };
-
-  //   const generateYearOptions = () => {
-  //     const currentYear = getCurrentYear();
-  //     const years = Array.from({ length: 11 }, (_, i) => currentYear + i);
-  //     return years.map((year) => (
-  //       <MenuItem key={year} value={year}>
-  //         {year}
-  //       </MenuItem>
-  //     ));
-  //   };
-
   const generateTimeOptions = (isHours) => {
     const max = isHours ? 23 : 59;
     const options = Array.from({ length: max + 1 }, (_, i) => {
@@ -209,256 +163,169 @@ const CreateTemplate = () => {
   return (
     <div className={classes.root}>
       <Homenavbarlite />
-      <Container>
-        <Typography variant="h5" className={classes.title}>
-          Create Conference Template
-        </Typography>
-        <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Subject:
-            </Typography>
-            <TextField
-              value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              fullWidth
-              variant="filled"
-              // style={{ backgroundColor: "white" }}
-            />
+      {!openConfirmation && (
+        <Container>
+          <Typography variant="h5" className={classes.title}>
+            Create Conference Template
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={6}>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Subject:
+              </Typography>
+              <TextField
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                fullWidth
+                variant="filled"
+              />
 
-            {/* <Typography variant="subtitle1" className={classes.subtitle}>
-              Date:
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={4}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  className={classes.formControl}
-                >
-                  <Select
-                    value={date.day}
-                    onChange={handleDayChange}
-                    className={classes.select}
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Duration:
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <FormControl
+                    fullWidth
+                    variant="filled"
+                    className={classes.formControl}
                   >
-                    {generateDayOptions()}
-                  </Select>
-                </FormControl>
+                    <Grid container spacing={2}>
+                      <Grid item xs={6}>
+                        <Select
+                          value={duration.hours}
+                          onChange={(e) =>
+                            setDuration((prevDuration) => ({
+                              ...prevDuration,
+                              hours: e.target.value,
+                            }))
+                          }
+                          className={classes.select}
+                        >
+                          {generateTimeOptions(true)}
+                        </Select>
+                      </Grid>
+                      <Grid item xs={6}>
+                        <Select
+                          value={duration.minutes}
+                          onChange={(e) =>
+                            setDuration((prevDuration) => ({
+                              ...prevDuration,
+                              minutes: e.target.value,
+                            }))
+                          }
+                          className={classes.select}
+                        >
+                          {generateTimeOptions(false)}
+                        </Select>
+                      </Grid>
+                    </Grid>
+                  </FormControl>
+                </Grid>
               </Grid>
-              <Grid item xs={4}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  className={classes.formControl}
-                >
-                  <Select
-                    value={date.month}
-                    onChange={handleMonthChange}
-                    className={classes.select}
-                  >
-                    {generateMonthOptions()}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={4}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  className={classes.formControl}
-                >
-                  <Select
-                    value={date.year}
-                    onChange={handleYearChange}
-                    className={classes.select}
-                  >
-                    {generateYearOptions()}
-                  </Select>
-                </FormControl>
-              </Grid>
-            </Grid> */}
 
-            {/* <Typography variant="subtitle1" className={classes.subtitle}>
-              Start Time:
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  className={classes.formControl}
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Number of Participants:
+              </Typography>
+              <FormControl
+                fullWidth
+                variant="filled"
+                className={classes.formControl}
+              >
+                <Select
+                  value={participants}
+                  onChange={(e) => setParticipants(e.target.value)}
+                  className={classes.select}
                 >
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Select
-                        value={startTime.hours}
-                        onChange={(e) =>
-                          setStartTime((prevTime) => ({
-                            ...prevTime,
-                            hours: e.target.value,
-                          }))
-                        }
-                        className={classes.select}
-                      >
-                        {generateTimeOptions(true)}
-                      </Select>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Select
-                        value={startTime.minutes}
-                        onChange={(e) =>
-                          setStartTime((prevTime) => ({
-                            ...prevTime,
-                            minutes: e.target.value,
-                          }))
-                        }
-                        className={classes.select}
-                      >
-                        {generateTimeOptions(false)}
-                      </Select>
-                    </Grid>
-                  </Grid>
-                </FormControl>
-              </Grid>
-            </Grid> */}
-
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Duration:
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <FormControl
-                  fullWidth
-                  variant="filled"
-                  className={classes.formControl}
-                >
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <Select
-                        value={duration.hours}
-                        onChange={(e) =>
-                          setDuration((prevDuration) => ({
-                            ...prevDuration,
-                            hours: e.target.value,
-                          }))
-                        }
-                        className={classes.select}
-                      >
-                        {generateTimeOptions(true)}
-                      </Select>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Select
-                        value={duration.minutes}
-                        onChange={(e) =>
-                          setDuration((prevDuration) => ({
-                            ...prevDuration,
-                            minutes: e.target.value,
-                          }))
-                        }
-                        className={classes.select}
-                      >
-                        {generateTimeOptions(false)}
-                      </Select>
-                    </Grid>
-                  </Grid>
-                </FormControl>
-              </Grid>
+                  {Array.from({ length: 48 }, (_, i) => i + 3).map((value) => (
+                    <MenuItem key={value} value={value}>
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Fab
+                color="primary"
+                aria-label="add"
+                className={classes.fab}
+                onClick={handleCreateTemplate}
+              >
+                <AddIcon />
+              </Fab>
             </Grid>
-
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Number of Participants:
-            </Typography>
-            <FormControl
-              fullWidth
-              variant="filled"
-              className={classes.formControl}
-            >
-              <Select
-                value={participants}
-                onChange={(e) => setParticipants(e.target.value)}
-                className={classes.select}
+            <Grid item xs={6}>
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Add Contacts:
+              </Typography>
+              <FormControl
+                fullWidth
+                variant="filled"
+                className={classes.formControl}
               >
-                {Array.from({ length: 50 }, (_, i) => i + 1).map((value) => (
-                  <MenuItem key={value} value={value}>
-                    {value}
-                  </MenuItem>
+                <Select
+                  value={addContacts}
+                  onChange={(e) => setAddContacts(e.target.value)}
+                  className={classes.select}
+                >
+                  <MenuItem value="contact1">Contact 1</MenuItem>
+                  {/* Add other contact options */}
+                </Select>
+              </FormControl>
+
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Add Groups:
+              </Typography>
+              <FormControl
+                fullWidth
+                variant="filled"
+                className={classes.formControl}
+              >
+                <Select
+                  value={addGroups}
+                  onChange={(e) => setAddGroups(e.target.value)}
+                  className={classes.select}
+                >
+                  <MenuItem value="group1">Group 1</MenuItem>
+                  {/* Add other group options */}
+                </Select>
+              </FormControl>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleAddParticipant}
+                className={classes.button}
+              >
+                Add Participant
+              </Button>
+
+              <Typography variant="subtitle1" className={classes.subtitle}>
+                Participants:
+              </Typography>
+              <ul>
+                {addedParticipants.map((participant) => (
+                  <li key={participant.id}>
+                    {participant.name}
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleDeleteParticipant(participant.id)}
+                    >
+                      <ClearIcon />
+                    </IconButton>
+                  </li>
                 ))}
-              </Select>
-            </FormControl>
-            <Fab
-              color="primary"
-              aria-label="add"
-              className={classes.fab}
-              onClick={handleCreateTemplate}
-            >
-              <AddIcon />
-            </Fab>
+              </ul>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Add Contacts:
-            </Typography>
-            <FormControl
-              fullWidth
-              variant="filled"
-              className={classes.formControl}
-            >
-              <Select
-                value={addContacts}
-                onChange={(e) => setAddContacts(e.target.value)}
-                className={classes.select}
-              >
-                <MenuItem value="contact1">Contact 1</MenuItem>
-                {/* Add other contact options */}
-              </Select>
-            </FormControl>
-
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Add Groups:
-            </Typography>
-            <FormControl
-              fullWidth
-              variant="filled"
-              className={classes.formControl}
-            >
-              <Select
-                value={addGroups}
-                onChange={(e) => setAddGroups(e.target.value)}
-                className={classes.select}
-              >
-                <MenuItem value="group1">Group 1</MenuItem>
-                {/* Add other group options */}
-              </Select>
-            </FormControl>
-
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddParticipant}
-              className={classes.button}
-            >
-              Add Participant
-            </Button>
-
-            <Typography variant="subtitle1" className={classes.subtitle}>
-              Participants:
-            </Typography>
-            <ul>
-              {addedParticipants.map((participant) => (
-                <li key={participant.id}>
-                  {participant.name}
-                  <IconButton
-                    aria-label="delete"
-                    onClick={() => handleDeleteParticipant(participant.id)}
-                  >
-                    <ClearIcon />
-                  </IconButton>
-                </li>
-              ))}
-            </ul>
-          </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      )}
+      {openConfirmation && (
+        <TemplateCreated
+          subject={subject}
+          creator={userID}
+          participants={participants}
+        />
+      )}
     </div>
   );
 };

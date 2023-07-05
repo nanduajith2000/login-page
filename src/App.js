@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 export const userDetailsContext = React.createContext();
 
 function App() {
-  const [webAccount, setWebAccount] = useState("user");
+  const [webAccount, setWebAccount] = useState("");
   return (
     <BrowserRouter>
       <userDetailsContext.Provider value={{ webAccount, setWebAccount }}>

@@ -10,6 +10,10 @@ import {
   Container,
   Fab,
   Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
@@ -33,6 +37,9 @@ const useStyles = makeStyles((theme) => ({
     bottom: theme.spacing(4),
     right: theme.spacing(4),
   },
+  buttonContainer: {
+    display: "flex",
+  },
   button: {
     backgroundColor: "#0161b0",
     color: "white",
@@ -40,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
     textTransform: "none",
     marginTop: 20,
     marginBottom: 20,
+    width: "100%",
+    marginRight: 10,
+    marginLeft: 10,
   },
   subtitle: {
     fontFamily: "Poppins, sans-serif",
@@ -64,6 +74,16 @@ const useStyles = makeStyles((theme) => ({
   },
   chip: {
     margin: theme.spacing(0.5),
+  },
+  dialogTitle: {
+    fontFamily: "Poppins",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  dialogContent: {
+    display: "flex",
+    flexDirection: "column",
+    gap: theme.spacing(2),
   },
 }));
 const userID = localStorage.getItem("userID");
@@ -91,8 +111,13 @@ const CreateConference = () => {
   const [chairpersonPassword, setChairpersonPassword] = useState(null);
   const [guestPassword, setGuestPassword] = useState(null);
   const [conferenceID, setConferenceID] = useState(null);
+  const [contacts, setContacts] = useState([]);
+
   const [creator, setCreator] = useState("Admin");
   const [accessNumber, setAccessNumber] = useState(null);
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const classes = useStyles();
@@ -109,12 +134,10 @@ const CreateConference = () => {
     const durationInMinutes = parseInt(duration.minutes, 10);
     // console.log(durationInHours);
     // console.log(durationInMinutes);
-    
 
     const durationInMilliseconds =
       durationInHours * 60 * 60 * 1000 + durationInMinutes * 60 * 1000;
     //   console.log(durationInMilliseconds);
-    
 
     const selectedDate = new Date(
       `${date.month} ${date.day}, ${date.year} ${startTime.hours}:${startTime.minutes}`
@@ -138,10 +161,9 @@ const CreateConference = () => {
 
       return null; // Return null if the cookie is not found
     }
-    
 
     var token = getCookie("user");
-    
+
     // console.log(token);
     // console.log("Subject: ", subject);
     // // console.log("Date: ", date);
@@ -195,9 +217,34 @@ const CreateConference = () => {
     ]);
   };
 
+  const handleAddExternalParticipant = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    setName("");
+    setPhoneNumber("");
+  };
+
+  const handleAddContact = () => {
+    const newContact = {
+      name,
+      phoneNumber,
+    };
+
+    setContacts((prevContacts) => [...prevContacts, newContact]);
+    handleCloseDialog();
+  };
+
   const handleDeleteParticipant = (id) => {
     setAddedParticipants((prevParticipants) =>
       prevParticipants.filter((participant) => participant.id !== id)
+    );
+  };
+  const handleDeleteContact = (id) => {
+    setContacts((prevContacts) =>
+      prevContacts.filter((contact) => contact.id !== phoneNumber)
     );
   };
 
@@ -525,15 +572,24 @@ const CreateConference = () => {
                   {/* Add other group options */}
                 </Select>
               </FormControl>
-
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleAddParticipant}
-                className={classes.button}
-              >
-                Add Participant
-              </Button>
+              <Container className={classes.buttonContainer}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddParticipant}
+                  className={classes.button}
+                >
+                  Add Contact/Group
+                </Button>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddExternalParticipant}
+                  className={classes.button}
+                >
+                  Add External Participant
+                </Button>
+              </Container>
 
               <Typography variant="subtitle1" className={classes.subtitle}>
                 Participants:
@@ -544,6 +600,14 @@ const CreateConference = () => {
                     key={participant.id}
                     label={participant.name}
                     onDelete={() => handleDeleteParticipant(participant.id)}
+                    className={classes.chip}
+                  />
+                ))}
+                {contacts.map((contact, index) => (
+                  <Chip
+                    key={contact.id}
+                    label={contact.name}
+                    onDelete={() => handleDeleteContact(contact.id)}
                     className={classes.chip}
                   />
                 ))}
@@ -571,6 +635,51 @@ const CreateConference = () => {
           participants={participants}
         />
       )}
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        className={classes.dialogRoot}
+      >
+        <DialogTitle>
+          <Typography variant="h6" className={classes.dialogTitle}>
+            Add Contact
+          </Typography>
+        </DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <TextField
+            label="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            fullWidth
+            className={classes.textField}
+          />
+          <TextField
+            label="Phone Number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            required
+            fullWidth
+            className={classes.textField}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={handleAddContact}
+            variant="contained"
+            className={classes.addButton}
+          >
+            Add
+          </Button>
+          <Button
+            onClick={handleCloseDialog}
+            variant="outlined"
+            className={classes.cancelButton}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
