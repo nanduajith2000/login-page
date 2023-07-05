@@ -244,7 +244,7 @@ const CreateConference = () => {
   };
   const handleDeleteContact = (id) => {
     setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== phoneNumber)
+      prevContacts.filter((contact) => contact.id !== id)
     );
   };
 

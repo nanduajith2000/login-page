@@ -11,7 +11,9 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import meetings from "../data/meetingsList.json";
+import { set } from "date-fns";
+
+const queryConferenceList = require("../api/QueryConferenceList");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,12 +26,23 @@ const useStyles = makeStyles((theme) => ({
     margin: "2vh 0",
     width: "100%",
     position: "relative",
+    transition: "height 0.5s ease-in-out",
+  },
+  rootExpanded: {
+    height: "auto",
   },
   heading: {
     fontFamily: "Poppins, sans-serif",
     paddingTop: 10,
     paddingBottom: 10,
     fontWeight: "bold",
+  },
+  meetingContent: {
+    transition: "max-height 0.5s ease-in-out", // Added transition property
+  },
+  meetingContentExpanded: {
+    maxHeight: "300px",
+    transition: "max-height 0.5s ease-in-out", // Added transition property
   },
   meetingHeader: {
     display: "flex",
@@ -65,6 +78,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4,
     marginRight: 10,
     height: 60,
+    marginBottom: "auto",
+    marginTop: 14,
   },
   dateBoxDay: {
     fontSize: 22,
@@ -95,15 +110,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     position: "absolute",
-    top: 16,
+    top: 18,
     right: 16,
   },
   buttonContainerExpanded: {
     display: "flex",
     flexDirection: "column",
     position: "absolute",
-    top: 64,
+    top: 18,
     right: 16,
+    gap: 80,
   },
   joinButton: {
     backgroundColor: "#0CE23B",
@@ -135,6 +151,77 @@ const UpcomingMeetings = () => {
   const classes = useStyles();
   const [expandedMeetings, setExpandedMeetings] = React.useState([]);
 
+  function convertUTCMillisecondsToDate(utcMilliseconds) {
+    // Create a new Date object with the UTC milliseconds
+    var date = new Date(utcMilliseconds);
+
+    // Specify the time zone as 'Asia/Kolkata' for Indian time
+    var options = { timeZone: "Asia/Kolkata" };
+
+    // Extract the different components of the date in Indian time
+    var year = date.toLocaleString("en-IN", { year: "numeric", options });
+    var month = date.toLocaleString("en-IN", { month: "2-digit", options });
+    var day = date.toLocaleString("en-IN", { day: "2-digit", options });
+    var hours = date.toLocaleString("en-IN", {
+      hour: "2-digit",
+      hour12: false,
+      options,
+    });
+    var minutes = date.toLocaleString("en-IN", { minute: "2-digit", options });
+
+    // Format the date and time string
+    var formattedDate = year + "-" + month + "-" + day;
+    var formattedTime = hours + ":" + minutes;
+
+    // Return the formatted date and time
+    return formattedDate + " " + formattedTime;
+  }
+
+  // function getCookie(cookieName) {
+  //   const cookieString = document.cookie;
+  //   const cookies = cookieString.split(":");
+
+  //   for (let i = 0; i < cookies.length; i++) {
+  //     const cookie = cookies[i].trim();
+  //     if (cookie.startsWith(cookieName + "=")) {
+  //       return cookie.substring(cookieName.length + 1);
+  //     }
+  //   }
+
+  //   return null; // Return null if the cookie is not found
+  // }
+
+  const [meetings, setMeetings] = React.useState([]);
+
+  React.useEffect(() => {
+    function getCookie(cookieName) {
+      const cookieString = document.cookie;
+      const cookies = cookieString.split(":");
+
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.startsWith(cookieName + "=")) {
+          return cookie.substring(cookieName.length + 1);
+        }
+      }
+
+      return null; // Return null if the cookie is not found
+    }
+
+    const token = getCookie("user");
+    queryConferenceList(token)
+      .then((res) => {
+        const meetingArray = Object.values(res)
+          .filter((value) => typeof value === "object")
+          .map((meeting) => meeting);
+        setMeetings(meetingArray);
+      })
+      .catch((err) => {
+        alert("Could not fetch meeting details. Please try again later.");
+      });
+  }, []);
+  console.log("MEETING LIST: " + meetings);
+
   const handleToggleMeeting = (meetingId) => {
     setExpandedMeetings((prevExpanded) =>
       prevExpanded.includes(meetingId)
@@ -158,13 +245,7 @@ const UpcomingMeetings = () => {
   };
 
   const renderMeetingDetails = (meeting) => {
-    const {
-      accessNumber,
-      conferenceId,
-      chairpersonPassword,
-      guestPassword,
-      numParticipants,
-    } = meeting;
+    const { accessNumber, conferenceKey, chair, general, size } = meeting;
 
     return (
       <React.Fragment className={classes.secondaryText}>
@@ -172,16 +253,16 @@ const UpcomingMeetings = () => {
           Access Number: {accessNumber}
         </Typography>
         <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Conference ID: {conferenceId}
+          Conference ID: {conferenceKey.conferenceID}
         </Typography>
         <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Chairperson Password: {chairpersonPassword}
+          Chairperson Password: {chair}
         </Typography>
         <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Guest Password: {guestPassword}
+          Guest Password: {general}
         </Typography>
         <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Participants: {numParticipants}
+          Participants: {size}
         </Typography>
       </React.Fragment>
     );
@@ -197,8 +278,8 @@ const UpcomingMeetings = () => {
       <Divider />
       <Container>
         <List style={{ maxHeight: "300px", overflowY: "scroll" }}>
-          {meetings.map((meeting) => (
-            <React.Fragment key={meeting.id}>
+          {meetings.map((meeting, key) => (
+            <React.Fragment key={key}>
               <ListItem className={classes.listItem}>
                 <div className={classes.dateBox}>
                   <Typography variant="body2" className={classes.dateBoxDay}>
@@ -216,13 +297,19 @@ const UpcomingMeetings = () => {
                     })}
                   </Typography>
                 </div>
-                <div className={classes.meetingContent}>
+                <div
+                  className={`${classes.meetingContent} ${
+                    isMeetingExpanded(meeting.id)
+                      ? classes.meetingContentExpanded
+                      : ""
+                  }`}
+                >
                   <div className={classes.meetingHeader}>
                     <Typography
                       variant="body1"
                       className={classes.listItemText}
                     >
-                      {meeting.title}
+                      {meeting.subject}
                     </Typography>
                     <IconButton
                       className={classes.expandButton}
@@ -239,19 +326,22 @@ const UpcomingMeetings = () => {
                     variant="body2"
                     className={classes.listItemSecondaryText}
                   >
-                    Start Time: {new Date(meeting.startTime).toLocaleString()}
+                    Start Time:{" "}
+                    {new Date(
+                      convertUTCMillisecondsToDate(meeting.startTime)
+                    ).toLocaleString()}
                   </Typography>
-                  <Typography
+                  {/* <Typography
                     variant="body2"
                     className={classes.listItemSecondaryText}
                   >
                     End Time: {new Date(meeting.endTime).toLocaleString()}
-                  </Typography>
+                  </Typography> */}
                   <Typography
                     variant="body2"
                     className={classes.listItemSecondaryText}
                   >
-                    Creator: {meeting.creator}
+                    Creator: {meeting.scheduserName}
                   </Typography>
                   {isMeetingExpanded(meeting.id) && (
                     <div className={classes.meetingDetails}>
@@ -293,5 +383,4 @@ const UpcomingMeetings = () => {
     </Container>
   );
 };
-
 export default UpcomingMeetings;
