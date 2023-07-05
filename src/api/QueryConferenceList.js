@@ -1,4 +1,5 @@
-const url = `http://35.154.233.185:8000/user/conferenceList`;
+const url = `http://35.154.233.185:8000/user/conferencelist`;
+
 
 function queryConferenceList(token) {
   //attendee is a json file
@@ -8,10 +9,9 @@ function queryConferenceList(token) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      token: `${token}`,
-      conferenceFilter: {
-        filter: {
-          resultFields: [
+        token: `${token}`,
+        "filter":{
+          "resultFields":[
             "StartTime",
             "Subject",
             "ConferenceID",
@@ -20,30 +20,44 @@ function queryConferenceList(token) {
             "Length",
             "TimeZone",
             "ScheduserName",
-            "summerTime",
-            "isRecordConference",
             "mediaTypes",
             "accessNumber",
             "factEndTime",
             "accountID",
-            "rownum",
-            "totalSize",
-          ],
-          conditions: {
-            key: "ConferenceState",
-            value: "Destroyed",
-            matching: "unequal",
+            "totalSize"], 
+          "conditions":{
+              "key":"ConferenceState",
+              "value":"Destroyed",
+              "matching":"unequal"
           },
-          isAscend: false,
-          pageIndex: 0,
-          pageSize: 15,
-        },
-        isIncludeInvitedConference: true,
+          "isAscend":"False",
+          "pageIndex": 0,
+          "pageSize": 15 },
+          "isIncludeInvitedConference":"True"
       },
-    }),
+    ),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => data);
+    .then((data) => {
+      for(var i=1;i<=data['total'];i++){
+          console.log(i)
+          console.log(data[`${i}`].subject)
+          console.log(data[`${i}`].size)
+          console.log(data[`${i}`].length)
+          const utcTimestamp = data[`${i}`].startTime;
+          console.log(utcTimestamp)
+          
+         
+
+          console.log(data[`${i}`].conferenceKey["conferenceID"])
+          console.log(data[`${i}`].accountID)
+          console.log(data[`${i}`].chair)
+          console.log(data[`${i}`].general)
+        }
+
+    });
 }
 
 module.exports = queryConferenceList;
+
+queryConferenceList("MTYwMTI2MTUwMTMzMTIzMTc1NTMwMDAtMDAxMA==");
