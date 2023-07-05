@@ -27,9 +27,19 @@ function createconference(
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => {console.log(data)});
+    .then((data) => {
+      console.log(data);
+    });
 }
 
 module.exports = createconference;
 
-// createconference('MjczOTk0MTQ5MDIwMDQxMzk3MDAwMDAtMDAxMA==','600000','3','56','en-US','tester',)
+// createconference(
+//   "MTMxODIxMTQ5OTY2NDg1NDkyMDcwMDAtMDAxMg==",
+//   600000,
+//   3,
+//   48,
+//   "en_US",
+//   "kamesh",
+//   1688845800000
+// );

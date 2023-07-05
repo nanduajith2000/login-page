@@ -24,12 +24,23 @@ const useStyles = makeStyles((theme) => ({
     margin: "2vh 0",
     width: "100%",
     position: "relative",
+    transition: "height 0.5s ease-in-out",
+  },
+  rootExpanded: {
+    height: "auto",
   },
   heading: {
     fontFamily: "Poppins, sans-serif",
     paddingTop: 10,
     paddingBottom: 10,
     fontWeight: "bold",
+  },
+  meetingContent: {
+    transition: "max-height 0.5s ease-in-out", // Added transition property
+  },
+  meetingContentExpanded: {
+    maxHeight: "300px",
+    transition: "max-height 0.5s ease-in-out", // Added transition property
   },
   meetingHeader: {
     display: "flex",
@@ -65,6 +76,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4,
     marginRight: 10,
     height: 60,
+    marginBottom: "auto",
+    marginTop: 14,
   },
   dateBoxDay: {
     fontSize: 22,
@@ -95,15 +108,16 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     position: "absolute",
-    top: 16,
+    top: 18,
     right: 16,
   },
   buttonContainerExpanded: {
     display: "flex",
     flexDirection: "column",
     position: "absolute",
-    top: 64,
+    top: 18,
     right: 16,
+    gap: 80,
   },
   joinButton: {
     backgroundColor: "#0CE23B",
@@ -216,7 +230,13 @@ const UpcomingMeetings = () => {
                     })}
                   </Typography>
                 </div>
-                <div className={classes.meetingContent}>
+                <div
+                  className={`${classes.meetingContent} ${
+                    isMeetingExpanded(meeting.id)
+                      ? classes.meetingContentExpanded
+                      : ""
+                  }`}
+                >
                   <div className={classes.meetingHeader}>
                     <Typography
                       variant="body1"
