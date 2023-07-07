@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
-import InstantConferenceSidenav from "../components/InstantConferenceSidenav";
+import ConferenceSidenav from "../components/ConferenceSidenav";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -146,7 +146,7 @@ const InstantConference = (props) => {
 
   return (
     <div className={classes.root}>
-      <InstantConferenceSidenav
+      <ConferenceSidenav
         participants={participants}
         setParticipants={setParticipants}
       />

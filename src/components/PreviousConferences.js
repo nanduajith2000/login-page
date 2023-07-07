@@ -107,7 +107,7 @@ const PreviousConferences = () => {
         const meetingArray = Object.values(res)
           .filter((value) => typeof value === "object")
           .map((meeting) => meeting);
-        setMeetings(meetingArray);
+        setMeetings(meetingArray.reverse());
       })
       .catch((err) => {
         alert("Could not fetch meeting details. Please try again later.");
@@ -151,7 +151,7 @@ const PreviousConferences = () => {
             </TableRow>
           </TableHead>
           <TableBody className={classes.tableBody}>
-            {meetings.reverse().map((conference, index) => (
+            {meetings.map((conference, index) => (
               <TableRow
                 key={conference.id}
                 className={index % 2 === 0 ? classes.evenRow : classes.oddRow}

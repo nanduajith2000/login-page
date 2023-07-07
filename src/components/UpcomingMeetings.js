@@ -232,6 +232,10 @@ const UpcomingMeetings = () => {
     window.open(url, "_blank");
   };
 
+  const handleEditConference = (meeting) => {
+    console.log("Editing meeting: ", meeting);
+  };
+
   const handleEndConference = (meeting) => {
     console.log("Ending meeting: ", meeting);
   };
@@ -352,12 +356,21 @@ const UpcomingMeetings = () => {
                       Join
                     </Button>
                     <Button
-                      variant="contained"
-                      className={classes.endButton}
-                      onClick={() => handleEndConference(meeting)}
+                      variant="outlined"
+                      className={classes.editButton}
+                      onClick={() => handleEditConference(meeting)}
                     >
-                      End
+                      Edit
                     </Button>
+                    {isMeetingExpanded(meeting.id) && (
+                      <Button
+                        variant="contained"
+                        className={classes.endButton}
+                        onClick={() => handleEndConference(meeting)}
+                      >
+                        End
+                      </Button>
+                    )}
                   </div>
                 </div>
               </ListItem>

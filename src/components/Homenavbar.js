@@ -1,4 +1,6 @@
 import React from "react";
+import { ReactDOM } from "react";
+import InstantConference from "../pages/InstantConference";
 import {
   AppBar,
   Toolbar,
@@ -53,9 +55,8 @@ const Homenavbar = () => {
   const handleForward = () => {
     navigate(1);
   };
-  const creator = "user";
   const handleStartConference = () => {
-    window.open(`/home/instantConference?creator=${creator}`, "_blank");
+    window.open(`/home/instantConference`, "_blank");
   };
 
   return (
