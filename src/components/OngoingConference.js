@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
-import ConferenceSidenav from "../components/ConferenceSidenav";
+import ConferenceSidenav from "./ConferenceSidenav";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InstantConference = (props) => {
+const OngoingConference = (props) => {
   const userID = localStorage.getItem("userID");
   const classes = useStyles();
   const [participants, setParticipants] = useState(props.participantsData);
@@ -152,7 +152,7 @@ const InstantConference = (props) => {
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {userID}'s Conference
+          {props.creator}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
           {participants.filter((participant) => participant.connected).length}/
@@ -260,4 +260,4 @@ const InstantConference = (props) => {
   );
 };
 
-export default InstantConference;
+export default OngoingConference;

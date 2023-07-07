@@ -1,6 +1,6 @@
 const url = `http://35.154.233.185:8000/user/conferencelist`;
 
-function queryConferencehistory(token) {
+function queryConferencehistory(token, pageIndex) {
   //attendee is a json file
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
@@ -31,7 +31,7 @@ function queryConferencehistory(token) {
           matching: "equal",
         },
         isAscend: "False",
-        pageIndex: 0,
+        pageIndex: pageIndex,
         pageSize: 10,
       },
       isIncludeInvitedConference: "True",
@@ -43,4 +43,9 @@ function queryConferencehistory(token) {
 
 module.exports = queryConferencehistory;
 
-// queryConferencehistory("");
+queryConferencehistory(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTI4MjguNzUyNzQ2Nn0.Ie77LUqJCNVN66yePr77nxkHgYYHKIMf70YqHmJCDyg",
+  0
+).then((res) => {
+  console.log(res);
+});

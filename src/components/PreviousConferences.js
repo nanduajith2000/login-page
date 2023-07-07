@@ -8,7 +8,9 @@ import {
   makeStyles,
   Container,
   Typography,
+  IconButton,
 } from "@material-ui/core";
+import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 
 const queryConferencehistory = require("../api/QueryConferenceHistory");
 
@@ -18,11 +20,15 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto", // Enable overflow scrolling
     maxHeight: "70vh", // Set a specific height for the table container
   },
-  title: {
+  headerContainer: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: "#D9D9D9",
-    textAlign: "auto",
     borderRadius: 10,
-    padding: "10px 20px",
+  },
+  title: {
+    textAlign: "auto",
     fontFamily: "Poppins, sans-serif",
     fontWeight: "bold",
   },
@@ -46,10 +52,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PreviousConferences = () => {
-
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
-    var date = new Date(parseInt(utcMilliseconds,10));
+    var date = new Date(parseInt(utcMilliseconds, 10));
 
     // Specify the time zone as 'Asia/Kolkata' for Indian time
     var options = { timeZone: "Asia/Kolkata" };
@@ -81,38 +86,49 @@ const PreviousConferences = () => {
     };
   }
 
-  
-
   const classes = useStyles();
   const [meetings, setMeetings] = React.useState([]);
 
-  React.useEffect(() => {
-    function getCookie(cookieName) {
-      const cookieString = document.cookie;
-      const cookies = cookieString.split(":");
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
 
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(cookieName + "=")) {
-          return cookie.substring(cookieName.length + 1);
-        }
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
       }
-
-      return null; // Return null if the cookie is not found
     }
 
+    return null; // Return null if the cookie is not found
+  }
+
+  const [totalPages, setTotalPages] = React.useState(19);
+
+  // React.useEffect(() => {
+  //   const token = getCookie("user");
+
+  // },[]);
+  const [pageIndex, setPageIndex] = React.useState(totalPages);
+
+  const handlePageChange = (newPageIndex) => {
+    setPageIndex(newPageIndex);
+  };
+
+  React.useEffect(() => {
     const token = getCookie("user");
-    queryConferencehistory(token)
+    queryConferencehistory(token, pageIndex)
       .then((res) => {
         const meetingArray = Object.values(res)
           .filter((value) => typeof value === "object")
           .map((meeting) => meeting);
         setMeetings(meetingArray.reverse());
+        setTotalPages(res.totalPages);
       })
       .catch((err) => {
-        alert("Could not fetch meeting details. Please try again later.");
+        alert("Could not fetch meeting history. Please try again later.");
       });
-  }, []);
+  }, [pageIndex]);
 
   function convertMillisecondsToHoursAndMinutes(milliseconds) {
     var hours = Math.floor(milliseconds / (1000 * 60 * 60));
@@ -123,9 +139,27 @@ const PreviousConferences = () => {
 
   return (
     <Container>
-      <Typography variant="h6" className={classes.title}>
-        Previous Conferences
-      </Typography>
+      <Container className={classes.headerContainer}>
+        <Typography variant="h6" className={classes.title}>
+          Previous Conferences
+        </Typography>
+        <div className={classes.paginationContainer}>
+          <IconButton
+            className={classes.paginationButton}
+            disabled={pageIndex === 1}
+            onClick={() => handlePageChange(pageIndex + 1)}
+          >
+            <NavigateBefore />
+          </IconButton>
+          <IconButton
+            className={classes.paginationButton}
+            disabled={pageIndex === totalPages}
+            onClick={() => handlePageChange(pageIndex - 1)}
+          >
+            <NavigateNext />
+          </IconButton>
+        </div>
+      </Container>
       <Container disableGutters className={classes.root}>
         <Table className={classes.tableContainer}>
           <TableHead>
@@ -169,10 +203,11 @@ const PreviousConferences = () => {
                   {conference.size}
                 </TableCell>
                 <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                {convertUTCMillisecondsToDate(conference.startTime).day}-
-                {convertUTCMillisecondsToDate(conference.startTime).month}-
-                {convertUTCMillisecondsToDate(conference.startTime).year} {convertUTCMillisecondsToDate(conference.startTime).hours}: 
-                {convertUTCMillisecondsToDate(conference.startTime).minutes}
+                  {convertUTCMillisecondsToDate(conference.startTime).day}-
+                  {convertUTCMillisecondsToDate(conference.startTime).month}-
+                  {convertUTCMillisecondsToDate(conference.startTime).year}{" "}
+                  {convertUTCMillisecondsToDate(conference.startTime).hours}:
+                  {convertUTCMillisecondsToDate(conference.startTime).minutes}
                 </TableCell>
                 <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
                   {convertMillisecondsToHoursAndMinutes(conference.length)

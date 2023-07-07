@@ -1,6 +1,6 @@
 import React from "react";
 import { ReactDOM } from "react";
-import InstantConference from "../pages/InstantConference";
+import InstantConference from "./InstantConference";
 import {
   AppBar,
   Toolbar,

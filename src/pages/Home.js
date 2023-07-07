@@ -5,7 +5,7 @@ import Sidenav from "../components/Sidenav";
 import Contacts from "../components/Contacts";
 import ConferenceTemplates from "../components/ConferenceTemplates";
 import CreateTemplate from "../components/CreateTemplate";
-import InstantConference from "./InstantConference";
+import InstantConference from "../components/InstantConference";
 import Settings from "../components/Settings";
 import { Routes, Route, useLocation } from "react-router-dom";
 import participantsData from "../data/participantsData";
