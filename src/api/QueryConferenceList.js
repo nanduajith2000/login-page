@@ -84,4 +84,8 @@ function queryConferenceList(token) {
 
 module.exports = queryConferenceList;
 
-// console.log(convertUTCMillisecondsToDate(1621536000000).hours);
+queryConferenceList(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTU1NjEuNTc2ODU0NX0.SBoAK7BQ3skhoA-fK76PF9rPs0KHGvRKbTzE09ZFFHQ"
+).then((res) => {
+  console.log(res);
+});

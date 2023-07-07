@@ -12,6 +12,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
+import { useLocation, useParams } from "react-router-dom";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
@@ -84,10 +85,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const OngoingConference = (props) => {
+const OngoingConference = () => {
   const userID = localStorage.getItem("userID");
   const classes = useStyles();
-  const [participants, setParticipants] = useState(props.participantsData);
+  const [participants, setParticipants] = useState([
+    {
+      id: 1,
+      name: "njandu",
+      number: "8848750913",
+      selected: false,
+      connected: false,
+      muted: false,
+    },
+  ]);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCheckedUser = (participantId) => {
@@ -152,7 +162,7 @@ const OngoingConference = (props) => {
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {props.creator}'s Conference
+          {userID}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
           {participants.filter((participant) => participant.connected).length}/

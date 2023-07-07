@@ -6,6 +6,7 @@ import Contacts from "../components/Contacts";
 import ConferenceTemplates from "../components/ConferenceTemplates";
 import CreateTemplate from "../components/CreateTemplate";
 import InstantConference from "../components/InstantConference";
+import OngoingConference from "../components/OngoingConference";
 import Settings from "../components/Settings";
 import { Routes, Route, useLocation } from "react-router-dom";
 import participantsData from "../data/participantsData";
@@ -17,13 +18,17 @@ export const userDetailsContextThree = React.createContext();
 export default function Home(props) {
   const webAccount = React.useContext(userDetailsContext).webAccount;
   const setWebAccount = React.useContext(userDetailsContext).setWebAccount;
+  let [participants, setParticipants] = React.useState([]);
   const location = useLocation();
   const hideSidenav = location.pathname === "/home/instantConference";
+  const alsoHideSidenav = location.pathname === "/home/startConference";
 
   return (
     <div className="home-container">
-      <userDetailsContextThree.Provider value={{ webAccount, setWebAccount }}>
-        {!hideSidenav && <Sidenav userID={props.userID} />}
+      <userDetailsContextThree.Provider
+        value={{ webAccount, setWebAccount, participants, setParticipants }}
+      >
+        {!hideSidenav && !alsoHideSidenav && <Sidenav userID={props.userID} />}
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/createConference" element={<CreateConference />} />
@@ -38,6 +43,7 @@ export default function Home(props) {
             path="/instantConference"
             element={<InstantConference participantsData={participantsData} />}
           />
+          <Route path="/startConference" element={<OngoingConference />} />
         </Routes>
       </userDetailsContextThree.Provider>
     </div>
