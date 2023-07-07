@@ -65,7 +65,7 @@ function queryConferencehistory(token,JW) {
         },
         isAscend: "False",
         pageIndex: 0,
-        pageSize: 50,
+        pageSize: 10,
       },
       isIncludeInvitedConference: "True",
     }),
@@ -76,4 +76,4 @@ function queryConferencehistory(token,JW) {
 
 module.exports = queryConferencehistory;
 
-queryConferencehistory("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiO…DY4fQ.BkEmt5rTWP_wg6WrWTEt6YnU7cjrLbS8S6cNzRFSmuM","MTA1Mjk3MTUxMTQ3MzU4NDExMTQwMDAtMDAxMg==");
+// queryConferencehistory("");
