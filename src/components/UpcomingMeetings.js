@@ -308,6 +308,7 @@ const UpcomingMeetings = () => {
                     </Typography>
                     <IconButton
                       className={classes.expandButton}
+                      color="secondary"
                       onClick={() => handleToggleMeeting(meeting.id)}
                     >
                       {isMeetingExpanded(meeting.id) ? (

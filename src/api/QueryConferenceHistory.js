@@ -43,9 +43,9 @@ function queryConferencehistory(token, pageIndex) {
 
 module.exports = queryConferencehistory;
 
-queryConferencehistory(
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTI4MjguNzUyNzQ2Nn0.Ie77LUqJCNVN66yePr77nxkHgYYHKIMf70YqHmJCDyg",
-  0
-).then((res) => {
-  console.log(res);
-});
+// queryConferencehistory(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTI4MjguNzUyNzQ2Nn0.Ie77LUqJCNVN66yePr77nxkHgYYHKIMf70YqHmJCDyg",
+//   0
+// ).then((res) => {
+//   console.log(res);
+// });
