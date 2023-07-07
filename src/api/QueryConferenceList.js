@@ -40,13 +40,12 @@ const url = `http://35.154.233.185:8000/user/conferencelist`;
 //   return { hours: hours, minutes: minutes };
 // }
 
-function queryConferenceList(token, jwtToken) {
+function queryConferenceList(token) {
   //attendee is a json file
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({
       token: `${token}`,
