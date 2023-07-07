@@ -64,7 +64,7 @@ function queryConferencehistory(token) {
         },
         isAscend: "False",
         pageIndex: 0,
-        pageSize: 500,
+        pageSize: 50,
       },
       isIncludeInvitedConference: "True",
     }),

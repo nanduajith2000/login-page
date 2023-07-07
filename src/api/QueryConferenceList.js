@@ -40,12 +40,13 @@ function convertMillisecondsToHoursAndMinutes(milliseconds) {
   return { hours: hours, minutes: minutes };
 }
 
-function queryConferenceList(token) {
+function queryConferenceList(token, jwtToken) {
   //attendee is a json file
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({
       token: `${token}`,
@@ -78,9 +79,13 @@ function queryConferenceList(token) {
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => data);
+    .then((data) => data)
+    .catch((err) => console.log(err));
 }
 
 module.exports = queryConferenceList;
 
-console.log(convertUTCMillisecondsToDate(1621536000000).hours);
+queryConferenceList(
+  "NjkxODU4MTUxMTQwMDE5ODMzNjgwMDAtMDAxMA==",
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiO…A3N30.xqzaZz73S9W6eN6_3jwKTv06fHhh0vjasUmToKK8OG4"
+);

@@ -66,7 +66,13 @@ const LoginForm = () => {
 
         if (res.message === "success") {
           // console.log(res.token);
-          document.cookie = "user=" + res.token + ": userID=" + res.userID;
+          document.cookie =
+            "user=" +
+            res.token +
+            ": userID=" +
+            res.userID +
+            ": jwtToken=" +
+            res.JWT;
           localStorage.setItem("userID", webAccount);
           localStorage.setItem("userPassword", password);
           console.log(document.cookie);
