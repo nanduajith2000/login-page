@@ -46,6 +46,43 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PreviousConferences = () => {
+
+  function convertUTCMillisecondsToDate(utcMilliseconds) {
+    // Create a new Date object with the UTC milliseconds
+    var date = new Date(parseInt(utcMilliseconds,10));
+
+    // Specify the time zone as 'Asia/Kolkata' for Indian time
+    var options = { timeZone: "Asia/Kolkata" };
+
+    // Extract the different components of the date in Indian time
+    var year = date.toLocaleString("en-IN", { year: "numeric", options });
+    var month = date.toLocaleString("en-IN", { month: "2-digit", options });
+    var day = date.toLocaleString("en-IN", { day: "2-digit", options });
+    var hours = date.toLocaleString("en-IN", {
+      hour: "2-digit",
+      hour12: false,
+      options,
+    });
+    var minutes = date.toLocaleString("en-IN", { minute: "2-digit", options });
+
+    // Format the date and time string
+    var formattedDate = year + "-" + month + "-" + day;
+    var formattedTime = hours + ":" + minutes;
+
+    // Return the formatted date and time
+    return {
+      year: year,
+      month: month,
+      day: day,
+      hours: hours,
+      minutes: minutes,
+      formattedDate: formattedDate,
+      formattedTime: formattedTime,
+    };
+  }
+
+  
+
   const classes = useStyles();
   const [meetings, setMeetings] = React.useState([]);
 
@@ -106,7 +143,7 @@ const PreviousConferences = () => {
                 No of Participants
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                Start Time
+                Start time
               </TableCell>
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
                 Duration
@@ -132,7 +169,10 @@ const PreviousConferences = () => {
                   {conference.size}
                 </TableCell>
                 <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {conference.startTime}
+                {convertUTCMillisecondsToDate(conference.startTime).day}-
+                {convertUTCMillisecondsToDate(conference.startTime).month}-
+                {convertUTCMillisecondsToDate(conference.startTime).year} {convertUTCMillisecondsToDate(conference.startTime).hours}: 
+                {convertUTCMillisecondsToDate(conference.startTime).minutes}
                 </TableCell>
                 <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
                   {convertMillisecondsToHoursAndMinutes(conference.length)

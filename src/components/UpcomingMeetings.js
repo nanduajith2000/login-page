@@ -152,7 +152,7 @@ const UpcomingMeetings = () => {
 
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
-    var date = new Date(utcMilliseconds);
+    var date = new Date(parseInt(utcMilliseconds,10));
 
     // Specify the time zone as 'Asia/Kolkata' for Indian time
     var options = { timeZone: "Asia/Kolkata" };
@@ -285,7 +285,7 @@ const UpcomingMeetings = () => {
                     variant="body2"
                     className={classes.dateBoxMonthYear}
                   >
-                    {convertUTCMillisecondsToDate(meeting.startTime).month}+" "+
+                    {convertUTCMillisecondsToDate(meeting.startTime).month}-
                     {convertUTCMillisecondsToDate(meeting.startTime).year}
                   </Typography>
                 </div>
