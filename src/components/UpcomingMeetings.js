@@ -11,6 +11,8 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+import OngoingConference from "./OngoingConference";
+import { Routes, Route, useNavigate } from "react-router-dom";
 
 const queryConferenceList = require("../api/QueryConferenceList");
 
@@ -147,12 +149,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UpcomingMeetings = () => {
+  const navigate = useNavigate();
   const classes = useStyles();
   const [expandedMeetings, setExpandedMeetings] = React.useState([]);
 
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
-    var date = new Date(parseInt(utcMilliseconds,10));
+    var date = new Date(parseInt(utcMilliseconds, 10));
 
     // Specify the time zone as 'Asia/Kolkata' for Indian time
     var options = { timeZone: "Asia/Kolkata" };
@@ -375,10 +378,14 @@ const UpcomingMeetings = () => {
                 </div>
               </ListItem>
               <Divider />
+              <Routes>
+        <Route path="/home/startConference" element={<OngoingConference creator={meeting.scheduserName} participantsData=/>} />
+      </Routes>
             </React.Fragment>
           ))}
         </List>
       </Container>
+      
     </Container>
   );
 };
