@@ -25,19 +25,20 @@ function convertUTCMillisecondsToDate(utcMilliseconds) {
   return formattedDate + " " + formattedTime;
 }
 
-function convertMillisecondsToHoursAndMinutes(milliseconds) {
-  var hours = Math.floor(milliseconds / (1000 * 60 * 60));
-  var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+// function convertMillisecondsToHoursAndMinutes(milliseconds) {
+//   var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+//   var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
 
-  return { hours: hours, minutes: minutes };
-}
+//   return { hours: hours, minutes: minutes };
+// }
 
-function queryConferencehistory(token) {
+function queryConferencehistory(token,JW) {
   //attendee is a json file
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
+      "Authorization": `Bearer ${JW}` 
     },
     body: JSON.stringify({
       token: `${token}`,
@@ -64,15 +65,15 @@ function queryConferencehistory(token) {
         },
         isAscend: "False",
         pageIndex: 0,
-        pageSize: 500,
+        pageSize: 50,
       },
       isIncludeInvitedConference: "True",
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => data);
+    .then((data) => {console.log(data)});
 }
 
 module.exports = queryConferencehistory;
 
-queryConferencehistory("NDgyMDUxMTUwNDI2NDg2MjIzNzEwMDAtMDAxMA==");
+queryConferencehistory("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiO…DY4fQ.BkEmt5rTWP_wg6WrWTEt6YnU7cjrLbS8S6cNzRFSmuM","MTA1Mjk3MTUxMTQ3MzU4NDExMTQwMDAtMDAxMg==");
