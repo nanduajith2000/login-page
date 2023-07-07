@@ -2,7 +2,6 @@ const url = `http://35.154.233.185:8000/user/createconference`;
 
 function createconference(
   token,
-  jwtToken,
   length,
   size,
   timeZone,
@@ -14,8 +13,7 @@ function createconference(
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${jwtToken}`,
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
       token: `${token}`,
