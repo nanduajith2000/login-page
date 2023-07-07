@@ -40,13 +40,12 @@ const url = `http://35.154.233.185:8000/user/conferencelist`;
 //   return { hours: hours, minutes: minutes };
 // }
 
-function queryConferenceList(token, jwtToken) {
+function queryConferenceList(token) {
   //attendee is a json file
   return fetch(url, {
     method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${jwtToken}`,
     },
     body: JSON.stringify({
       token: `${token}`,
@@ -85,4 +84,8 @@ function queryConferenceList(token, jwtToken) {
 
 module.exports = queryConferenceList;
 
-// console.log(convertUTCMillisecondsToDate(1621536000000).hours);
+queryConferenceList(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTU1NjEuNTc2ODU0NX0.SBoAK7BQ3skhoA-fK76PF9rPs0KHGvRKbTzE09ZFFHQ"
+).then((res) => {
+  console.log(res);
+});

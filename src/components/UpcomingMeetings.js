@@ -12,7 +12,7 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import OngoingConference from "./OngoingConference";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, Link } from "react-router-dom";
 
 const queryConferenceList = require("../api/QueryConferenceList");
 
@@ -120,13 +120,20 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 18,
     right: 16,
-    gap: 80,
+    gap: 20,
   },
   joinButton: {
     backgroundColor: "#0CE23B",
     color: "white",
     borderRadius: 15,
     marginBottom: 20,
+    height: 30,
+    textTransform: "capitalize",
+  },
+  editButton: {
+    color: "white",
+    borderRadius: 15,
+    border: "1px solid white",
     height: 30,
     textTransform: "capitalize",
   },
@@ -231,8 +238,9 @@ const UpcomingMeetings = () => {
 
   const handleJoinConference = (meeting) => {
     console.log("Joining meeting: ", meeting);
-    const url = `/home/instantConference`;
-    window.open(url, "_blank");
+    window.open(`/home/startConference`);
+    // const url = `/home/startConference`;
+    // window.open(url, "_blank");
   };
 
   const handleEditConference = (meeting) => {
@@ -322,13 +330,21 @@ const UpcomingMeetings = () => {
                     className={classes.listItemSecondaryText}
                   >
                     Start Time:{" "}
-                    {convertUTCMillisecondsToDate(meeting.startTime).hours}
+                    {
+                      convertUTCMillisecondsToDate(meeting.startTime)
+                        .formattedTime
+                    }
                   </Typography>
                   <Typography
                     variant="body2"
                     className={classes.listItemSecondaryText}
                   >
-                    End Time:
+                    End Time:{" "}
+                    {/* {
+                      convertUTCMillisecondsToDate(
+                        meeting.startTime + meeting.length
+                      ).formattedTime
+                    } */}
                   </Typography>
                   <Typography
                     variant="body2"
@@ -351,6 +367,13 @@ const UpcomingMeetings = () => {
                         : classes.buttonContainerExpanded
                     }
                   >
+                    {/* <Link
+                      to="/home/startConference"
+                      state={{
+                        creator: meeting.scheduserName,
+                        participantsData: meeting.attendees,
+                      }}
+                    > */}
                     <Button
                       variant="contained"
                       className={classes.joinButton}
@@ -358,6 +381,7 @@ const UpcomingMeetings = () => {
                     >
                       Join
                     </Button>
+                    {/* </Link> */}
                     <Button
                       variant="outlined"
                       className={classes.editButton}
@@ -378,9 +402,6 @@ const UpcomingMeetings = () => {
                 </div>
               </ListItem>
               <Divider />
-              {/* <Routes>
-        <Route path="/home/startConference" element={<OngoingConference creator={meeting.scheduserName} participantsData=/>} />
-      </Routes> */}
             </React.Fragment>
           ))}
         </List>
