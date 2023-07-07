@@ -1,44 +1,44 @@
 const url = `http://35.154.233.185:8000/user/conferencelist`;
-function convertUTCMillisecondsToDate(utcMilliseconds) {
-  // Create a new Date object with the UTC milliseconds
-  var date = new Date(utcMilliseconds);
+// function convertUTCMillisecondsToDate(utcMilliseconds) {
+//   // Create a new Date object with the UTC milliseconds
+//   var date = new Date(utcMilliseconds);
 
-  // Specify the time zone as 'Asia/Kolkata' for Indian time
-  var options = { timeZone: "Asia/Kolkata" };
+//   // Specify the time zone as 'Asia/Kolkata' for Indian time
+//   var options = { timeZone: "Asia/Kolkata" };
 
-  // Extract the different components of the date in Indian time
-  var year = date.toLocaleString("en-IN", { year: "numeric", options });
-  var month = date.toLocaleString("en-IN", { month: "2-digit", options });
-  var day = date.toLocaleString("en-IN", { day: "2-digit", options });
-  var hours = date.toLocaleString("en-IN", {
-    hour: "2-digit",
-    hour12: false,
-    options,
-  });
-  var minutes = date.toLocaleString("en-IN", { minute: "2-digit", options });
+//   // Extract the different components of the date in Indian time
+//   var year = date.toLocaleString("en-IN", { year: "numeric", options });
+//   var month = date.toLocaleString("en-IN", { month: "2-digit", options });
+//   var day = date.toLocaleString("en-IN", { day: "2-digit", options });
+//   var hours = date.toLocaleString("en-IN", {
+//     hour: "2-digit",
+//     hour12: false,
+//     options,
+//   });
+//   var minutes = date.toLocaleString("en-IN", { minute: "2-digit", options });
 
-  // Format the date and time string
-  var formattedDate = year + "-" + month + "-" + day;
-  var formattedTime = hours + ":" + minutes;
+//   // Format the date and time string
+//   var formattedDate = year + "-" + month + "-" + day;
+//   var formattedTime = hours + ":" + minutes;
 
-  // Return the formatted date and time
-  return {
-    year: year,
-    month: month,
-    day: day,
-    hours: hours,
-    minutes: minutes,
-    formattedDate: formattedDate,
-    formattedTime: formattedTime,
-  };
-}
+//   // Return the formatted date and time
+//   return {
+//     year: year,
+//     month: month,
+//     day: day,
+//     hours: hours,
+//     minutes: minutes,
+//     formattedDate: formattedDate,
+//     formattedTime: formattedTime,
+//   };
+// }
 
-function convertMillisecondsToHoursAndMinutes(milliseconds) {
-  var hours = Math.floor(milliseconds / (1000 * 60 * 60));
-  var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+// function convertMillisecondsToHoursAndMinutes(milliseconds) {
+//   var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+//   var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
 
-  return { hours: hours, minutes: minutes };
-}
+//   return { hours: hours, minutes: minutes };
+// }
 
 function queryConferenceList(token) {
   //attendee is a json file
