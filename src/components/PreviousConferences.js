@@ -103,7 +103,7 @@ const PreviousConferences = () => {
     return null; // Return null if the cookie is not found
   }
 
-  const [totalPages, setTotalPages] = React.useState(19);
+  const [totalPages, setTotalPages] = React.useState(21);
 
   // React.useEffect(() => {
   //   const token = getCookie("user");

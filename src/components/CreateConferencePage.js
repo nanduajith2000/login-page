@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
-import ConferenceCreated from "./ConferenceCreated";
+import CreateConfirmation from "./CreateConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 
@@ -619,7 +619,7 @@ const CreateConference = () => {
         </Container>
       )}
       {openConfirmation && (
-        <ConferenceCreated
+        <CreateConfirmation
           openConfirmation={openConfirmation}
           setOpenConfirmation={setOpenConfirmation}
           subject={subject}

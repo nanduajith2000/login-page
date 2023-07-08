@@ -17,7 +17,7 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
-import ConferenceCreated from "./ConferenceCreated";
+import EditConfirmation from "./EditConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 
@@ -88,33 +88,81 @@ const useStyles = makeStyles((theme) => ({
 }));
 const userID = localStorage.getItem("userID");
 
-const CreateConference = () => {
+function convertUTCMillisecondsToDate(utcMilliseconds) {
+  // Create a new Date object with the UTC milliseconds
+  var date = new Date(parseInt(utcMilliseconds, 10));
+
+  // Specify the time zone as 'Asia/Kolkata' for Indian time
+  var options = { timeZone: "Asia/Kolkata" };
+
+  // Extract the different components of the date in Indian time
+  var year = date.toLocaleString("en-IN", { year: "numeric", options });
+  var month = date.toLocaleString("en-IN", { month: "2-digit", options });
+  var day = date.toLocaleString("en-IN", { day: "2-digit", options });
+  var hours = date.toLocaleString("en-IN", {
+    hour: "2-digit",
+    hour12: false,
+    options,
+  });
+  var minutes = date.toLocaleString("en-IN", { minute: "2-digit", options });
+
+  // Format the date and time string
+  var formattedDate = year + "-" + month + "-" + day;
+  var formattedTime = hours + ":" + minutes;
+
+  // Return the formatted date and time
+  return {
+    year: year,
+    month: month,
+    day: day,
+    hours: hours,
+    minutes: minutes,
+    formattedDate: formattedDate,
+    formattedTime: formattedTime,
+  };
+}
+
+function convertMillisecondsToHoursAndMinutes(milliseconds) {
+  var hours = Math.floor(milliseconds / (1000 * 60 * 60));
+  var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+  return { hours: hours, minutes: minutes };
+}
+
+const EditConference = () => {
+  const [meeting, setMeeting] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails"))
+  );
   const navigate = useNavigate();
-  const [subject, setSubject] = useState(`${userID}'s Conference`);
+  const [subject, setSubject] = useState(
+    `${meeting.scheduserName}'s Conference`
+  );
   const [date, setDate] = useState({
-    day: "",
-    month: "",
-    year: "",
+    day: convertUTCMillisecondsToDate(meeting.startTime).day,
+    month: convertUTCMillisecondsToDate(meeting.startTime).month,
+    year: convertUTCMillisecondsToDate(meeting.startTime).year,
   });
   const [startTime, setStartTime] = useState({
-    hours: "11",
-    minutes: "00",
+    hours: convertUTCMillisecondsToDate(meeting.startTime).hours,
+    minutes: convertUTCMillisecondsToDate(meeting.startTime).minutes,
   });
   const [duration, setDuration] = useState({
-    hours: "01",
-    minutes: "00",
+    hours: convertMillisecondsToHoursAndMinutes(meeting.length).hours,
+    minutes: convertMillisecondsToHoursAndMinutes(meeting.length).minutes,
   });
-  const [participants, setParticipants] = useState(3);
+  const [participants, setParticipants] = useState(meeting.size);
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
-  const [addedParticipants, setAddedParticipants] = useState([]);
-  const [chairpersonPassword, setChairpersonPassword] = useState(null);
-  const [guestPassword, setGuestPassword] = useState(null);
-  const [conferenceID, setConferenceID] = useState(null);
+  const [addedParticipants, setAddedParticipants] = useState(meeting.attendees);
+  const [chairpersonPassword, setChairpersonPassword] = useState(meeting.chair);
+  const [guestPassword, setGuestPassword] = useState(meeting.general);
+  const [conferenceID, setConferenceID] = useState(
+    meeting.conferenceKey.conferenceID
+  );
   const [contacts, setContacts] = useState([]);
 
-  const [creator, setCreator] = useState("Admin");
-  const [accessNumber, setAccessNumber] = useState(null);
+  const [creator, setCreator] = useState(meeting.scheduserName);
+  const [accessNumber, setAccessNumber] = useState(meeting.accessNumber);
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -163,7 +211,6 @@ const CreateConference = () => {
     }
 
     var token = getCookie("user");
-    var jwtToken = getCookie("jwtToken");
 
     // console.log(token);
     // console.log("Subject: ", subject);
@@ -173,45 +220,45 @@ const CreateConference = () => {
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
 
-    createconference(
-      token,
-      jwtToken,
-      durationInMilliseconds,
-      participants,
-      48,
-      "en_US",
-      subject,
-      formattedStartTimeUTC
-    )
-      .then((res) => {
-        console.log(res);
-        setConferenceID(
-          res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
-        );
-        setAccessNumber(
-          res.scheduleConferenceResult.conferenceInfo.accessNumber
-        );
-        setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
-        setChairpersonPassword(
-          res.scheduleConferenceResult.conferenceInfo.passwords[0].password
-        );
-        setGuestPassword(
-          res.scheduleConferenceResult.conferenceInfo.passwords[1].password
-        );
-      })
+    //   createconference(
+    //     token,
+    //     jwtToken,
+    //     durationInMilliseconds,
+    //     participants,
+    //     48,
+    //     "en_US",
+    //     subject,
+    //     formattedStartTimeUTC
+    //   )
+    //     .then((res) => {
+    //       console.log(res);
+    //       setConferenceID(
+    //         res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
+    //       );
+    //       setAccessNumber(
+    //         res.scheduleConferenceResult.conferenceInfo.accessNumber
+    //       );
+    //       setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
+    //       setChairpersonPassword(
+    //         res.scheduleConferenceResult.conferenceInfo.passwords[0].password
+    //       );
+    //       setGuestPassword(
+    //         res.scheduleConferenceResult.conferenceInfo.passwords[1].password
+    //       );
+    //     })
 
-      .catch((err) => {
-        console.log(err);
-        navigate("/home");
-        alert("Error in creating conference. Please try again.");
-      });
+    //     .catch((err) => {
+    //       console.log(err);
+    //       navigate("/home");
+    //       alert("Error in creating conference. Please try again.");
+    //     });
   };
 
   const handleAddParticipant = () => {
     const participant = addContacts || addGroups;
     const newParticipant = {
       id: new Date().getTime(), // Unique ID for each participant
-      name: participant,
+      attendeeName: participant,
     };
     setAddedParticipants((prevParticipants) => [
       ...prevParticipants,
@@ -355,7 +402,7 @@ const CreateConference = () => {
       {!openConfirmation && (
         <Container>
           <Typography variant="h5" className={classes.title}>
-            Create Conference
+            Edit Conference
           </Typography>
           <Grid container spacing={3}>
             <Grid item xs={6}>
@@ -619,7 +666,7 @@ const CreateConference = () => {
         </Container>
       )}
       {openConfirmation && (
-        <ConferenceCreated
+        <EditConfirmation
           openConfirmation={openConfirmation}
           setOpenConfirmation={setOpenConfirmation}
           subject={subject}
@@ -633,7 +680,7 @@ const CreateConference = () => {
           guestPassword={guestPassword}
           creator={creator}
           accessNumber={accessNumber}
-          // addedParticipants={addedParticipants}
+          addedParticipants={addedParticipants}
           participants={participants}
         />
       )}
@@ -686,4 +733,4 @@ const CreateConference = () => {
   );
 };
 
-export default CreateConference;
+export default EditConference;

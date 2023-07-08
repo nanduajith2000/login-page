@@ -12,7 +12,6 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { useLocation, useParams } from "react-router-dom";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
@@ -88,16 +87,13 @@ const useStyles = makeStyles((theme) => ({
 const OngoingConference = () => {
   const userID = localStorage.getItem("userID");
   const classes = useStyles();
-  const [participants, setParticipants] = useState([
-    {
-      id: 1,
-      name: "njandu",
-      number: "8848750913",
-      selected: false,
-      connected: false,
-      muted: false,
-    },
-  ]);
+  const [meeting, setMeeting] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails"))
+  );
+  const [participants, setParticipants] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails")).attendees
+  );
+  console.log(participants);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCheckedUser = (participantId) => {
@@ -131,18 +127,7 @@ const OngoingConference = () => {
   };
 
   const handleCall = (participantId) => {
-    setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => {
-        if (participant.id === participantId) {
-          return {
-            ...participant,
-            connected: !participant.connected,
-          };
-        }
-        return participant;
-      });
-      return updatedParticipants;
-    });
+    //api fn to call the participant
   };
 
   const handleSearch = (event) => {
@@ -151,7 +136,7 @@ const OngoingConference = () => {
 
   // Filter participants based on search query
   const filteredParticipants = participants.filter((participant) =>
-    participant.name.toLowerCase().includes(searchQuery.toLowerCase())
+    participant.attendeeName.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -162,11 +147,11 @@ const OngoingConference = () => {
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {userID}'s Conference
+          {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          {participants.filter((participant) => participant.connected).length}/
-          {participants.length} on call
+          {/* {participants.filter((participant) => participant.connected).length} */}
+          0/{participants.length} on call
         </Typography>
         <div className={classes.section}>
           <TextField
@@ -210,19 +195,20 @@ const OngoingConference = () => {
                       />
                     </TableCell>
                     <TableCell className={classes.tableCell}>
-                      {participant.name}
+                      {participant.attendeeName}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
-                      {participant.number}
+                      {participant.addressEntry.address}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
                         onClick={() => handleCall(participant.id)}
-                        disabled={
-                          !participant.connected && participant.selected
-                        }
+                        // disabled={
+                        //   !participant.connected && participant.selected
+                        // }
                       >
-                        {participant.connected ? (
+                        <Call />
+                        {/* {participant.connected ? (
                           <CallEnd
                             className={
                               participant.connected
@@ -232,15 +218,15 @@ const OngoingConference = () => {
                           />
                         ) : (
                           <Call />
-                        )}
+                        )} */}
                       </IconButton>
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
                         onClick={() => handleMute(participant.id)}
-                        disabled={
-                          !participant.connected && participant.selected
-                        }
+                        // disabled={
+                        //   !participant.connected && participant.selected
+                        // }
                       >
                         {participant.muted ? (
                           <MicOff
@@ -258,7 +244,7 @@ const OngoingConference = () => {
               ) : (
                 <TableRow>
                   <TableCell className={classes.message} colSpan={5}>
-                    No participants found.
+                    No participants yet.
                   </TableCell>
                 </TableRow>
               )}

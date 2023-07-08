@@ -11,8 +11,7 @@ import {
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
-import OngoingConference from "./OngoingConference";
-import { Routes, Route, useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const queryConferenceList = require("../api/QueryConferenceList");
 
@@ -156,8 +155,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UpcomingMeetings = () => {
-  const navigate = useNavigate();
   const classes = useStyles();
+  const navigate = useNavigate();
   const [expandedMeetings, setExpandedMeetings] = React.useState([]);
 
   function convertUTCMillisecondsToDate(utcMilliseconds) {
@@ -193,7 +192,6 @@ const UpcomingMeetings = () => {
       formattedTime: formattedTime,
     };
   }
-
   const [meetings, setMeetings] = React.useState([]);
 
   React.useEffect(() => {
@@ -237,7 +235,11 @@ const UpcomingMeetings = () => {
   };
 
   const handleJoinConference = (meeting) => {
-    console.log("Joining meeting: ", meeting);
+    localStorage.setItem("meetingDetails", JSON.stringify(meeting));
+    console.log(
+      "Meeting details: ",
+      JSON.parse(localStorage.getItem("meetingDetails"))
+    );
     window.open(`/home/startConference`);
     // const url = `/home/startConference`;
     // window.open(url, "_blank");
@@ -245,6 +247,12 @@ const UpcomingMeetings = () => {
 
   const handleEditConference = (meeting) => {
     console.log("Editing meeting: ", meeting);
+    localStorage.setItem("meetingDetails", JSON.stringify(meeting));
+    console.log(
+      "Meeting details: ",
+      JSON.parse(localStorage.getItem("meetingDetails"))
+    );
+    navigate("/home/editConference");
   };
 
   const handleEndConference = (meeting) => {
