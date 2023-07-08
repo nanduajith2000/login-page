@@ -57,7 +57,7 @@ const Homenavbar = () => {
         <IconButton
           edge="start"
           className={classes.backButton}
-          color="secondaryk"
+          color="secondary"
           aria-label="back"
           onClick={handleBack}
         >
