@@ -1,9 +1,9 @@
-const url = `http://35.154.233.185:8000/user/inviteparticipants`;
+const url = `http://35.154.233.185:8000/user/queryconferenceinfo`;
 
-function InviteParticipants(
+function ConferenceInfo(
   token,
   conID,
-  body
+  subconfID
 ) {
   //attendee is a json file
   return fetch(url, {
@@ -14,15 +14,12 @@ function InviteParticipants(
     body: JSON.stringify({
         token: `${token}`,
         conferenceID:`${conID}`,
-        inviteParas:   {
-            invitePara: [body]
-        }
+        SubconferenceID:`${subconfID}`
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
     .then((data) => {console.log(data)} );
 }
 
-module.exports = InviteParticipants;
-
-// InviteParticipants("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMyNTMzNjc5IiwiZXhwaXJ5IjoxNjg4OTU4MjkyLjI5MjI2Nzh9.xHDNXnlbDiHh5FkXL_sAujGOtjPwjxBV3ySTeHGYQQo","1232533679")
+module.exports = ConferenceInfo;
+// ConferenceInfo("NzA5Mjk1MTUzNzEzNDIzOTQyNDYwMDAtMDAxMg==","1232582798","0")
