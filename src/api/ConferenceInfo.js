@@ -18,8 +18,8 @@ function ConferenceInfo(
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => {console.log(data)} );
+    .then((data) => data );
 }
 
 module.exports = ConferenceInfo;
-// ConferenceInfo("NzA5Mjk1MTUzNzEzNDIzOTQyNDYwMDAtMDAxMg==","1232582798","0")
+// ConferenceInfo("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMyNTgyNzk4IiwiZXhwaXJ5IjoxNjg5MTI1MTcyLjc0OTk3OTV9.mXhycJ-3yOaAOUdL69uiXOenKWUXm8_rcod4_64Z1GU","1232582798","0")
