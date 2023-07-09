@@ -14,6 +14,7 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useNavigate } from "react-router-dom";
 
 const queryConferenceList = require("../api/QueryConferenceList");
+const EndConference = require("../api/RemoveConference");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -128,6 +129,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 20,
     height: 30,
     textTransform: "capitalize",
+    fontFamily: "Poppins, sans-serif",
   },
   editButton: {
     color: "white",
@@ -135,6 +137,7 @@ const useStyles = makeStyles((theme) => ({
     border: "1px solid white",
     height: 30,
     textTransform: "capitalize",
+    fontFamily: "Poppins, sans-serif",
   },
   endButton: {
     backgroundColor: "black",
@@ -142,6 +145,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 15,
     height: 30,
     textTransform: "capitalize",
+    fontFamily: "Poppins, sans-serif",
   },
   expandButton: {
     color: "white",
@@ -157,7 +161,6 @@ const useStyles = makeStyles((theme) => ({
 const UpcomingMeetings = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const [expandedMeetings, setExpandedMeetings] = React.useState([]);
 
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
@@ -194,27 +197,30 @@ const UpcomingMeetings = () => {
   }
   const [meetings, setMeetings] = React.useState([]);
 
-  React.useEffect(() => {
-    function getCookie(cookieName) {
-      const cookieString = document.cookie;
-      const cookies = cookieString.split(":");
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
 
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.startsWith(cookieName + "=")) {
-          return cookie.substring(cookieName.length + 1);
-        }
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
       }
-
-      return null; // Return null if the cookie is not found
     }
 
+    return null; // Return null if the cookie is not found
+  }
+
+  React.useEffect(() => {
     const token = getCookie("user");
     queryConferenceList(token)
       .then((res) => {
         const meetingArray = Object.values(res)
           .filter((value) => typeof value === "object")
-          .map((meeting) => meeting);
+          .map((meeting) => ({
+            ...meeting,
+            expanded: false,
+          }));
         setMeetings(meetingArray);
       })
       .catch((err) => {
@@ -223,15 +229,19 @@ const UpcomingMeetings = () => {
   }, []);
 
   const handleToggleMeeting = (meetingId) => {
-    setExpandedMeetings((prevExpanded) =>
-      prevExpanded.includes(meetingId)
-        ? prevExpanded.filter((id) => id !== meetingId)
-        : [...prevExpanded, meetingId]
-    );
-  };
+    setMeetings((prevMeetings) => {
+      const updatedMeetings = prevMeetings.map((meeting) => {
+        if (meeting.id === meetingId) {
+          return {
+            ...meeting,
+            expanded: !meeting.expanded,
+          };
+        }
+        return meeting;
+      });
 
-  const isMeetingExpanded = (meetingId) => {
-    return expandedMeetings.includes(meetingId);
+      return updatedMeetings;
+    });
   };
 
   const handleJoinConference = (meeting) => {
@@ -241,8 +251,6 @@ const UpcomingMeetings = () => {
       JSON.parse(localStorage.getItem("meetingDetails"))
     );
     window.open(`/home/startConference`);
-    // const url = `/home/startConference`;
-    // window.open(url, "_blank");
   };
 
   const handleEditConference = (meeting) => {
@@ -255,30 +263,60 @@ const UpcomingMeetings = () => {
     navigate("/home/editConference");
   };
 
-  const handleEndConference = (meeting) => {
-    console.log("Ending meeting: ", meeting);
+  const handleRemoveConference = (meeting) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to remove this meeting?"
+    );
+    if (confirmDelete) {
+      console.log("Removing meeting: ", meeting);
+      const token = getCookie("user");
+      EndConference(token, meeting.conferenceKey.conferenceID)
+        .then((res) => {
+          console.log(res);
+          const token = getCookie("user");
+          queryConferenceList(token)
+            .then((res) => {
+              const meetingArray = Object.values(res)
+                .filter((value) => typeof value === "object")
+                .map((meeting) => ({
+                  ...meeting,
+                  expanded: false,
+                }));
+              setMeetings(meetingArray);
+            })
+            .catch((err) => {
+              alert("Could not fetch meeting details. Please try again later.");
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Could not end meeting. Please try again later.");
+        });
+    }
   };
 
   const renderMeetingDetails = (meeting) => {
     const { accessNumber, conferenceKey, chair, general, size } = meeting;
 
     return (
-      <React.Fragment className={classes.secondaryText}>
-        <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Access Number: {accessNumber}
-        </Typography>
-        <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Conference ID: {conferenceKey.conferenceID}
-        </Typography>
-        <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Chairperson Password: {chair}
-        </Typography>
-        <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Guest Password: {general}
-        </Typography>
-        <Typography variant="body2" className={classes.listItemSecondaryText}>
-          Participants: {size}
-        </Typography>
+      <React.Fragment>
+        <Container disableGutters className={classes.secondaryText}>
+          <Typography variant="body2" className={classes.listItemSecondaryText}>
+            Access Number: {accessNumber}
+          </Typography>
+          <Typography variant="body2" className={classes.listItemSecondaryText}>
+            Conference ID: {conferenceKey.conferenceID}
+          </Typography>
+          <Typography variant="body2" className={classes.listItemSecondaryText}>
+            Chairperson Password: {chair}
+          </Typography>
+          <Typography variant="body2" className={classes.listItemSecondaryText}>
+            Guest Password: {general}
+          </Typography>
+          <Typography variant="body2" className={classes.listItemSecondaryText}>
+            Participants: {size}
+          </Typography>
+        </Container>
       </React.Fragment>
     );
   };
@@ -293,9 +331,13 @@ const UpcomingMeetings = () => {
       <Divider />
       <Container>
         <List style={{ maxHeight: "300px", overflowY: "scroll" }}>
-          {meetings.map((meeting, key) => (
-            <React.Fragment key={key}>
-              <ListItem className={classes.listItem}>
+          {meetings.map((meeting) => (
+            <React.Fragment key={meeting.id}>
+              <ListItem
+                className={`${classes.listItem} ${
+                  meeting.expanded ? classes.rootExpanded : ""
+                }`}
+              >
                 <div className={classes.dateBox}>
                   <Typography variant="body2" className={classes.dateBoxDay}>
                     {convertUTCMillisecondsToDate(meeting.startTime).day}
@@ -310,9 +352,7 @@ const UpcomingMeetings = () => {
                 </div>
                 <div
                   className={`${classes.meetingContent} ${
-                    isMeetingExpanded(meeting.id)
-                      ? classes.meetingContentExpanded
-                      : ""
+                    meeting.expanded ? classes.meetingContentExpanded : ""
                   }`}
                 >
                   <div className={classes.meetingHeader}>
@@ -327,7 +367,7 @@ const UpcomingMeetings = () => {
                       color="secondary"
                       onClick={() => handleToggleMeeting(meeting.id)}
                     >
-                      {isMeetingExpanded(meeting.id) ? (
+                      {meeting.expanded ? (
                         <ExpandLessIcon />
                       ) : (
                         <ExpandMoreIcon />
@@ -351,7 +391,7 @@ const UpcomingMeetings = () => {
                     End Time:{" "}
                     {/* {
                       convertUTCMillisecondsToDate(
-                        meeting.startTime + meeting.length
+                        parseInt(meeting.startTime) + parseInt(meeting.duration)
                       ).formattedTime
                     } */}
                   </Typography>
@@ -361,28 +401,20 @@ const UpcomingMeetings = () => {
                   >
                     Creator: {meeting.scheduserName}
                   </Typography>
-                  {isMeetingExpanded(meeting.id) && (
+                  {meeting.expanded && (
                     <div className={classes.meetingDetails}>
                       <Container disableGutters>
-                        {" "}
                         {renderMeetingDetails(meeting)}
                       </Container>
                     </div>
                   )}
                   <div
                     className={
-                      !isMeetingExpanded(meeting.id)
+                      !meeting.expanded
                         ? classes.buttonContainer
                         : classes.buttonContainerExpanded
                     }
                   >
-                    {/* <Link
-                      to="/home/startConference"
-                      state={{
-                        creator: meeting.scheduserName,
-                        participantsData: meeting.attendees,
-                      }}
-                    > */}
                     <Button
                       variant="contained"
                       className={classes.joinButton}
@@ -390,7 +422,6 @@ const UpcomingMeetings = () => {
                     >
                       Join
                     </Button>
-                    {/* </Link> */}
                     <Button
                       variant="outlined"
                       className={classes.editButton}
@@ -398,11 +429,11 @@ const UpcomingMeetings = () => {
                     >
                       Edit
                     </Button>
-                    {isMeetingExpanded(meeting.id) && (
+                    {meeting.expanded && (
                       <Button
                         variant="contained"
                         className={classes.endButton}
-                        onClick={() => handleEndConference(meeting)}
+                        onClick={() => handleRemoveConference(meeting)}
                       >
                         End
                       </Button>
@@ -418,4 +449,5 @@ const UpcomingMeetings = () => {
     </Container>
   );
 };
+
 export default UpcomingMeetings;

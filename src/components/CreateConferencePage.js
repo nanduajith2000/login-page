@@ -115,7 +115,7 @@ const CreateConference = () => {
 
   const [creator, setCreator] = useState("Admin");
   const [accessNumber, setAccessNumber] = useState(null);
-  const [name, setName] = useState("");
+  const [attendeeName, setAttendeeName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
@@ -123,6 +123,7 @@ const CreateConference = () => {
   const classes = useStyles();
 
   const handleSchedule = () => {
+    console.log("ATTENDEES: ", contacts);
     // console.log("Subject: ", subject);
     // // console.log("Date: ", date);
     // // console.log("Start Time: ", startTime);
@@ -163,7 +164,6 @@ const CreateConference = () => {
     }
 
     var token = getCookie("user");
-    var jwtToken = getCookie("jwtToken");
 
     // console.log(token);
     // console.log("Subject: ", subject);
@@ -175,13 +175,13 @@ const CreateConference = () => {
 
     createconference(
       token,
-      jwtToken,
       durationInMilliseconds,
       participants,
       48,
       "en_US",
       subject,
-      formattedStartTimeUTC
+      formattedStartTimeUTC,
+      contacts
     )
       .then((res) => {
         console.log(res);
@@ -211,7 +211,7 @@ const CreateConference = () => {
     const participant = addContacts || addGroups;
     const newParticipant = {
       id: new Date().getTime(), // Unique ID for each participant
-      name: participant,
+      attendeeName: participant,
     };
     setAddedParticipants((prevParticipants) => [
       ...prevParticipants,
@@ -225,14 +225,17 @@ const CreateConference = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setName("");
+    setAttendeeName("");
     setPhoneNumber("");
   };
 
   const handleAddContact = () => {
     const newContact = {
-      name,
-      phoneNumber,
+      attendeeName,
+      addressEntry: {
+        address: `${phoneNumber}`,
+        type: "phone",
+      },
     };
 
     setContacts((prevContacts) => [...prevContacts, newContact]);
@@ -650,8 +653,8 @@ const CreateConference = () => {
         <DialogContent className={classes.dialogContent}>
           <TextField
             label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={attendeeName}
+            onChange={(e) => setAttendeeName(e.target.value)}
             required
             fullWidth
             className={classes.textField}

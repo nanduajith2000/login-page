@@ -84,6 +84,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const InviteParticipants = require("../api/InviteParticipants");
+
+function getCookie(cookieName) {
+  const cookieString = document.cookie;
+  const cookies = cookieString.split(":");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith(cookieName + "=")) {
+      return cookie.substring(cookieName.length + 1);
+    }
+  }
+
+  return null; // Return null if the cookie is not found
+}
+
 const OngoingConference = () => {
   const userID = localStorage.getItem("userID");
   const classes = useStyles();
@@ -126,8 +142,18 @@ const OngoingConference = () => {
     });
   };
 
-  const handleCall = (participantId) => {
-    //api fn to call the participant
+  const handleCall = (participant) => {
+    var token = getCookie("user");
+    const inviteParas = {
+      name: participant.attendeeName,
+      phone: participant.addressEntry.address,
+    };
+
+    InviteParticipants(token, meeting.conferenceKey.conferenceID, inviteParas)
+      .then((res) => console.log(res))
+      .catch((err) =>
+        alert("Could not call attendee. Please try again later.")
+      );
   };
 
   const handleSearch = (event) => {

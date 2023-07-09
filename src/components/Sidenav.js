@@ -122,7 +122,7 @@ export default function Sidenav(props) {
     }
     const token = getCookie("user");
     // console.log(cookieValue);
-    console.log(Logout(token));
+    Logout(token);
     function clearAllCookies() {
       var cookies = document.cookie.split(":");
 

@@ -153,7 +153,9 @@ const EditConference = () => {
   const [participants, setParticipants] = useState(meeting.size);
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
-  const [addedParticipants, setAddedParticipants] = useState(meeting.attendees);
+  const [addedParticipants, setAddedParticipants] = useState(
+    meeting.attendees > 2 ? meeting.attendees : []
+  );
   const [chairpersonPassword, setChairpersonPassword] = useState(meeting.chair);
   const [guestPassword, setGuestPassword] = useState(meeting.general);
   const [conferenceID, setConferenceID] = useState(
