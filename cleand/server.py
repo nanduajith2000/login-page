@@ -1,171 +1,290 @@
-import requests
-import time
-import urllib3
-import xmltodict
-import json
+from fastapi import FastAPI, Body, Depends, Header
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo
+from app.model import UsersLoginSchema
+from app.auth.jwt_handler import signJWT, decodeJWT
+from app.auth.jwt_bearer import jwtBearer
+import xml.parsers.expat
+from typing import Dict, Any
 
 
-requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-requests.packages.urllib3.disable_warnings() 
-def login(URL,head):
-      url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
-      headers = {'content-type': 'application/json'}
-      headers.update(head)
-      start = time.time()
-      r = requests.post(url, verify=False)
-      end = time.time()
+from fastapi.middleware.cors import CORSMiddleware
+import redis
+import ssl1
+# from json2xml import json2xml
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
-      data_dict = xmltodict.parse(r.content)
-      
-      print("Body OUT\n",data_dict)
-      print("The time of execution is :",
-            (end-start) * 10**3, "ms")
-      
-      
-      return data_dict
 
-def create_POST(URL, head, body):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings()
+msg1 = "Enter Student ID"
 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+app = FastAPI()
 
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
+def checkToken(token):
+    if token==None:
+        return True
+    return False
 
-#     body_dict = body.dict()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def home():
+    return {"Data":"First Data"}
+
+@app.post("/user/login", tags=["user"])
+def user_login(user: UsersLoginSchema = Body(default=None)):
+    URL = "login?accountType="+user.accountType+"&accountName="+user.email+"&password="+user.password
+    dict1=ssl1.login(URL,user)
+   
+    try:
+        if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
+            jwt_token=signJWT(user.email)["access token"]
+            redis_client.set(jwt_token,dict1["loginResult"]["profile"]["token"])
+            return {"message": "success","token":jwt_token,"userID":dict1["loginResult"]["profile"]["userID"]}
+    except:
+        if dict1["result"]["resultDesc"] == "NOT_FOUND":
+            return{"message": "Invalid username or password"}
+        else:
+            return{"message":"some error has occurred"}
+   
+#Route : To logout
+@app.delete("/user/logout", tags=["user"])
+def logout(logout_token: LogoutToken = Body(default=None)):
+    token = logout_token.token
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"User Already Logged Out"}
+    URL = "logout"
+    dict1 = ssl1.logout(URL, head)
+    is_deleted = redis_client.delete(token)
+
+    # Perform additional logout actions, such as removing the token from a blacklist or invalidating the token
+
+    if is_deleted:
+        return {"message": "User has been logged out"}
+    else:
+        return {"message": "Logout failed or token does not exist"}
+
+
+@app.post("/user/createconferencetemplate")
+def CreateConferenceTemplate(conf_template: ConferenceTemplate =Body(default=None)):
+    URL="conferenceTemplate"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(conf_template.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invaild Token"}
+    BODY = {'conferenceTemplate':conf_template.dict()}
+    del BODY['conferenceTemplate']['token']
+    dict1 = ssl1.create_POST(URL,head,BODY)
+    return dict1
+
+@app.put("user/modifyconferencetemplate")
+def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
+    URL="conferenceTemplate/"+mod_template.templateId
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(mod_template.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY= {"conferenceTemplate":mod_template.dict()}
+    del BODY["conferenceTemplate"]["token"]
+    dict1 = ssl1.update_PUT(URL,head,BODY)
+    return dict1
+
+
+@app.post("/user/templatelist")
+def templatelist(template_list: TemplateList = Body(default=None)):
+    URL = "conferenceTemplateList"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(template_list.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    Body = {"conferenceTemplateFilter": template_list.dict()}
+    del Body["conferenceTemplateFilter"]["token"]
+    dict1 = ssl1.create_POST(URL, head, Body)
+    data_list = dict1["conferenceTemplateList"]["page"]["data"]
+    ans = {"message": "success"}
+    i = 0
+    for item in data_list:
+        entry_list = item["entry"]
+        extracted_dict = {}
+        for entry in entry_list:
+            key = entry["key"]
+            value = entry["value"]
+            extracted_dict[key] = value
+        i += 1
+        ans.update({i: extracted_dict})
+    ans["total"] = i
+    return ans
+
+@app.post("/user/createconference")
+def createconference(create_conference: createConferenceInfo =Body(default=None)):
+    URL = "conference"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(create_conference.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invaild Token"}
+    BODY = {'conferenceInfo':create_conference.dict()}
+    del BODY['conferenceInfo']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
+    return dict1
+
+@app.put("/user/modifyconference")
+def createconference(modify_conference: conferenceInfo =Body(default=None)):
+    URL = "conferences/"+modify_conference.conferenceID+"/subConferenceID/"+modify_conference.subconferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(modify_conference.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY = {'conferenceInfo':modify_conference.dict()}
+    del BODY["conferenceInfo"]["conferenceID"]
+    del BODY["conferenceInfo"]["subconferenceID"]
+    del BODY['conferenceInfo']['token']
+    dict1 = ssl1.update_PUT(URL, head, BODY)
+    return dict1
+
+@app.delete("/user/deleteconference")
+def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
+    URL="conferences/"+delete_conf.conferenceID+"/subConferenceID/"+delete_conf.subconferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+
+# @app.put("/user/prologconference")
+# def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
+#     URL="conferences/"+prolog_Conf.conferenceID+"/length"
+
+#     try:
+#         head = {'Authorization': "Basic " + redis_client.get(prolog_Conf.token).decode('utf8')}
+#     except AttributeError:
+#         return {"message": "Invalid Token"}
+
+#     BODY={}
+
+#     dict1=ssl1.encoded_PUT(URL,head,BODY)
+
+#     return dict1
+
+
+
+@app.post("/user/conferencelist")
+def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
+    URL = "conferenceList"
+
+#checking jwt logout
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(conference_list.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
     
-    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
-    print("Body IN\n",body_xml)
-#     print(headers)
-    start = time.time()
-    r = requests.post(url, headers=headers, data=body_xml, verify=False)
-    end = time.time()
     
-    data_dict = xmltodict.parse(r.content)
+    BODY = {'conferenceFilter': conference_list.dict()}
+    del BODY['conferenceFilter']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
+    # return dict1
+    data_list = dict1["conferenceList"]["page"]["data"]
+    keys_to_extract = [
+    "Subject",
+    "StartTime",
+    "EndTime",
+    "ScheduserName",
+    "accessNumber",
+    "ConferenceID",
+    "ChairpersonID",
+    "ConferenceState",
+    "factEndTime",
+]
 
-    print("Body OUT\n",data_dict)
+    ans={"message": "success"}
+    conf_details={"message":'GET_SUCCESS'}
+
+    i=0
+    for item in data_list:
+        entry_list = item["entry"]
+        extracted_dict = {}
+        for entry in entry_list:
+            key = entry["key"]
+            value = entry["value"]
+            if key in keys_to_extract:
+                extracted_dict[key] = value
+        URL = "conferences/" + extracted_dict['ConferenceID'] + "/subConferenceID/0"
+        dict1 = ssl1.data_GET(URL, head)
+        info=dict1["conferenceResult"]["conferenceInfo"]
+        i+=1
+        info["chair"]=info["passwords"][0]["password"]
+        info["general"]=info["passwords"][1]["password"]
+        del info['passwords']
+        conf_details[i]=info
+        # print(conf_details)
+        ans.update({i:extracted_dict})
+    conf_details["total"]=i
+
+    return conf_details
+
+
+@app.post("/user/queryconferenceinfo")
+def queryConferenceInfo(confInfo: QueryConfInfo=Body(default=None)):
+    URL="conferences/"+confInfo.conferenceID+"/subConferenceID/"+confInfo.subconferenceID
+    try:
+        head= {'Authorization': "Basic " +redis_client.get(confInfo.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+
+    dict1=ssl1.data_GET(URL,head)
+
+    return dict1
+
+@app.post("/user/inviteparticipants")
+def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
+    URL="conferences/"+invite_participant.conferenceID+"/participants"
+    # print("Particpant Data:",invite_participant)
+    try:
+        head= {'Authorization': "Basic " +redis_client.get(invite_participant.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+
+    BODY={"inviteParas":invite_participant.dict()}
+    del BODY["inviteParas"]["token"]
+    del BODY["inviteParas"]["conferenceID"]
+
+
+    try:
+        dict1 = ssl1.create_POST(URL, head, BODY)
+    except xml.parsers.expat.ExpatError as e:
+        # Handle the exception here
+        print("Error parsing XML:", e)
+        return {"message": "Error occurred during XML parsing"}
+
+    return dict1
+    # return {"message":"Calling..."}
+
+# @app.get("/user/verifyparticipant")
+# def verifyParticipant(verifyparti: VerifyParticipant = Body(default=None)) -> Dict[str, Any]:
+#     URL = "conferences/" + verifyparti.conferenceID + "/participants/" + verifyparti.participantID + "/validate"
+#     try:
+#         head = {'Authorization': "Basic " + redis_client.get(verifyparti.token).decode('utf8')}
+#     except AttributeError:
+#         return {"message": "Invalid Token"}
+
+#     dict1 = ssl1.data_GET(URL, head)
+
+#     return dict1
     
-    print("The time of execution is:", (end - start) * 10**3, "ms")
-
-    return data_dict
-
-
-def update_PUT(URL, head, body):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings()
-
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
-
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
-
-    # body_dict = body.dict()
+# @app.delete("/user/removeparticipant")
+# def removeParticipant(remove_parti:verifyParticipant=Body(default=None)):
+#     URL="conferences/"+remove_parti.conferenceID+"/participants/"+remove_parti.participantID
+#     try:
+#         head= {'Authorization': "Basic " +redis_client.get(remove_parti.token).decode('utf8')}
+#     except AttributeError:
+#         return {"message": "Invalid Token"}
     
-    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
-    print(body_xml)
-    print("Body IN\n",body_xml)
+#     dict1=ssl1.data_DELETE(URL,head)
 
-#     print(headers)
-    start = time.time()
-    r = requests.put(url, headers=headers, data=body_xml, verify=False)
-    end = time.time()
-
-    data_dict = xmltodict.parse(r.content)
-
-    print("Body OUT\n",data_dict)
-    
-    print("The time of execution is:", (end - start) * 10**3, "ms")
-
-    return data_dict
-
-def encoded_PUT(URL,head,body,):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings()
-
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
-
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
-
-    body_encoded = urllib3.parse.urlencode(body)
-
-    start = time.time()
-    r = requests.put(url, headers=headers, data=body_encoded, verify=False)
-    end = time.time()
-
-    data_dict = xmltodict.parse(r.content)
-
-    print("Body OUT\n", data_dict)
-
-    print("The time of execution is:", (end - start) * 10**3, "ms")
-
-    return data_dict
-
-#------------------------------------------------------------------------------------------------  
-def data_GET(URL, head):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings()
-
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
-
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
-    print("Head IN\n",headers)
-
-#     body_dict = body.dict()
-    
-    # print(headers)
-    start = time.time()
-    r = requests.get(url, headers=headers,  verify=False)
-    end = time.time()
-
-    print (r.content)
-    data_dict = xmltodict.parse(r.content)
-
-    print("Body OUT\n",data_dict)
-    print("The time of execution is:", (end - start) * 10**3, "ms")
-
-    return data_dict
-
-def remove_DELETE(URL,head):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings() 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
-    
-    start = time.time()
-    r = requests.delete(url,headers=headers, verify=False)
-    end = time.time()
-
-    data_dict=xmltodict.parse(r.content)
-
-    print(data_dict)
-    print("The time of execution is :",
-        (end-start) * 10**3, "ms")
-      
-      
-    return data_dict
-
-def logout(URL,head):
-    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
-    requests.packages.urllib3.disable_warnings() 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
-    headers = {'content-type': 'application/json'}
-    headers.update(head)
-
-#   print (head)
-
-    start = time.time()
-    r = requests.delete(url,headers=headers, verify=False)
-    end = time.time()
-
-    data_dict = xmltodict.parse(r.content)
-    
-    print(data_dict)
-    print("The time of execution is :",
-        (end-start) * 10**3, "ms")
-    
-    
-    return data_dict
+#     return dict1
