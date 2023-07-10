@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -302,3 +302,15 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
 #     dict1=ssl1.data_DELETE(URL,head)
 
 #     return dict1
+
+@app.put("/user/finduserpassword")
+def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
+    URL = "findUserPassword"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(modify_conference.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY = {'findUserPasswordInfo':find_password.dict()}
+    del BODY["findUserPasswordInfo"]["token"]
+    dict1 = ssl1.update_PUT(URL, head, BODY)
+    return dict1
