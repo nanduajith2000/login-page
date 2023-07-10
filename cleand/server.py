@@ -1,64 +1,171 @@
-from fastapi import FastAPI, Body, Depends, Header
-from pydan import LogoutToken
-from app.model import UsersLoginSchema
-from app.auth.jwt_handler import signJWT, decodeJWT
-from app.auth.jwt_bearer import jwtBearer
-
-from fastapi.middleware.cors import CORSMiddleware
-import redis
-import ssl1
-# from json2xml import json2xml
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+import requests
+import time
+import urllib3
+import xmltodict
+import json
 
 
-msg1 = "Enter Student ID"
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+requests.packages.urllib3.disable_warnings() 
+def login(URL,head):
+      url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
+      headers = {'content-type': 'application/json'}
+      headers.update(head)
+      start = time.time()
+      r = requests.post(url, verify=False)
+      end = time.time()
 
-app = FastAPI()
+      data_dict = xmltodict.parse(r.content)
+      
+      print("Body OUT\n",data_dict)
+      print("The time of execution is :",
+            (end-start) * 10**3, "ms")
+      
+      
+      return data_dict
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+def create_POST(URL, head, body):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings()
+
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+
+#     body_dict = body.dict()
+    
+    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
+    print("Body IN\n",body_xml)
+#     print(headers)
+    start = time.time()
+    r = requests.post(url, headers=headers, data=body_xml, verify=False)
+    end = time.time()
+    
+    data_dict = xmltodict.parse(r.content)
+
+    print("Body OUT\n",data_dict)
+    
+    print("The time of execution is:", (end - start) * 10**3, "ms")
+
+    return data_dict
 
 
-@app.post("/user/login", tags=["user"])
-def user_login(user: UsersLoginSchema = Body(default=None)):
-    URL = "login?accountType=WEB&accountName="+user.email+"&password="+user.password
-    dict1 = ssl1.login(URL, user)
-    print(dict1)
-    try:
-        if dict1["loginResult"]["result"]["resultDesc"] == "SUCCESS":
-            redis_client.set(dict1["loginResult"]["profile"]
-                             ["token"], signJWT(user.email)["access token"])
-            return {"message": "success",
-                    "token": dict1["loginResult"]["profile"]["token"]
-                    }
-    except:
-        if dict1["result"]["resultDesc"] == "NOT_FOUND":
-            return{"message": "Invalid username or password"}
-        else:
-            return{"message": "some error has occurred"}
+def update_PUT(URL, head, body):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings()
 
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
 
-# Route : To logout
-# @app.delete("/user/logout", dependencies=[Depends(jwtBearer())], tags=["user"])
-@app.delete("/user/logout", tags=["user"])
-def logout(logout_token: LogoutToken = Body(default=None)):
-    URL = "/logout"
-    # logout_token=json2xml(logout_token).to_xml()
-    dict1 = ssl1.login(URL, logout_token)
-    print(dict1)
-    try:
-        if dict1["result"]["resultDesc"] == "SUCCESS":
-            user = decodeJWT(logout_token.token)
-            redis_client.expire(logout_token.token, 1)
-            return {"message": "success"}
-    except:
-        return{"message": "some error has occurred"}
-    # if user:
-        # user["expiry"] = time.time()
-    # Perform additional logout actions, such as removing the token from a blacklist or invalidating the token
-    # return {"message": "User has been logged out"}
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+
+    # body_dict = body.dict()
+    
+    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
+    print(body_xml)
+    print("Body IN\n",body_xml)
+
+#     print(headers)
+    start = time.time()
+    r = requests.put(url, headers=headers, data=body_xml, verify=False)
+    end = time.time()
+
+    data_dict = xmltodict.parse(r.content)
+
+    print("Body OUT\n",data_dict)
+    
+    print("The time of execution is:", (end - start) * 10**3, "ms")
+
+    return data_dict
+
+def encoded_PUT(URL,head,body,):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings()
+
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+
+    body_encoded = urllib3.parse.urlencode(body)
+
+    start = time.time()
+    r = requests.put(url, headers=headers, data=body_encoded, verify=False)
+    end = time.time()
+
+    data_dict = xmltodict.parse(r.content)
+
+    print("Body OUT\n", data_dict)
+
+    print("The time of execution is:", (end - start) * 10**3, "ms")
+
+    return data_dict
+
+#------------------------------------------------------------------------------------------------  
+def data_GET(URL, head):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings()
+
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+    print("Head IN\n",headers)
+
+#     body_dict = body.dict()
+    
+    # print(headers)
+    start = time.time()
+    r = requests.get(url, headers=headers,  verify=False)
+    end = time.time()
+
+    print (r.content)
+    data_dict = xmltodict.parse(r.content)
+
+    print("Body OUT\n",data_dict)
+    print("The time of execution is:", (end - start) * 10**3, "ms")
+
+    return data_dict
+
+def remove_DELETE(URL,head):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings() 
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+    
+    start = time.time()
+    r = requests.delete(url,headers=headers, verify=False)
+    end = time.time()
+
+    data_dict=xmltodict.parse(r.content)
+
+    print(data_dict)
+    print("The time of execution is :",
+        (end-start) * 10**3, "ms")
+      
+      
+    return data_dict
+
+def logout(URL,head):
+    requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
+    requests.packages.urllib3.disable_warnings() 
+    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
+    headers = {'content-type': 'application/json'}
+    headers.update(head)
+
+#   print (head)
+
+    start = time.time()
+    r = requests.delete(url,headers=headers, verify=False)
+    end = time.time()
+
+    data_dict = xmltodict.parse(r.content)
+    
+    print(data_dict)
+    print("The time of execution is :",
+        (end-start) * 10**3, "ms")
+    
+    
+    return data_dict
