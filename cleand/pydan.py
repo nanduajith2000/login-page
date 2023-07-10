@@ -19,6 +19,15 @@ class UserSchema(BaseModel):
 class LogoutToken(BaseModel):
     token:str
 
+class addressEntrySchema(BaseModel):
+     address:str
+     type:str
+     
+class attendeeSchema(BaseModel):
+     attendeeName:str
+     conferenceRole: str
+     addressEntry: Optional[List[addressEntrySchema]]=[]
+
 class createConferenceInfo(BaseModel):
     token:str
     length:int
@@ -28,7 +37,7 @@ class createConferenceInfo(BaseModel):
     startTime:Optional[str]="0"
     timeZone:int
     language: str
-    attendee:Optional[dict]={}
+    attendees:Optional[List[attendeeSchema]]=[]
 
 class conferenceInfo (BaseModel):
     token:str
@@ -41,7 +50,7 @@ class conferenceInfo (BaseModel):
     startTime:Optional[str]="0"
     timeZone:int
     language: str
-    attendee:Optional[dict]={}
+    attendees:Optional[dict]={}
 
 class ConferenceTemplate(BaseModel):
     token:str
@@ -109,3 +118,14 @@ class QueryConfInfo(BaseModel):
     token:str
     conferenceID:str
     subconferenceID:Optional[str]="0" 
+
+class AccountInfo(BaseModel):
+    name:str
+    type:str
+
+class UserPasswordInfo(BaseModel):
+    token: str
+    account: AccountInfo
+    oldPassWord: str
+    newPassWord: str
+    newPassWordAffirm: str

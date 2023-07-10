@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -85,7 +85,7 @@ def CreateConferenceTemplate(conf_template: ConferenceTemplate =Body(default=Non
     dict1 = ssl1.create_POST(URL,head,BODY)
     return dict1
 
-@app.put("user/modifyconferencetemplate")
+@app.put("/user/modifyconferencetemplate")
 def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
     URL="conferenceTemplate/"+mod_template.templateId
     try:
@@ -241,6 +241,18 @@ def queryConferenceInfo(confInfo: QueryConfInfo=Body(default=None)):
 
     dict1=ssl1.data_GET(URL,head)
 
+    return dict1
+
+@app.put("/user/modifyuserpassword")
+def mod_userpass(mod_password:UserPasswordInfo = Body(default=None)):
+    URL="modifyUserPassword"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(mod_password.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY= {"userPasswordInfo":mod_password.dict()}
+    del BODY["userPasswordInfo"]["token"]
+    dict1 = ssl1.update_PUT(URL,head,BODY)
     return dict1
 
 @app.post("/user/inviteparticipants")
