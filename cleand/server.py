@@ -1,7 +1,7 @@
-from fastapi import FastAPI, Body, Depends, Header
+from fastapi import FastAPI,Body,Depends,Header
 from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo
 from app.model import UsersLoginSchema
-from app.auth.jwt_handler import signJWT, decodeJWT
+from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
 import xml.parsers.expat
 from typing import Dict, Any
@@ -9,12 +9,14 @@ from typing import Dict, Any
 
 from fastapi.middleware.cors import CORSMiddleware
 import redis
-import ssl1
-# from json2xml import json2xml
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+import ssl1 
 
 
-msg1 = "Enter Student ID"
+
+redis_client = redis.Redis(host='localhost',port=6379,db=0)
+
+
+msg1= "Enter Student ID"
 
 app = FastAPI()
 
@@ -46,8 +48,8 @@ def user_login(user: UsersLoginSchema = Body(default=None)):
             redis_client.set(jwt_token,dict1["loginResult"]["profile"]["token"])
             return {"message": "success","token":jwt_token,"userID":dict1["loginResult"]["profile"]["userID"]}
     except:
-        if dict1["result"]["resultDesc"] == "NOT_FOUND":
-            return{"message": "Invalid username or password"}
+        if dict1["result"]["resultDesc"]=="NOT_FOUND":
+            return{"message":"Invalid username or password"}
         else:
             return{"message":"some error has occurred"}
    
