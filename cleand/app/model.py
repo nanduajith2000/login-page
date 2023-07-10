@@ -1,4 +1,4 @@
-from pydantic import BaseModel,Field,EmailStr
+from pydantic import BaseModel,Field
 
 class PostSchema(BaseModel):
     id: int = Field(default=None)
@@ -14,7 +14,7 @@ class PostSchema(BaseModel):
 
 class UsersSchema(BaseModel):
     fullname:str 
-    email: EmailStr 
+    email: str
     password: str 
     class Config:
         the_schema = {
@@ -28,6 +28,8 @@ class UsersSchema(BaseModel):
 class UsersLoginSchema(BaseModel):
     email: str = Field(default=None)
     password: str = Field(default=None)
+    accountType: str
+
     class Config:
         the_schema = {
             "user_demo": {
