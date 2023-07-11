@@ -149,8 +149,8 @@ def createconference(modify_conference: conferenceInfo =Body(default=None)):
     dict1 = ssl1.update_PUT(URL, head, BODY)
     return dict1
 
-@app.delete("/user/deleteconference")
-def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
+@app.delete("/user/removescheduledconference")
+def delete_schedconf(delete_conf:QueryConfInfo = Body(default=None)):
     URL="conferences/"+delete_conf.conferenceID+"/subConferenceID/"+delete_conf.subconferenceID
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
@@ -158,6 +158,20 @@ def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
         return {"message": "Invalid Token"}
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
+
+@app.delete("/user/removeconference")
+def remove_conference(delete_conf: QueryConfInfo=Body(default=None)):
+    URL="conferences/"+delete_conf.conferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+    
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+
+
+
 
 # @app.put("/user/prologconference")
 # def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
@@ -279,17 +293,17 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
     return dict1
     # return {"message":"Calling..."}
 
-# @app.get("/user/verifyparticipant")
-# def verifyParticipant(verifyparti: VerifyParticipant = Body(default=None)) -> Dict[str, Any]:
-#     URL = "conferences/" + verifyparti.conferenceID + "/participants/" + verifyparti.participantID + "/validate"
-#     try:
-#         head = {'Authorization': "Basic " + redis_client.get(verifyparti.token).decode('utf8')}
-#     except AttributeError:
-#         return {"message": "Invalid Token"}
+@app.post("/user/verifyparticipant")
+def verifyParticipant(verifyparti: VerifyParticipant = Body(default=None)):
+    URL = "conferences/" + verifyparti.conferenceID + "/participants/" + verifyparti.participantID + "/validate"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(verifyparti.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
 
-#     dict1 = ssl1.data_GET(URL, head)
+    dict1 = ssl1.data_GET(URL, head)
 
-#     return dict1
+    return dict1
     
 # @app.delete("/user/removeparticipant")
 # def removeParticipant(remove_parti:verifyParticipant=Body(default=None)):
@@ -307,7 +321,7 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
 def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
     URL = "findUserPassword"
     try:
-        head = {'Authorization': "Basic " + redis_client.get(modify_conference.token).decode("utf-8")}
+        head = {'Authorization': "Basic " + redis_client.get(find_password.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
     BODY = {'findUserPasswordInfo':find_password.dict()}
