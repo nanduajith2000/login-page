@@ -270,7 +270,7 @@ const UpcomingMeetings = () => {
     if (confirmDelete) {
       console.log("Removing meeting: ", meeting);
       const token = getCookie("user");
-      EndConference(token, meeting.conferenceKey.conferenceID)
+      EndConference(token, meeting.conferenceKey.conferenceID, "0")
         .then((res) => {
           console.log(res);
           const token = getCookie("user");
@@ -334,6 +334,7 @@ const UpcomingMeetings = () => {
           {meetings.map((meeting) => (
             <React.Fragment key={meeting.id}>
               <ListItem
+                key={meeting.id}
                 className={`${classes.listItem} ${
                   meeting.expanded ? classes.rootExpanded : ""
                 }`}

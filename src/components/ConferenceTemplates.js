@@ -111,7 +111,6 @@ function getCookie(cookieName) {
 }
 
 const token = getCookie("user");
-const jwtToken = getCookie("jwtToken");
 
 const ConferenceTemplates = () => {
   const classes = useStyles();
@@ -120,7 +119,7 @@ const ConferenceTemplates = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    ConferenceTemplateList(token, jwtToken)
+    ConferenceTemplateList(token)
       .then((res) => {
         const templateArray = Object.values(res)
           .filter((value) => typeof value === "object")
