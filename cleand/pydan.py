@@ -136,3 +136,8 @@ class FindUserPasswordInfo(BaseModel):
      accountType:str
      notifyType:str
      ipaddr:str
+
+class IsAllMute(BaseModel):
+     token: str
+     conferenceID:str
+     isAllMute:bool
