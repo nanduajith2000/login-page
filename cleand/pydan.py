@@ -39,6 +39,7 @@ class createConferenceInfo(BaseModel):
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
     isAllowInvite:Optional [bool]=True
+    isAutoInvite: Optional [bool]=True
 
 
 class conferenceInfo (BaseModel):
@@ -53,6 +54,7 @@ class conferenceInfo (BaseModel):
     timeZone:int
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
+    isAllowInvite:Optional [bool]=True
 
 class ConferenceTemplate(BaseModel):
     token:str
@@ -96,7 +98,7 @@ class InvitePara(BaseModel):
     email: Optional[str]
     sms: Optional[str]
     role: Optional[str] = "general"
-    isMute:Optional [bool] = True
+    isMute:Optional [bool] = False
 
 
 class ConferenceInvite(BaseModel):
@@ -133,16 +135,21 @@ class UserPasswordInfo(BaseModel):
     newPassWordAffirm: str
 
 class FindUserPasswordInfo(BaseModel):
-     token:str
-     name:str
-     accountType:str
-     notifyType:str
-     ipaddr:str
+    token:str
+    accountType:str
+    notifyType:str
+    ipaddr:str
 
 class IsAllMute(BaseModel):
-     token:str
-     conferenceID:str
-     isAllMute:bool
+    token:str
+    conferenceID: str
+    isAllMute: bool
+
+class DeleteConf(BaseModel):
+    token:str
+    conferenceID: str
+    participantID:str
+
 
 class Contactor(BaseModel):
      token:str
