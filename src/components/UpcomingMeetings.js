@@ -12,10 +12,13 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useNavigate } from "react-router-dom";
+import API from '../api/API.js';
 
-const queryConferenceList = require("../api/QueryConferenceList");
-const EndConference = require("../api/RemoveConference");
-const Login = require("../api/Login");
+
+// const queryConferenceList = require("../api/QueryConferenceList");
+// const EndConference = require("../api/RemoveConference");
+
+// const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -214,7 +217,7 @@ const UpcomingMeetings = () => {
 
   React.useEffect(() => {
     const token = getCookie("user");
-    queryConferenceList(token)
+    API.queryConferenceList(token)
       .then((res) => {
         const meetingArray = Object.values(res)
           .filter((value) => typeof value === "object")
@@ -269,11 +272,11 @@ const UpcomingMeetings = () => {
     if (confirmDelete) {
       console.log("Removing meeting: ", meeting);
       const token = getCookie("user");
-      EndConference(token, meeting.conferenceKey.conferenceID, "0")
+      API.EndConference(token, meeting.conferenceKey.conferenceID, "0")
         .then((res) => {
           console.log(res);
           const token = getCookie("user");
-          queryConferenceList(token)
+          API.queryConferenceList(token)
             .then((res) => {
               const meetingArray = Object.values(res)
                 .filter((value) => typeof value === "object")
