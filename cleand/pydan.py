@@ -38,6 +38,8 @@ class createConferenceInfo(BaseModel):
     timeZone:int
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
+    isAllowInvite:Optional [bool]=True
+
 
 class conferenceInfo (BaseModel):
     token:str
@@ -50,7 +52,7 @@ class conferenceInfo (BaseModel):
     startTime:Optional[str]="0"
     timeZone:int
     language: str
-    attendees:Optional[dict]={}
+    attendees:Optional[List[attendeeSchema]]=[]
 
 class ConferenceTemplate(BaseModel):
     token:str
@@ -96,13 +98,11 @@ class InvitePara(BaseModel):
     role: Optional[str] = "general"
     isMute:Optional [bool] = True
 
-class InviteParas(BaseModel):
-    invitePara: List[InvitePara]
 
 class ConferenceInvite(BaseModel):
     token: str
     conferenceID: str
-    inviteParas: InviteParas
+    invitePara: List[InvitePara]
 
 class VerifyParticipant(BaseModel):
     token: str
@@ -129,10 +129,3 @@ class UserPasswordInfo(BaseModel):
     oldPassWord: str
     newPassWord: str
     newPassWordAffirm: str
-
-class FindUserPasswordInfo(BaseModel):
-     token:str
-     name:str
-     accountType:str
-     notifyType:str
-     ipaddr:str
