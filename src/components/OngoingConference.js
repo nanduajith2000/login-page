@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Checkbox,
   Container,
@@ -15,6 +15,9 @@ import {
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
+import { useNavigate } from "react-router-dom";
+
+const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -85,6 +88,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const InviteParticipants = require("../api/InviteParticipants");
+function clearAllCookies() {
+  const cookies = document.cookie.split(";");
+
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
+    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+  }
+}
 
 function getCookie(cookieName) {
   const cookieString = document.cookie;
@@ -101,6 +114,8 @@ function getCookie(cookieName) {
 }
 
 const OngoingConference = () => {
+  const navigate = useNavigate();
+
   const userID = localStorage.getItem("userID");
   const classes = useStyles();
   const [meeting, setMeeting] = useState(
@@ -111,6 +126,23 @@ const OngoingConference = () => {
   );
   console.log(participants);
   const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    clearAllCookies();
+    Login(
+      meeting.conferenceKey.conferenceID,
+      meeting.chair,
+      "ConferenceID"
+    ).then((res) => {
+      console.log(res);
+      if (res.message === "success") {
+        document.cookie = "cred=" + res.token;
+        localStorage.setItem("ConferenceID", meeting.conferenceID);
+        localStorage.setItem("Password", meeting.chair);
+        console.log(document.cookie);
+      } else alert("Invalid Credentials");
+    });
+  }, []);
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -143,17 +175,35 @@ const OngoingConference = () => {
   };
 
   const handleCall = (participant) => {
-    var token = getCookie("user");
-    const inviteParas = {
-      name: participant.attendeeName,
-      phone: participant.addressEntry.address,
-    };
+    const credCookie = document.cookie
+      .split(";")
+      .map((cookie) => cookie.trim())
+      .find((cookie) => cookie.startsWith("cred="));
 
-    InviteParticipants(token, meeting.conferenceKey.conferenceID, inviteParas)
+    if (credCookie) {
+      var credValue = credCookie.substring(5);
+      // Output: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMxNzk1MjQwIiwiZXhwaXJ5IjoxNjg5NDUwOTQxLjU2MzIyN30.RhWViXoOUMiRe_w7HRXesNTahYZkFkBK9ThUFklykXI
+    }
+    console.log("Participant: ", participant);
+
+    const invitePara = [
+      {
+        name: participant.attendeeName,
+        phone: participant.addressEntry.address,
+      },
+    ];
+    console.log("Cred: ", credValue);
+    console.log("Conference ID: ", meeting.conferenceKey.conferenceID);
+    InviteParticipants(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      invitePara
+    )
       .then((res) => console.log(res))
-      .catch((err) =>
-        alert("Could not call attendee. Please try again later.")
-      );
+      .catch((err) => {
+        console.log(err);
+        alert("Could not call attendee. Please try again later.");
+      });
   };
 
   const handleSearch = (event) => {
@@ -228,7 +278,7 @@ const OngoingConference = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
-                        onClick={() => handleCall(participant.id)}
+                        onClick={() => handleCall(participant)}
                         // disabled={
                         //   !participant.connected && participant.selected
                         // }
