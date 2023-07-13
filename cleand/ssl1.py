@@ -3,6 +3,7 @@ import time
 import urllib3
 import xmltodict
 import json
+import urllib.parse
 
 
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
@@ -36,15 +37,16 @@ def create_POST(URL, head, body):
 #     body_dict = body.dict()
     
     body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
-    print("Body IN\n",body_xml)
+    print("\nBody IN\n",body_xml)
 #     print(headers)
     start = time.time()
     r = requests.post(url, headers=headers, data=body_xml, verify=False)
     end = time.time()
     
+    print("\n Content Out \n",r)
     data_dict = xmltodict.parse(r.content)
 
-    print("Body OUT\n",data_dict)
+    # print("Body OUT\n",data_dict)
     
     print("The time of execution is:", (end - start) * 10**3, "ms")
 
@@ -88,7 +90,7 @@ def encoded_PUT(URL,head,body,):
 
     url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
 
-    body_encoded = urllib3.parse.urlencode(body)
+    body_encoded = urllib.parse.urlencode(body)
 
     start = time.time()
     r = requests.put(url, headers=headers, data=body_encoded, verify=False)
