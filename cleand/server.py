@@ -327,5 +327,3 @@ def isallmute(is_mute: IsAllMute = Body(default=None)):
     del BODY["conferenceID"]
     dict1 = ssl1.encoded_PUT(URL, head, BODY)
     return dict1
-
-

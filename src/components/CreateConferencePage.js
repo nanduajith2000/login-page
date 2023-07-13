@@ -232,13 +232,17 @@ const CreateConference = () => {
   const handleAddContact = () => {
     const newContact = {
       attendeeName,
-      addressEntry: {
-        address: `${phoneNumber}`,
-        type: "phone",
-      },
+      conferenceRole: "general",
+      addressEntry: [
+        {
+          address: `${phoneNumber}`,
+          type: "phone",
+        },
+      ],
     };
 
     setContacts((prevContacts) => [...prevContacts, newContact]);
+
     handleCloseDialog();
   };
 
@@ -603,15 +607,15 @@ const CreateConference = () => {
                 {addedParticipants.map((participant) => (
                   <Chip
                     key={participant.id}
-                    label={participant.name}
+                    label={participant.attendeeName}
                     onDelete={() => handleDeleteParticipant(participant.id)}
                     className={classes.chip}
                   />
                 ))}
-                {contacts.map((contact, index) => (
+                {contacts.map((contact) => (
                   <Chip
                     key={contact.id}
-                    label={contact.name}
+                    label={contact.attendeeName}
                     onDelete={() => handleDeleteContact(contact.id)}
                     className={classes.chip}
                   />

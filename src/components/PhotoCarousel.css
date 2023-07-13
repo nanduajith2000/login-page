@@ -6,7 +6,7 @@
 .carousel-container .image {
   object-fit: contain;
   opacity: 1;
-  transition: opacity 1s ease-in;
+  transition: opacity 1s ease-in-out;
 }
 
 .carousel-container .hiddenImage {

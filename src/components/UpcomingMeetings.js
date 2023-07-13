@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 const queryConferenceList = require("../api/QueryConferenceList");
 const EndConference = require("../api/RemoveConference");
+const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -245,6 +246,20 @@ const UpcomingMeetings = () => {
   };
 
   const handleJoinConference = (meeting) => {
+    // console.log(meeting.conferenceKey.conferenceID,meeting.chair)
+    Login(meeting.conferenceKey.conferenceID,meeting.chair,"ConferenceID")
+    .then((res) => {
+      console.log(res);
+
+      if (res.message === "success") {
+        console.log(res.token);
+        document.cookie = "cred=" + res.token ;
+        localStorage.setItem("ConferenceID", meeting.conferenceID);
+        localStorage.setItem("Password",meeting.chair);
+        console.log(document.cookie);
+        navigate("/home");
+      } else alert("Invalid Credentials");
+    })
     localStorage.setItem("meetingDetails", JSON.stringify(meeting));
     console.log(
       "Meeting details: ",
@@ -270,7 +285,7 @@ const UpcomingMeetings = () => {
     if (confirmDelete) {
       console.log("Removing meeting: ", meeting);
       const token = getCookie("user");
-      EndConference(token, meeting.conferenceKey.conferenceID)
+      EndConference(token, meeting.conferenceKey.conferenceID, "0")
         .then((res) => {
           console.log(res);
           const token = getCookie("user");
@@ -334,6 +349,7 @@ const UpcomingMeetings = () => {
           {meetings.map((meeting) => (
             <React.Fragment key={meeting.id}>
               <ListItem
+                key={meeting.id}
                 className={`${classes.listItem} ${
                   meeting.expanded ? classes.rootExpanded : ""
                 }`}
