@@ -121,6 +121,8 @@ class QueryConfInfo(BaseModel):
     conferenceID:str
     subconferenceID:Optional[str]="0" 
 
+
+
 class AccountInfo(BaseModel):
     name:str
     type:str
@@ -133,7 +135,7 @@ class UserPasswordInfo(BaseModel):
     newPassWordAffirm: str
 
 class IsAllMute(BaseModel):
-    token: str
+    token:str
     conferenceID: str
     isAllMute: bool
 
@@ -142,3 +144,13 @@ class DeleteConf(BaseModel):
     conferenceID: str
     participantID:str
 
+
+class Contactor(BaseModel):
+     token:str
+     id:str
+     name:str
+     phone:str
+     mobile:str
+     email:str
+     impu:str
+     description:str

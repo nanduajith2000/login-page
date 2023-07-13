@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Typography,
   Grid,
@@ -21,7 +21,7 @@ import EditConfirmation from "./EditConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 
-const createconference = require("../api/CreateConference.js");
+const ModifyConference = require("../api/ModifyConference.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -86,7 +86,6 @@ const useStyles = makeStyles((theme) => ({
     gap: theme.spacing(2),
   },
 }));
-const userID = localStorage.getItem("userID");
 
 function convertUTCMillisecondsToDate(utcMilliseconds) {
   // Create a new Date object with the UTC milliseconds
@@ -126,22 +125,44 @@ function convertMillisecondsToHoursAndMinutes(milliseconds) {
   var hours = Math.floor(milliseconds / (1000 * 60 * 60));
   var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
 
-  return { hours: hours, minutes: minutes };
+  // Format hours and minutes as two-digit strings
+  var formattedHours = hours.toString().padStart(2, "0");
+  var formattedMinutes = minutes.toString().padStart(2, "0");
+
+  return { hours: formattedHours, minutes: formattedMinutes };
+}
+
+function getLongMonth(month) {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  return months[month - 1];
 }
 
 const EditConference = () => {
+  const navigate = useNavigate();
   const [meeting, setMeeting] = useState(
     JSON.parse(localStorage.getItem("meetingDetails"))
   );
-  const navigate = useNavigate();
-  const [subject, setSubject] = useState(
-    `${meeting.scheduserName}'s Conference`
-  );
+  const [subject, setSubject] = useState(`${meeting.subject}`);
   const [date, setDate] = useState({
     day: convertUTCMillisecondsToDate(meeting.startTime).day,
-    month: convertUTCMillisecondsToDate(meeting.startTime).month,
+    month: getLongMonth(convertUTCMillisecondsToDate(meeting.startTime).month),
     year: convertUTCMillisecondsToDate(meeting.startTime).year,
   });
+
   const [startTime, setStartTime] = useState({
     hours: convertUTCMillisecondsToDate(meeting.startTime).hours,
     minutes: convertUTCMillisecondsToDate(meeting.startTime).minutes,
@@ -154,7 +175,7 @@ const EditConference = () => {
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
   const [addedParticipants, setAddedParticipants] = useState(
-    meeting.attendees > 2 ? meeting.attendees : []
+    meeting.attendees.length > 2 ? meeting.attendees : []
   );
   const [chairpersonPassword, setChairpersonPassword] = useState(meeting.chair);
   const [guestPassword, setGuestPassword] = useState(meeting.general);
@@ -165,7 +186,7 @@ const EditConference = () => {
 
   const [creator, setCreator] = useState(meeting.scheduserName);
   const [accessNumber, setAccessNumber] = useState(meeting.accessNumber);
-  const [name, setName] = useState("");
+  const [attendeeName, setAttendeeName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [openConfirmation, setOpenConfirmation] = useState(false);
@@ -222,38 +243,27 @@ const EditConference = () => {
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
 
-    //   createconference(
-    //     token,
-    //     jwtToken,
-    //     durationInMilliseconds,
-    //     participants,
-    //     48,
-    //     "en_US",
-    //     subject,
-    //     formattedStartTimeUTC
-    //   )
-    //     .then((res) => {
-    //       console.log(res);
-    //       setConferenceID(
-    //         res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
-    //       );
-    //       setAccessNumber(
-    //         res.scheduleConferenceResult.conferenceInfo.accessNumber
-    //       );
-    //       setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
-    //       setChairpersonPassword(
-    //         res.scheduleConferenceResult.conferenceInfo.passwords[0].password
-    //       );
-    //       setGuestPassword(
-    //         res.scheduleConferenceResult.conferenceInfo.passwords[1].password
-    //       );
-    //     })
+    ModifyConference(
+      token,
+      meeting.conferenceKey.conferenceID,
+      "0",
+      durationInMilliseconds,
+      participants,
+      48,
+      "en_US",
+      subject,
+      formattedStartTimeUTC,
+      contacts
+    )
+      .then((res) => {
+        console.log(res);
+      })
 
-    //     .catch((err) => {
-    //       console.log(err);
-    //       navigate("/home");
-    //       alert("Error in creating conference. Please try again.");
-    //     });
+      .catch((err) => {
+        console.log(err);
+        // navigate("/home");
+        alert("Error in creating conference. Please try again.");
+      });
   };
 
   const handleAddParticipant = () => {
@@ -274,17 +284,24 @@ const EditConference = () => {
 
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    setName("");
+    setAttendeeName("");
     setPhoneNumber("");
   };
 
   const handleAddContact = () => {
     const newContact = {
-      name,
-      phoneNumber,
+      attendeeName,
+      conferenceRole: "general",
+      addressEntry: [
+        {
+          address: `${phoneNumber}`,
+          type: "phone",
+        },
+      ],
     };
 
     setContacts((prevContacts) => [...prevContacts, newContact]);
+
     handleCloseDialog();
   };
 
@@ -649,7 +666,7 @@ const EditConference = () => {
                 {addedParticipants.map((participant) => (
                   <Chip
                     key={participant.id}
-                    label={participant.name}
+                    label={participant.attendeeName}
                     onDelete={() => handleDeleteParticipant(participant.id)}
                     className={classes.chip}
                   />
@@ -657,7 +674,7 @@ const EditConference = () => {
                 {contacts.map((contact, index) => (
                   <Chip
                     key={contact.id}
-                    label={contact.name}
+                    label={contact.attendeeName}
                     onDelete={() => handleDeleteContact(contact.id)}
                     className={classes.chip}
                   />
@@ -682,7 +699,7 @@ const EditConference = () => {
           guestPassword={guestPassword}
           creator={creator}
           accessNumber={accessNumber}
-          addedParticipants={addedParticipants}
+          // addedParticipants={addedParticipants}
           participants={participants}
         />
       )}
@@ -699,8 +716,8 @@ const EditConference = () => {
         <DialogContent className={classes.dialogContent}>
           <TextField
             label="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={attendeeName}
+            onChange={(e) => setAttendeeName(e.target.value)}
             required
             fullWidth
             className={classes.textField}

@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 
 const Login = require("../api/Login.js");
+const ConferenceInfo = require("../api/ConferenceInfo.js");
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -46,6 +47,20 @@ const LoginForm = () => {
   const conferenceId = useContext(userDetailsContextTwo).conferenceId;
   const setConferenceId = useContext(userDetailsContextTwo).setConferenceId;
 
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
+      }
+    }
+
+    return null; // Return null if the cookie is not found
+  }
+
   const handleJoinConference = () => {
     setShowConferenceForm(true);
   };
@@ -56,18 +71,17 @@ const LoginForm = () => {
 
   const handleLogin = () => {
     // Do something with the submitted login information
-    console.log("Web Account:", webAccount);
-    console.log("Password:", password);
     document.cookie = "";
 
     Login(webAccount, password, "WEB")
       .then((res) => {
-        console.log(res);
+        console.log("Login response: ", res);
 
         if (res.message === "success") {
           // console.log(res.token);
           document.cookie = "user=" + res.token + ": userID=" + res.userID;
           localStorage.setItem("userID", webAccount);
+          console.log("Web account: ", localStorage.getItem("userID"));
           localStorage.setItem("userPassword", password);
           console.log(document.cookie);
           navigate("/home");
@@ -86,24 +100,44 @@ const LoginForm = () => {
 
     Login(conferenceId, conferencePassword, "ConferenceID")
       .then((res) => {
-        console.log(res);
-        // if (res.conferenceKey == null) {
-        //   alert(
-        //     "Conference does not exist. Please check your credentials and try again."
-        //   );
-        // } else {
-        //   if (res.conferenceState === "Destroyed") {
-        //     alert(
-        //       "Conference has already ended. Please check your credentials and try again."
-        //     );
-        //   } else if (res.conferenceState === "Scheduled") {
-        //     alert(
-        //       "Conference has not started yet. Please check your credentials and try again."
-        //     );
-        //   } else if (res.conferenceState === "Created") {
-        //     navigate("/home/instantConference");
-        //   }
-        // }
+        console.log("Join response: ", res);
+
+        if (res.message === "success") {
+          document.cookie = "cred=" + res.token;
+          console.log(document.cookie);
+          var token = getCookie("cred");
+          ConferenceInfo(token, conferenceId, "0")
+            .then((res) => {
+              console.log("Conference info: ", res);
+              if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Destroyed"
+              ) {
+                alert(
+                  "Conference has already ended. Please check your credentials and try again."
+                );
+              } else if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Schedule"
+              ) {
+                alert(
+                  "Conference has not started yet. Please check your credentials and try again."
+                );
+              } else if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Created"
+              ) {
+                localStorage.setItem(
+                  "meetingDetails",
+                  JSON.stringify(res.conferenceResult.conferenceInfo)
+                );
+                navigate("/home/startConference");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else alert("Invalid Credentials");
       })
       .catch((err) => {
         console.log(err);

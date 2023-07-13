@@ -10,9 +10,7 @@ function InviteParticipants(token, conID, body) {
     body: JSON.stringify({
       token: `${token}`,
       conferenceID: `${conID}`,
-      inviteParas: {
-        invitePara: [body],
-      },
+      invitePara: body,
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
@@ -21,4 +19,13 @@ function InviteParticipants(token, conID, body) {
 
 module.exports = InviteParticipants;
 
-// InviteParticipants("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMyNTMzNjc5IiwiZXhwaXJ5IjoxNjg4OTU4MjkyLjI5MjI2Nzh9.xHDNXnlbDiHh5FkXL_sAujGOtjPwjxBV3ySTeHGYQQo","1232533679")
+InviteParticipants(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMyNzE5MjIzIiwiZXhwaXJ5IjoxNjg5NDUyNjE3Ljc3MzYwN30.rTQTzY3H_GPlvWB7oR6WcTZipAu2paRi9vDWq7H5Gs4",
+  "1232719223",
+  [
+    {
+      name: "njandu",
+      phone: "8848750913",
+    },
+  ]
+);

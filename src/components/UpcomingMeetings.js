@@ -247,19 +247,7 @@ const UpcomingMeetings = () => {
 
   const handleJoinConference = (meeting) => {
     // console.log(meeting.conferenceKey.conferenceID,meeting.chair)
-    Login(meeting.conferenceKey.conferenceID,meeting.chair,"ConferenceID")
-    .then((res) => {
-      console.log(res);
 
-      if (res.message === "success") {
-        console.log(res.token);
-        document.cookie = "cred=" + res.token ;
-        localStorage.setItem("ConferenceID", meeting.conferenceID);
-        localStorage.setItem("Password",meeting.chair);
-        console.log(document.cookie);
-        navigate("/home");
-      } else alert("Invalid Credentials");
-    })
     localStorage.setItem("meetingDetails", JSON.stringify(meeting));
     console.log(
       "Meeting details: ",
@@ -271,10 +259,6 @@ const UpcomingMeetings = () => {
   const handleEditConference = (meeting) => {
     console.log("Editing meeting: ", meeting);
     localStorage.setItem("meetingDetails", JSON.stringify(meeting));
-    console.log(
-      "Meeting details: ",
-      JSON.parse(localStorage.getItem("meetingDetails"))
-    );
     navigate("/home/editConference");
   };
 
