@@ -84,8 +84,8 @@ function queryConferenceList(token) {
 
 module.exports = queryConferenceList;
 
-// queryConferenceList(
-//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODg5NTU1NjEuNTc2ODU0NX0.SBoAK7BQ3skhoA-fK76PF9rPs0KHGvRKbTzE09ZFFHQ"
-// ).then((res) => {
-//   console.log(res);
-// });
+queryConferenceList(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk0MzAwMDguNDQwMDI0OX0.qpDIS27fviS3gSPdVH-roF3_giuI9-CDVjOc7CAASAQ"
+).then((res) => {
+  console.log(res);
+});
