@@ -1,4 +1,4 @@
-const url = `http://35.154.233.185:8000/user/`;
+const url = `http://35.154.233.185:8000/user/mute`;
 
 function MuteConference(token,conferenceID,mute) {
   return fetch(url, {
