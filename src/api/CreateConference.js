@@ -8,6 +8,7 @@ function createconference(
   language,
   subject,
   startTime,
+  autoInvite,
   attendees
 ) {
   //attendee is a json file
@@ -24,6 +25,7 @@ function createconference(
       language: `${language}`,
       subject: `${subject}`,
       startTime: `${startTime}`,
+      autoInvite: autoInvite,
       mediaTypes: `Voice`,
       attendees: attendees,
     }),

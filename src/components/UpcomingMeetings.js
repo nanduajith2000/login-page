@@ -259,10 +259,6 @@ const UpcomingMeetings = () => {
   const handleEditConference = (meeting) => {
     console.log("Editing meeting: ", meeting);
     localStorage.setItem("meetingDetails", JSON.stringify(meeting));
-    console.log(
-      "Meeting details: ",
-      JSON.parse(localStorage.getItem("meetingDetails"))
-    );
     navigate("/home/editConference");
   };
 

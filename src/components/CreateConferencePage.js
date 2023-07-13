@@ -173,6 +173,8 @@ const CreateConference = () => {
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
 
+    const autoInvite = true;
+
     createconference(
       token,
       durationInMilliseconds,
@@ -181,6 +183,7 @@ const CreateConference = () => {
       "en_US",
       subject,
       formattedStartTimeUTC,
+      autoInvite,
       contacts
     )
       .then((res) => {

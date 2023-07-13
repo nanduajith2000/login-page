@@ -14,7 +14,7 @@ function InviteParticipants(token, conID, body) {
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => console.log(data));
+    .then((data) => data);
 }
 
 module.exports = InviteParticipants;

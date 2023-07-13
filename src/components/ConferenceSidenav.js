@@ -49,6 +49,12 @@ export default function Sidenav(props) {
   const [areAllParticipantsConnected, setAreAllParticipantsConnected] =
     useState(false);
   const classes = useStyles();
+  const [meeting, setMeeting] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails"))
+  );
+  const [participants, setParticipants] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails")).attendees
+  );
 
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
