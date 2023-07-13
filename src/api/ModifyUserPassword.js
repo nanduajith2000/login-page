@@ -7,8 +7,6 @@ function modifyuserpassword(
   newPassWord,
   newPassWordAffirm
 ) {
-  var name = account.name;
-  var type = account.type;
   return fetch(url, {
     method: "PUT", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
@@ -16,32 +14,29 @@ function modifyuserpassword(
     },
     body: JSON.stringify({
       token: `${token}`,
-      name: `${name}`,
-      type: `${type}`,
+      account: account,
       oldPassWord: `${oldPassWord}`,
       newPassWord: `${newPassWord}`,
       newPassWordAffirm: `${newPassWordAffirm}`,
     }),
   })
     .then((response) => response.json()) // Parse the response as JSON
-    .then((data) => {
-      console.log(data);
-    });
+    .then((data) => data);
 }
 
 module.exports = modifyuserpassword;
 
-modifyuserpassword(
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODkyMTgyMDYuNDkwNzgyNX0.1cRCnKWsfRZmicbMVKoMcIOGXuyJqy7opWJS48LYrFs",
+// modifyuserpassword(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODkyNTczODIuNDQ3ODkyNH0.ktqVTSZmAKuZ7sKktIG1Mwvw5klKj_vwv6-ZbR9uQNk",
 
-  {
-    name: "Test_Bsnl",
-    type: "WEB",
-  },
+//   {
+//     name: "Test_Bsnl",
+//     type: "WEB",
+//   },
 
-  "Bsnl~1234",
-  "Bsnl~12345",
-  "Bsnl~12345"
-)
-  .then((res) => console.log(res))
-  .catch((err) => console.log(err));
+//   "Bsnl~12345",
+//   "Bsnl~1234",
+//   "Bsnl~1234"
+// )
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));

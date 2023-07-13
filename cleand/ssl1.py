@@ -3,6 +3,7 @@ import time
 import urllib3
 import xmltodict
 import json
+import urllib.parse
 
 
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
@@ -89,7 +90,7 @@ def encoded_PUT(URL,head,body,):
 
     url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
 
-    body_encoded = urllib3.parse.urlencode(body)
+    body_encoded = urllib.parse.urlencode(body)
 
     start = time.time()
     r = requests.put(url, headers=headers, data=body_encoded, verify=False)

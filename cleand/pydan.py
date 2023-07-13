@@ -129,3 +129,15 @@ class UserPasswordInfo(BaseModel):
     oldPassWord: str
     newPassWord: str
     newPassWordAffirm: str
+
+class FindUserPasswordInfo(BaseModel):
+     token:str
+     name:str
+     accountType:str
+     notifyType:str
+     ipaddr:str
+
+class IsAllMute(BaseModel):
+     token: str
+     conferenceID:str
+     isAllMute:bool
