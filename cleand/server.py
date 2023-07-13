@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -327,3 +327,15 @@ def isallmute(is_mute: IsAllMute = Body(default=None)):
     del BODY["conferenceID"]
     dict1 = ssl1.encoded_PUT(URL, head, BODY)
     return dict1
+
+@app.post("/user/createpersonalcontact")
+def createpersonalcontact(create_contact: Contactor = Body(default=None)):
+    URL = "contactor"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(create_contact.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invaild Token"}
+    BODY = {'contactor':create_contact.dict()}
+    del BODY['contactor']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
+    return dict1 
