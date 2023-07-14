@@ -136,7 +136,7 @@ export default function Sidenav(props) {
       }
       const token = getCookie("user");
       // console.log(cookieValue);
-      Logout(token)
+      API.Logout(token)
         .then((res) => {
           console.log("Logout response: ", res);
           clearAllCookies();

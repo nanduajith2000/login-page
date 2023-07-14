@@ -129,7 +129,7 @@ const OngoingConference = () => {
 
   useEffect(() => {
     clearAllCookies();
-    Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
+    API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
       .then((res) => {
         console.log("Join response: ", res);
         if (res.message === "success") {
