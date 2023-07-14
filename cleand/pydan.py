@@ -70,6 +70,7 @@ class ConferenceTemplate(BaseModel):
 class DeleteConferencetemplate(BaseModel):
      token:str
      templateID:str
+     
 class Conditions(BaseModel):
 	key:str
 	value:str
