@@ -119,6 +119,10 @@ def templatelist(template_list: TemplateList = Body(default=None)):
     Body = {"conferenceTemplateFilter": template_list.dict()}
     del Body["conferenceTemplateFilter"]["token"]
     dict1 = ssl1.create_POST(URL, head, Body)
+
+    if (dict1["conferenceTemplateList"]["page"]["total"]=="0"):
+        return {"message":"no_conference_template"}
+    
     data_list = dict1["conferenceTemplateList"]["page"]["data"]
     ans = {"message": "success"}
     i = 0
@@ -160,8 +164,8 @@ def createconference(modify_conference: conferenceInfo =Body(default=None)):
     dict1 = ssl1.update_PUT(URL, head, BODY)
     return dict1
 
-@app.post("/user/deletescheduledconference")
-def delete_schconference(delete_conf:QueryConfInfo = Body(default=None)):
+@app.post("/user/deleteconference")
+def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
     URL="conferences/"+delete_conf.conferenceID+"/subConferenceID/"+delete_conf.subconferenceID
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
@@ -180,7 +184,8 @@ def end_conference(end_conf:QueryConfInfo = Body(default=None)):
     
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
-                   
+
+
 # @app.put("/user/prologconference")
 # def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
 #     URL="conferences/"+prolog_Conf.conferenceID+"/length"
@@ -212,8 +217,10 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     del BODY['conferenceFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
     # return dict1
-    # if (dict1["conferenceList"]["page"]["total"]=="0"):
-    #     return {"message":"NULL"}
+
+    if (dict1["conferenceList"]["page"]["total"]=="0"):
+        return {"message":"no_upcoming_meetings"}
+    
     data_list = dict1["conferenceList"]["page"]["data"]
     keys_to_extract = [
     "Subject",
@@ -232,6 +239,8 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
 
     i=0
     for item in data_list:
+        if isinstance(item, str):
+            continue
         entry_list = item["entry"]
         extracted_dict = {}
         for entry in entry_list:
@@ -243,8 +252,8 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
         dict1 = ssl1.data_GET(URL, head)
         info=dict1["conferenceResult"]["conferenceInfo"]
         i+=1
-        info["chair"]=info["passwords"][0]["password"]
-        info["general"]=info["passwords"][1]["password"]
+        info["chair"]=info["passwords"][1]["password"]
+        info["general"]=info["passwords"][0]["password"]
         del info['passwords']
         conf_details[i]=info
         # print(conf_details)
@@ -388,7 +397,7 @@ def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
 
 @app.post("/user/querypersonalcontactinfo")
 def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
-    URL="/contactor/"+query_contact.contactorID
+    URL="contactor/"+query_contact.contactorID
     try:
         head = {'Authorization': "Basic " + redis_client.get(query_contact.token).decode('utf8')}
     except AttributeError:

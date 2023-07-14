@@ -58,18 +58,19 @@ class conferenceInfo (BaseModel):
 
 class ConferenceTemplate(BaseModel):
     token:str
-    conferenceTemplate: int
+    templateID: int
     templateName: str
     timeZone: int
     length: int
     size: int
-    mediaTypes: Optional[str]="Voice"
+    mediaTypes: str
     language: str
     isAllowInvite:Optional [bool]=True
 
 class DeleteConferencetemplate(BaseModel):
      token:str
      templateID:str
+     
 class Conditions(BaseModel):
 	key:str
 	value:str
@@ -182,12 +183,11 @@ class Contactor_mod(BaseModel):
 class Contactor_info(BaseModel):
      token:str
      contactorID:str
-
 class ResultField(BaseModel):
-     xsi_nil:True
+     xsi_nil:bool=True
 
 class SortField(BaseModel):
-     xsi_nil:True
+     xsi_nil:bool=True
 
 class Conditions(BaseModel):
      key:str
@@ -196,10 +196,10 @@ class Conditions(BaseModel):
 
 class ContactFilter(BaseModel):
      token:str
-     resultField:ResultField
+     resultField:Optional[ResultField]
      conditions:Conditions
      isAscend:bool
-     sortField:SortField
+     sortField:Optional[SortField]
      pageIndex:int
      pageSize:int
 
