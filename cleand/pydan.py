@@ -67,6 +67,9 @@ class ConferenceTemplate(BaseModel):
     language: str
     isAllowInvite:Optional [bool]=True
 
+class DeleteConferencetemplate(BaseModel):
+     token:str
+     templateID:str
 class Conditions(BaseModel):
 	key:str
 	value:str
@@ -134,12 +137,18 @@ class UserPasswordInfo(BaseModel):
     newPassWord: str
     newPassWordAffirm: str
 
+class FindUserPasswordInfo(BaseModel):
+    token:str
+    accountType:str
+    notifyType:str
+    ipaddr:str
+
 class IsAllMute(BaseModel):
     token:str
     conferenceID: str
     isAllMute: bool
 
-class DeleteConf(BaseModel):
+class LeaveParti(BaseModel):
     token:str
     conferenceID: str
     participantID:str

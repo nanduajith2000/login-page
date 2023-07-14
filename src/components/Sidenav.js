@@ -102,6 +102,18 @@ export default function Sidenav(props) {
     }
   };
 
+  function clearAllCookies() {
+    const cookies = document.cookie.split(';');
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
+      const cookieParts = cookie.split('=');
+      const cookieName = cookieParts[0].trim();
+  
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+  }
+
   const handleLogout = () => {
     // localStorage.removeItem("token");
     // localStorage.removeItem("user");
@@ -123,21 +135,17 @@ export default function Sidenav(props) {
         return null; // Return null if the cookie is not found
       }
       const token = getCookie("user");
-      // console.log(cookieValue);
-      Logout(token);
-      function clearAllCookies() {
-        const cookies = document.cookie.split(";");
-
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i];
-          const eqPos = cookie.indexOf("=");
-          const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-          document.cookie =
-            name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-        }
-      }
-      clearAllCookies();
-      navigate("/");
+      // console.log(token);
+      Logout(token)
+        .then((res) => {
+          console.log("Logout response: ", res);
+          clearAllCookies();
+          navigate("/");
+        })
+        .catch((err) => {
+          console.log(err);
+          alert("Could not log out. Please try again later.");
+        });
     }
   };
 
