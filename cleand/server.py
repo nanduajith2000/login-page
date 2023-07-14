@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_del,ContactFilter
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -160,8 +160,8 @@ def createconference(modify_conference: conferenceInfo =Body(default=None)):
     dict1 = ssl1.update_PUT(URL, head, BODY)
     return dict1
 
-@app.post("/user/deleteconference")
-def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
+@app.post("/user/deletescheduledconference")
+def delete_schconference(delete_conf:QueryConfInfo = Body(default=None)):
     URL="conferences/"+delete_conf.conferenceID+"/subConferenceID/"+delete_conf.subconferenceID
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
@@ -170,6 +170,17 @@ def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
+@app.post("/user/endconference")
+def end_conference(end_conf:QueryConfInfo = Body(default=None)):
+    URL="conferences/"+end_conf.conferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(end_conf.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+    
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+                   
 # @app.put("/user/prologconference")
 # def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
 #     URL="conferences/"+prolog_Conf.conferenceID+"/length"
@@ -352,8 +363,8 @@ def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
     return dict1  
 
 @app.post("/user/deletepersonalcontact")
-def delete_contact(delete_contact:Contactor_del = Body(default=None)):
-    URL="contactor/"+Contactor_del.contactorID
+def delete_contact(delete_contact:Contactor_info = Body(default=None)):
+    URL="contactor/"+delete_contact.contactorID
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_contact.token).decode('utf8')}
     except AttributeError:
@@ -371,4 +382,15 @@ def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     BODY = {'contactorFilter':contact_list.dict()}
     del BODY['contactorFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
+    return dict1
+
+@app.post("/user/querypersonalcontactinfo")
+def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
+    URL="/contactor/"+query_contact.contactorID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(query_contact.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+    
+    dict1=ssl1.data_GET(URL,head)
     return dict1

@@ -8,7 +8,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 // import { userDetailsContextThree } from "../pages/Home";
-import API from "../api/API"
+import API from "../api/API.js";
 import logo from "../images/bsnl-logo.jpeg";
 // const Logout = require("../api/Logout.js");
 
@@ -103,13 +103,13 @@ export default function Sidenav(props) {
   };
 
   function clearAllCookies() {
-    const cookies = document.cookie.split(';');
+    const cookies = document.cookie.split(";");
 
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i];
-      const cookieParts = cookie.split('=');
+      const cookieParts = cookie.split("=");
       const cookieName = cookieParts[0].trim();
-  
+
       document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
   }
@@ -135,7 +135,7 @@ export default function Sidenav(props) {
         return null; // Return null if the cookie is not found
       }
       const token = getCookie("user");
-      // console.log(token);
+      // console.log(cookieValue);
       API.Logout(token)
         .then((res) => {
           console.log("Logout response: ", res);

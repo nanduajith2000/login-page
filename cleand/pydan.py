@@ -179,7 +179,7 @@ class Contactor_mod(BaseModel):
      impu:str
      description:str
 
-class Contactor_del(BaseModel):
+class Contactor_info(BaseModel):
      token:str
      contactorID:str
 

@@ -9,9 +9,10 @@ import {
   Container,
   Typography,
   IconButton,
+  CircularProgress,
 } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
-import API from "../api/API"
+import API from "../api/API";
 
 // const queryConferencehistory = require("../api/QueryConferenceHistory");
 
@@ -49,6 +50,12 @@ const useStyles = makeStyles((theme) => ({
   },
   oddRow: {
     backgroundColor: "white",
+  },
+  loadingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
   },
 }));
 
@@ -89,6 +96,7 @@ const PreviousConferences = () => {
 
   const classes = useStyles();
   const [meetings, setMeetings] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   function getCookie(cookieName) {
     const cookieString = document.cookie;
@@ -125,9 +133,11 @@ const PreviousConferences = () => {
           .map((meeting) => meeting);
         setMeetings(meetingArray.reverse());
         setTotalPages(res.totalPages);
+        setLoading(false);
       })
       .catch((err) => {
         alert("Could not fetch meeting history. Please try again later.");
+        setLoading(false);
       });
   }, [pageIndex]);
 
@@ -186,40 +196,49 @@ const PreviousConferences = () => {
             </TableRow>
           </TableHead>
           <TableBody className={classes.tableBody}>
-            {meetings.map((conference, index) => (
-              <TableRow
-                key={conference.id}
-                className={index % 2 === 0 ? classes.evenRow : classes.oddRow}
-              >
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {conference.scheduserName}
-                </TableCell>
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {conference.subject}
-                </TableCell>
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {conference.conferenceKey.conferenceID}
-                </TableCell>
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {conference.size}
-                </TableCell>
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {convertUTCMillisecondsToDate(conference.startTime).day}-
-                  {convertUTCMillisecondsToDate(conference.startTime).month}-
-                  {convertUTCMillisecondsToDate(conference.startTime).year}{" "}
-                  {convertUTCMillisecondsToDate(conference.startTime).hours}:
-                  {convertUTCMillisecondsToDate(conference.startTime).minutes}
-                </TableCell>
-                <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
-                  {convertMillisecondsToHoursAndMinutes(conference.length)
-                    .hours +
-                    "h " +
-                    convertMillisecondsToHoursAndMinutes(conference.length)
-                      .minutes +
-                    "m"}
+            {loading ? ( // Render loading icon if loading is true
+              <TableRow>
+                <TableCell colSpan={6} align="center">
+                  <CircularProgress />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              // Render meetings when loading is false
+              meetings.map((conference, index) => (
+                <TableRow
+                  key={conference.id}
+                  className={index % 2 === 0 ? classes.evenRow : classes.oddRow}
+                >
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {conference.scheduserName}
+                  </TableCell>
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {conference.subject}
+                  </TableCell>
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {conference.conferenceKey.conferenceID}
+                  </TableCell>
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {conference.size}
+                  </TableCell>
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {convertUTCMillisecondsToDate(conference.startTime).day}-
+                    {convertUTCMillisecondsToDate(conference.startTime).month}-
+                    {convertUTCMillisecondsToDate(conference.startTime).year}{" "}
+                    {convertUTCMillisecondsToDate(conference.startTime).hours}:
+                    {convertUTCMillisecondsToDate(conference.startTime).minutes}
+                  </TableCell>
+                  <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                    {convertMillisecondsToHoursAndMinutes(conference.length)
+                      .hours +
+                      "h " +
+                      convertMillisecondsToHoursAndMinutes(conference.length)
+                        .minutes +
+                      "m"}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Container>

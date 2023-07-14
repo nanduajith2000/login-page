@@ -28,3 +28,13 @@
   margin-bottom: 2vh;
   font-size: 12px;
 }
+.slide-in {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.slide-in.active {
+  opacity: 1;
+  transform: translateX(0);
+}

@@ -11,6 +11,7 @@ import {
   TableRow,
   TextField,
   Typography,
+  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -23,7 +24,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import Homenavbarlite from "./Homenavbarlite";
 // const ConferenceTemplateList = require("../api/ConferenceTemplateList");
-import API from "../api/API"
+import API from "../api/API";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -96,6 +97,12 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "space-around",
     alignItems: "center",
   },
+  loadingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
 }));
 function getCookie(cookieName) {
   const cookieString = document.cookie;
@@ -118,6 +125,7 @@ const ConferenceTemplates = () => {
   const navigate = useNavigate();
   const [templateData, setTemplateData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     API.ConferenceTemplateList(token)
@@ -126,11 +134,13 @@ const ConferenceTemplates = () => {
           .filter((value) => typeof value === "object")
           .map((template) => template);
         setTemplateData(templateArray);
+        setLoading(false);
       })
       .catch((err) => {
         console.log(
           "Could not fetch template details. Please try again later."
         );
+        setLoading(false);
       });
   }, []);
 
@@ -219,13 +229,20 @@ const ConferenceTemplates = () => {
               </TableRow>
             </TableHead>
             <TableBody className={classes.tableBody}>
-              {filteredTemplates.length === 0 ? (
+              {loading ? ( // Render loading icon if loading is true
+                <TableRow>
+                  <TableCell colSpan={4} align="center">
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              ) : filteredTemplates.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} align="center">
                     No templates found
                   </TableCell>
                 </TableRow>
               ) : (
+                // Render templates when loading is false and templates are available
                 filteredTemplates.map((template, key) => (
                   <TableRow key={key} className={classes.tableRow}>
                     <TableCell className={classes.tableCell}>
