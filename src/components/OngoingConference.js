@@ -16,7 +16,7 @@ import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
 import { useNavigate } from "react-router-dom";
-import API from "../api/API"
+import API from "../api/API";
 // const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
@@ -129,19 +129,19 @@ const OngoingConference = () => {
 
   useEffect(() => {
     clearAllCookies();
-    API.Login(
-      meeting.conferenceKey.conferenceID,
-      meeting.chair,
-      "ConferenceID"
-    ).then((res) => {
-      console.log(res);
-      if (res.message === "success") {
-        document.cookie = "cred=" + res.token;
-        localStorage.setItem("ConferenceID", meeting.conferenceID);
-        localStorage.setItem("Password", meeting.chair);
-        console.log(document.cookie);
-      } else alert("Invalid Credentials");
-    });
+    API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
+      .then((res) => {
+        console.log("Join response: ", res);
+        if (res.message === "success") {
+          document.cookie = "cred=" + res.token;
+          localStorage.setItem("ConferenceID", meeting.conferenceID);
+          localStorage.setItem("Password", meeting.chair);
+          console.log(document.cookie);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleCheckedUser = (participantId) => {

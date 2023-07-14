@@ -2,7 +2,7 @@ const url = `http://35.154.233.185:8000/user/logout`;
 
 function Logout(token) {
   return fetch(url, {
-    method: "DELETE", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
+    method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
     },
