@@ -212,6 +212,8 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     del BODY['conferenceFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
     # return dict1
+    # if (dict1["conferenceList"]["page"]["total"]=="0"):
+    #     return {"message":"NULL"}
     data_list = dict1["conferenceList"]["page"]["data"]
     keys_to_extract = [
     "Subject",
@@ -223,7 +225,7 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     "ChairpersonID",
     "ConferenceState",
     "factEndTime",
-]
+    ]
 
     ans={"message": "success"}
     conf_details={"message":'GET_SUCCESS'}

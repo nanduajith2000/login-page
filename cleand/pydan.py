@@ -63,7 +63,7 @@ class ConferenceTemplate(BaseModel):
     timeZone: int
     length: int
     size: int
-    mediaTypes: str
+    mediaTypes: Optional[str]="Voice"
     language: str
     isAllowInvite:Optional [bool]=True
 
