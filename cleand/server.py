@@ -372,7 +372,7 @@ def delete_contact(delete_contact:Contactor_info = Body(default=None)):
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
-@app.post("/user/personalcontactlist")
+@app.post("/user/listpersonalcontact")
 def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     URL = "contactorList"
     try:
