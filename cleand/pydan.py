@@ -147,7 +147,7 @@ class FindUserPasswordInfo(BaseModel):
 class IsAllMute(BaseModel):
     token:str
     conferenceID: str
-    isAllMute: bool
+    isAllMute: str
 
 class LeaveParti(BaseModel):
     token:str

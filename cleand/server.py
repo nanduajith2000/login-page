@@ -186,7 +186,7 @@ def end_conference(end_conf:QueryConfInfo = Body(default=None)):
     return dict1
 
 
-@app.put("/user/prologconference")
+@app.post("/user/prologconference")
 def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
     URL="conferences/"+prolog_Conf.conferenceID+"/length"
 
@@ -200,7 +200,6 @@ def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
     dict1=ssl1.encoded_PUT(URL,head,BODY)
 
     return dict1
-
 
 @app.post("/user/conferencelist")
 def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
@@ -350,9 +349,8 @@ def isallmute(is_mute: IsAllMute = Body(default=None)):
         head = {'Authorization': "Basic " + redis_client.get(is_mute.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
-    BODY = is_mute.dict()
-    del BODY["token"]
-    del BODY["conferenceID"]
+    
+    BODY = "isAllMute="+is_mute.isAllMute
     dict1 = ssl1.encoded_PUT(URL, head, BODY)
     return dict1
 
