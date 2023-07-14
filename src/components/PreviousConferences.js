@@ -11,8 +11,9 @@ import {
   IconButton,
 } from "@material-ui/core";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
+import API from "../api/API"
 
-const queryConferencehistory = require("../api/QueryConferenceHistory");
+// const queryConferencehistory = require("../api/QueryConferenceHistory");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -117,7 +118,7 @@ const PreviousConferences = () => {
 
   React.useEffect(() => {
     const token = getCookie("user");
-    queryConferencehistory(token, pageIndex)
+    API.queryConferencehistory(token, pageIndex)
       .then((res) => {
         const meetingArray = Object.values(res)
           .filter((value) => typeof value === "object")

@@ -22,7 +22,8 @@ import { Add, Edit, Delete, Search, InfoOutlined } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
 import Homenavbarlite from "./Homenavbarlite";
-const ConferenceTemplateList = require("../api/ConferenceTemplateList");
+// const ConferenceTemplateList = require("../api/ConferenceTemplateList");
+import API from "../api/API"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,7 +120,7 @@ const ConferenceTemplates = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    ConferenceTemplateList(token)
+    API.ConferenceTemplateList(token)
       .then((res) => {
         const templateArray = Object.values(res)
           .filter((value) => typeof value === "object")
