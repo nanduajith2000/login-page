@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_del
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -369,3 +369,13 @@ def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
     del BODY["contactor"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
     return dict1  
+
+@app.post("/user/deletepersonalcontact")
+def delete_contact(delete_contact:Contactor_del = Body(default=None)):
+    URL="contactor/"+Contactor_del.contactorID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
