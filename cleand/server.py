@@ -85,7 +85,7 @@ def CreateConferenceTemplate(conf_template: ConferenceTemplate =Body(default=Non
     dict1 = ssl1.create_POST(URL,head,BODY)
     return dict1
 
-@app.put("/user/modifyconferencetemplate")
+@app.post("/user/modifyconferencetemplate")
 def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
     URL="conferenceTemplate/"+mod_template.templateId
     try:
@@ -97,7 +97,7 @@ def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
     dict1 = ssl1.update_PUT(URL,head,BODY)
     return dict1
 
-@app.delete("/user/deleteconferencetemplate")
+@app.post("/user/deleteconferencetemplate")
 def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None)):
     URL="conferenceTemplate/"+del_template.templateId
     try:
@@ -146,7 +146,7 @@ def createconference(create_conference: createConferenceInfo =Body(default=None)
     dict1 = ssl1.create_POST(URL, head, BODY)
     return dict1
 
-@app.put("/user/modifyconference")
+@app.post("/user/modifyconference")
 def createconference(modify_conference: conferenceInfo =Body(default=None)):
     URL = "conferences/"+modify_conference.conferenceID+"/subConferenceID/"+modify_conference.subconferenceID
     try:
@@ -160,7 +160,7 @@ def createconference(modify_conference: conferenceInfo =Body(default=None)):
     dict1 = ssl1.update_PUT(URL, head, BODY)
     return dict1
 
-@app.delete("/user/deleteconference")
+@app.post("/user/deleteconference")
 def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
     URL="conferences/"+delete_conf.conferenceID+"/subConferenceID/"+delete_conf.subconferenceID
     try:
@@ -253,7 +253,7 @@ def queryConferenceInfo(confInfo: QueryConfInfo=Body(default=None)):
 
     return dict1
 
-@app.put("/user/modifyuserpassword")
+@app.post("/user/modifyuserpassword")
 def mod_userpass(mod_password:UserPasswordInfo = Body(default=None)):
     URL="modifyUserPassword"
     try:
@@ -291,11 +291,11 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
 
 
 
-@app.delete("/user/leaveconference")
+@app.post("/user/leaveconference")
 def leaveConference(leave_conf:LeaveParti=Body(default=None)):
     URL = "conferences/"+leave_conf.conferenceID+"/participants/"+leave_conf.participantID
     try:
-        head = {'Authorization':'Basic' + redis_client.get(leave_conf.token).decode("utf-8")}
+        head = {'Authorization':'Basic ' + redis_client.get(leave_conf.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
     
@@ -321,7 +321,7 @@ def leaveConference(leave_conf:LeaveParti=Body(default=None)):
 
 #     return dict1
 
-@app.put("/user/finduserpassword")
+@app.post("/user/finduserpassword")
 def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
     URL = "findUserPassword"
     try:
@@ -333,7 +333,7 @@ def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
     dict1 = ssl1.update_PUT(URL, head, BODY)
     return dict1
 
-@app.put("/user/mute")
+@app.post("/user/mute")
 def isallmute(is_mute: IsAllMute = Body(default=None)):
     URL = "conferences/"+is_mute.conferenceID+"/isAllMute"
     try:
@@ -369,4 +369,3 @@ def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
     del BODY["contactor"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
     return dict1  
-
