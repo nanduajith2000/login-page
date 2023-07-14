@@ -357,3 +357,6 @@ def createpersonalcontact(create_contact: Contactor = Body(default=None)):
     del BODY['contactor']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
     return dict1 
+
+@app.put("/user/modifypersonalcontact")
+def

@@ -147,10 +147,12 @@ class DeleteConf(BaseModel):
 
 class Contactor(BaseModel):
      token:str
-     id:str
      name:str
      phone:str
      mobile:str
+     otherPhone1:str
+     otherPhone2:str
+     otherPhone3:str
      email:str
      impu:str
      description:str
