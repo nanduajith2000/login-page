@@ -295,7 +295,7 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
 def leaveConference(leave_conf:LeaveParti=Body(default=None)):
     URL = "conferences/"+leave_conf.conferenceID+"/participants/"+leave_conf.participantID
     try:
-        head = {'Authorization':'Basic' + redis_client.get(leave_conf.token).decode("utf-8")}
+        head = {'Authorization':'Basic ' + redis_client.get(leave_conf.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
     
