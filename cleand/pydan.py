@@ -118,7 +118,7 @@ class VerifyParticipant(BaseModel):
 class ProlongConf(BaseModel):
     token:str
     conferenceID: str
-    length: int  
+    length: str  
 
 class QueryConfInfo(BaseModel):
     token:str

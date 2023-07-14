@@ -92,11 +92,11 @@ def encoded_PUT(URL,head,body):
 
     url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
 
-    body_encoded = urllib.parse.urlencode(body)
-    print ("\nBody in\n",body_encoded)
+    # body_encoded = urllib.parse.urlencode(body)
+    print ("\nBody in\n",body)
 
     start = time.time()
-    r = requests.put(url, headers=headers, data=body_encoded, verify=False)
+    r = requests.put(url, headers=headers, data=body, verify=False)
     end = time.time()
 
     # print("\ncontent out\n",r.content)

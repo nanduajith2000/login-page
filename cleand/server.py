@@ -186,20 +186,20 @@ def end_conference(end_conf:QueryConfInfo = Body(default=None)):
     return dict1
 
 
-# @app.put("/user/prologconference")
-# def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
-#     URL="conferences/"+prolog_Conf.conferenceID+"/length"
+@app.put("/user/prologconference")
+def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
+    URL="conferences/"+prolog_Conf.conferenceID+"/length"
 
-#     try:
-#         head = {'Authorization': "Basic " + redis_client.get(prolog_Conf.token).decode('utf8')}
-#     except AttributeError:
-#         return {"message": "Invalid Token"}
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(prolog_Conf.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "Invalid Token"}
 
-#     BODY={}
+    BODY="length="+prolog_Conf.length
 
-#     dict1=ssl1.encoded_PUT(URL,head,BODY)
+    dict1=ssl1.encoded_PUT(URL,head,BODY)
 
-#     return dict1
+    return dict1
 
 
 @app.post("/user/conferencelist")
