@@ -87,7 +87,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InviteParticipants = require("../api/InviteParticipants");
+// const InviteParticipants = require("../api/InviteParticipants");
 function clearAllCookies() {
   const cookies = document.cookie.split(";");
 
@@ -194,7 +194,7 @@ const OngoingConference = () => {
     ];
     console.log("Cred:", credValue);
     console.log("Conference ID: ", meeting.conferenceKey.conferenceID);
-    InviteParticipants(
+    API.InviteParticipants(
       credValue,
       meeting.conferenceKey.conferenceID,
       invitePara
