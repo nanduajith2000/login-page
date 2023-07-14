@@ -17,8 +17,8 @@ import AddIcon from "@material-ui/icons/Add";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 import TemplateCreated from "./TemplateCreated";
-
-const createconferencetemplate = require("../api/CreateConferenceTemplate");
+import API from "../api/API"
+// const createconferencetemplate = require("../api/CreateConferenceTemplate");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -107,7 +107,7 @@ const CreateTemplate = () => {
 
     var token = getCookie("user");
 
-    createconferencetemplate(
+    API.createconferencetemplate(
       token,
       0,
       durationInMilliseconds,

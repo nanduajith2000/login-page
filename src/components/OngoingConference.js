@@ -16,8 +16,8 @@ import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
 import { useNavigate } from "react-router-dom";
-
-const Login = require("../api/Login");
+import API from "../api/API";
+// const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -192,7 +192,7 @@ const OngoingConference = () => {
         phone: participant.addressEntry.address,
       },
     ];
-    console.log("Cred: ", credValue);
+    console.log("Cred:", credValue);
     console.log("Conference ID: ", meeting.conferenceKey.conferenceID);
     InviteParticipants(
       credValue,

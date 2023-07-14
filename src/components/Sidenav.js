@@ -103,13 +103,14 @@ export default function Sidenav(props) {
   };
 
   function clearAllCookies() {
-    const cookies = document.cookie.split(":");
+    const cookies = document.cookie.split(";");
 
     for (let i = 0; i < cookies.length; i++) {
       const cookie = cookies[i];
-      const eqPos = cookie.indexOf("=");
-      const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-      document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+      const cookieParts = cookie.split("=");
+      const cookieName = cookieParts[0].trim();
+
+      document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
   }
 
@@ -135,7 +136,7 @@ export default function Sidenav(props) {
       }
       const token = getCookie("user");
       // console.log(cookieValue);
-      API.Logout(token)
+      Logout(token)
         .then((res) => {
           console.log("Logout response: ", res);
           clearAllCookies();

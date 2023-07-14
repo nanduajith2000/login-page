@@ -17,8 +17,9 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import Homenavbarlite from "./Homenavbarlite";
+import API from "../api/API"
 
-const modifyuserpassword = require("../api/ModifyUserPassword.js");
+// const modifyuserpassword = require("../api/ModifyUserPassword.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -155,7 +156,7 @@ function Settings() {
         name: name,
         type: "WEB",
       };
-      modifyuserpassword(
+      API.modifyuserpassword(
         token,
         account,
         currentPassword,

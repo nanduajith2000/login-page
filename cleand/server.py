@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,DeleteConf
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -95,6 +95,17 @@ def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
     BODY= {"conferenceTemplate":mod_template.dict()}
     del BODY["conferenceTemplate"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
+    return dict1
+
+@app.delete("/user/deleteconferencetemplate")
+def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None)):
+    URL="conferenceTemplate/"+del_template.templateId
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(del_template.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    
+    dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
 
@@ -278,21 +289,10 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
     return dict1
     # return {"message":"Calling..."}
 
-@app.put("/user/mute")
-def isallmute(is_mute: IsAllMute=Body(default=None)):
-    URL = "conferences/"+is_mute.conferenceID+"/isAllMute"
-    try:
-        head = {'Authorization':'Basic' + redis_client.get(is_mute.token).decode("utf-8")}
-    except AttributeError:
-        return {"message":"Invalid Token"}
-    BODY = is_mute.dict()
-    del BODY["token"]
-    del BODY["conferenceID"]
-    dict1 = ssl1.encoded_PUT(URL,head,BODY)
-    return dict1
+
 
 @app.delete("/user/leaveconference")
-def leaveConference(leave_conf:DeleteConf=Body(default=None)):
+def leaveConference(leave_conf:LeaveParti=Body(default=None)):
     URL = "conferences/"+leave_conf.conferenceID+"/participants/"+leave_conf.participantID
     try:
         head = {'Authorization':'Basic' + redis_client.get(leave_conf.token).decode("utf-8")}
@@ -357,3 +357,15 @@ def createpersonalcontact(create_contact: Contactor = Body(default=None)):
     del BODY['contactor']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
     return dict1 
+
+@app.post("/user/modifypersonalcontact")
+def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
+    URL="contactor/"+modify_contact.contactorID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(modify_contact.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY= {"contactor":modify_contact.dict()}
+    del BODY["contactor"]["token"]
+    dict1 = ssl1.update_PUT(URL,head,BODY)
+    return dict1  
