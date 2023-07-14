@@ -178,3 +178,7 @@ class Contactor_mod(BaseModel):
      email:str
      impu:str
      description:str
+
+class Contactor_del(BaseModel):
+     token:str
+     contactorID:str

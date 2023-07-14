@@ -146,7 +146,7 @@ class API {
   }
 
   static LeaveParticipant(token, conferenceID, participantID) {
-    const url = `${URL}/user/inviteparticipants`;
+    const url = `${URL}/user/leaveconference`;
 
     return fetch(url, {
       method: "POST",
