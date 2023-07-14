@@ -21,7 +21,7 @@ import EditConfirmation from "./EditConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 
-const ModifyConference = require("../api/ModifyConference.js");
+const ModifyConference = require("../api/modifyConference.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {},

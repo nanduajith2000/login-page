@@ -11,8 +11,9 @@ import {
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
+import API from '../api/API.js';
+// const Login = require("../api/Login.js");
 
-const Login = require("../api/Login.js");
 const ConferenceInfo = require("../api/ConferenceInfo.js");
 
 const useStyles = makeStyles((theme) => ({
@@ -73,7 +74,7 @@ const LoginForm = () => {
     // Do something with the submitted login information
     document.cookie = "";
 
-    Login(webAccount, password, "WEB")
+    API.Login(webAccount, password, "WEB")
       .then((res) => {
         console.log("Login response: ", res);
 
@@ -98,7 +99,7 @@ const LoginForm = () => {
     console.log("Conference ID:", conferenceId);
     console.log("Conference Password:", conferencePassword);
 
-    Login(conferenceId, conferencePassword, "ConferenceID")
+    API.Login(conferenceId, conferencePassword, "ConferenceID")
       .then((res) => {
         console.log("Join response: ", res);
 
