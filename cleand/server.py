@@ -289,18 +289,6 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
     return dict1
     # return {"message":"Calling..."}
 
-@app.post("/user/mute")
-def isallmute(is_mute: IsAllMute=Body(default=None)):
-    URL = "conferences/"+is_mute.conferenceID+"/isAllMute"
-    try:
-        head = {'Authorization':'Basic' + redis_client.get(is_mute.token).decode("utf-8")}
-    except AttributeError:
-        return {"message":"Invalid Token"}
-    BODY = is_mute.dict()
-    del BODY["token"]
-    del BODY["conferenceID"]
-    dict1 = ssl1.encoded_PUT(URL,head,BODY)
-    return dict1
 
 @app.post("/user/leaveconference")
 def leaveConference(leave_conf:LeaveParti=Body(default=None)):
