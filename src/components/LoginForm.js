@@ -72,7 +72,6 @@ const LoginForm = () => {
 
   const handleLogin = () => {
     // Do something with the submitted login information
-    document.cookie = "";
 
     API.Login(webAccount, password, "WEB")
       .then((res) => {

@@ -8,16 +8,12 @@ import {
   Button,
   IconButton,
   makeStyles,
+  CircularProgress,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useNavigate } from "react-router-dom";
 import API from "../api/API.js";
-
-// const queryConferenceList = require("../api/QueryConferenceList");
-// const EndConference = require("../api/RemoveConference");
-
-// const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -160,11 +156,19 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
   },
+  loadingContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100%",
+  },
 }));
 
 const UpcomingMeetings = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+
+  const [loading, setLoading] = React.useState(true);
 
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
@@ -226,9 +230,11 @@ const UpcomingMeetings = () => {
             expanded: false,
           }));
         setMeetings(meetingArray);
+        setLoading(false);
       })
       .catch((err) => {
         alert("Could not fetch meeting details. Please try again later.");
+        setLoading(false);
       });
   }, []);
 
@@ -272,7 +278,7 @@ const UpcomingMeetings = () => {
     if (confirmDelete) {
       console.log("Removing meeting: ", meeting);
       const token = getCookie("user");
-      API.EndConference(token, meeting.conferenceKey.conferenceID, "0")
+      API.RemoveConference(token, meeting.conferenceKey.conferenceID, "0")
         .then((res) => {
           console.log(res);
           const token = getCookie("user");
@@ -333,129 +339,135 @@ const UpcomingMeetings = () => {
         </Typography>
       </Container>
       <Divider />
-      <Container>
-        <List style={{ maxHeight: "300px", overflowY: "scroll" }}>
-          {meetings.map((meeting) => (
-            <React.Fragment key={meeting.id}>
-              <ListItem
-                key={meeting.id}
-                className={`${classes.listItem} ${
-                  meeting.expanded ? classes.rootExpanded : ""
-                }`}
-              >
-                <div className={classes.dateBox}>
-                  <Typography variant="body2" className={classes.dateBoxDay}>
-                    {convertUTCMillisecondsToDate(meeting.startTime).day}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.dateBoxMonthYear}
-                  >
-                    {convertUTCMillisecondsToDate(meeting.startTime).month}-
-                    {convertUTCMillisecondsToDate(meeting.startTime).year}
-                  </Typography>
-                </div>
-                <div
-                  className={`${classes.meetingContent} ${
-                    meeting.expanded ? classes.meetingContentExpanded : ""
+      {loading ? ( // Render loading icon if loading is true
+        <div className={classes.loadingContainer}>
+          <CircularProgress />
+        </div>
+      ) : (
+        <Container>
+          <List style={{ maxHeight: "300px", overflowY: "scroll" }}>
+            {meetings.map((meeting) => (
+              <React.Fragment key={meeting.id}>
+                <ListItem
+                  key={meeting.id}
+                  className={`${classes.listItem} ${
+                    meeting.expanded ? classes.rootExpanded : ""
                   }`}
                 >
-                  <div className={classes.meetingHeader}>
-                    <Typography
-                      variant="body1"
-                      className={classes.listItemText}
-                    >
-                      {meeting.subject}
+                  <div className={classes.dateBox}>
+                    <Typography variant="body2" className={classes.dateBoxDay}>
+                      {convertUTCMillisecondsToDate(meeting.startTime).day}
                     </Typography>
-                    <IconButton
-                      className={classes.expandButton}
-                      color="secondary"
-                      onClick={() => handleToggleMeeting(meeting.id)}
+                    <Typography
+                      variant="body2"
+                      className={classes.dateBoxMonthYear}
                     >
-                      {meeting.expanded ? (
-                        <ExpandLessIcon />
-                      ) : (
-                        <ExpandMoreIcon />
-                      )}
-                    </IconButton>
+                      {convertUTCMillisecondsToDate(meeting.startTime).month}-
+                      {convertUTCMillisecondsToDate(meeting.startTime).year}
+                    </Typography>
                   </div>
-                  <Typography
-                    variant="body2"
-                    className={classes.listItemSecondaryText}
+                  <div
+                    className={`${classes.meetingContent} ${
+                      meeting.expanded ? classes.meetingContentExpanded : ""
+                    }`}
                   >
-                    Start Time:{" "}
-                    {
-                      convertUTCMillisecondsToDate(meeting.startTime)
-                        .formattedTime
-                    }
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.listItemSecondaryText}
-                  >
-                    End Time:{" "}
-                    {/* {
+                    <div className={classes.meetingHeader}>
+                      <Typography
+                        variant="body1"
+                        className={classes.listItemText}
+                      >
+                        {meeting.subject}
+                      </Typography>
+                      <IconButton
+                        className={classes.expandButton}
+                        color="secondary"
+                        onClick={() => handleToggleMeeting(meeting.id)}
+                      >
+                        {meeting.expanded ? (
+                          <ExpandLessIcon />
+                        ) : (
+                          <ExpandMoreIcon />
+                        )}
+                      </IconButton>
+                    </div>
+                    <Typography
+                      variant="body2"
+                      className={classes.listItemSecondaryText}
+                    >
+                      Start Time:{" "}
+                      {
+                        convertUTCMillisecondsToDate(meeting.startTime)
+                          .formattedTime
+                      }
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      className={classes.listItemSecondaryText}
+                    >
+                      End Time:{" "}
+                      {/* {
                       convertUTCMillisecondsToDate(
                         parseInt(meeting.startTime) + parseInt(meeting.duration)
                       ).formattedTime
                     } */}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    className={classes.listItemSecondaryText}
-                  >
-                    Creator: {meeting.scheduserName}
-                  </Typography>
-                  {meeting.expanded && (
-                    <div className={classes.meetingDetails}>
-                      <Container disableGutters>
-                        {renderMeetingDetails(meeting)}
-                      </Container>
-                    </div>
-                  )}
-                  <div
-                    className={
-                      !meeting.expanded
-                        ? classes.buttonContainer
-                        : classes.buttonContainerExpanded
-                    }
-                  >
-                    {meeting.startTime <= currentTime && (
-                      <Button
-                        variant="contained"
-                        className={classes.joinButton}
-                        onClick={() => handleJoinConference(meeting)}
-                      >
-                        Join
-                      </Button>
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      className={classes.listItemSecondaryText}
+                    >
+                      Creator: {meeting.scheduserName}
+                    </Typography>
+                    {meeting.expanded && (
+                      <div className={classes.meetingDetails}>
+                        <Container disableGutters>
+                          {renderMeetingDetails(meeting)}
+                        </Container>
+                      </div>
                     )}
-                    {meeting.startTime > currentTime && (
-                      <Button
-                        variant="outlined"
-                        className={classes.editButton}
-                        onClick={() => handleEditConference(meeting)}
-                      >
-                        Edit
-                      </Button>
-                    )}
+                    <div
+                      className={
+                        !meeting.expanded
+                          ? classes.buttonContainer
+                          : classes.buttonContainerExpanded
+                      }
+                    >
+                      {meeting.startTime <= currentTime && (
+                        <Button
+                          variant="contained"
+                          className={classes.joinButton}
+                          onClick={() => handleJoinConference(meeting)}
+                        >
+                          Join
+                        </Button>
+                      )}
+                      {meeting.startTime > currentTime && (
+                        <Button
+                          variant="outlined"
+                          className={classes.editButton}
+                          onClick={() => handleEditConference(meeting)}
+                        >
+                          Edit
+                        </Button>
+                      )}
 
-                    {meeting.startTime > currentTime && (
-                      <Button
-                        variant="contained"
-                        className={classes.endButton}
-                        onClick={() => handleRemoveConference(meeting)}
-                      >
-                        End
-                      </Button>
-                    )}
+                      {meeting.startTime > currentTime && (
+                        <Button
+                          variant="contained"
+                          className={classes.endButton}
+                          onClick={() => handleRemoveConference(meeting)}
+                        >
+                          End
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </ListItem>
-              <Divider />
-            </React.Fragment>
-          ))}
-        </List>
-      </Container>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
+          </List>
+        </Container>
+      )}
     </Container>
   );
 };
