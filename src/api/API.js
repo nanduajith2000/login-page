@@ -109,7 +109,7 @@ class API {
   }
 
   static EndConference(token, conferenceID) {
-    const url = `${URL}/user/`;
+    const url = `${URL}/user/endconference`;
 
     return fetch(url, {
       method: "POST",
