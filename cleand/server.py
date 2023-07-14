@@ -301,25 +301,6 @@ def leaveConference(leave_conf:LeaveParti=Body(default=None)):
     
     dict1 = ssl1.remove_DELETE(URL,head)
     return dict1
-#         head = {'Authorization': "Basic " + redis_client.get(verifyparti.token).decode('utf8')}
-#     except AttributeError:
-#         return {"message": "Invalid Token"}
-
-#     dict1 = ssl1.data_GET(URL, head)
-
-#     return dict1
-    
-# @app.delete("/user/removeparticipant")
-# def removeParticipant(remove_parti:verifyParticipant=Body(default=None)):
-#     URL="conferences/"+remove_parti.conferenceID+"/participants/"+remove_parti.participantID
-#     try:
-#         head= {'Authorization': "Basic " +redis_client.get(remove_parti.token).decode('utf8')}
-#     except AttributeError:
-#         return {"message": "Invalid Token"}
-    
-#     dict1=ssl1.data_DELETE(URL,head)
-
-#     return dict1
 
 @app.post("/user/finduserpassword")
 def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
@@ -374,7 +355,7 @@ def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
 def delete_contact(delete_contact:Contactor_del = Body(default=None)):
     URL="contactor/"+Contactor_del.contactorID
     try:
-        head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
+        head = {'Authorization': "Basic " + redis_client.get(delete_contact.token).decode('utf8')}
     except AttributeError:
         return {"message": "Invalid Token"}
     dict1=ssl1.remove_DELETE(URL,head)
