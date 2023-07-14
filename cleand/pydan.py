@@ -182,3 +182,25 @@ class Contactor_mod(BaseModel):
 class Contactor_del(BaseModel):
      token:str
      contactorID:str
+
+class ResultField(BaseModel):
+     xsi_nil:True
+
+class SortField(BaseModel):
+     xsi_nil:True
+
+class Conditions(BaseModel):
+     key:str
+     value:str
+     matching:str
+
+class ContactFilter(BaseModel):
+     token:str
+     resultField:ResultField
+     conditions:Conditions
+     isAscend:bool
+     sortField:SortField
+     pageIndex:int
+     pageSize:int
+
+

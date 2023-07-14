@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_del
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_del,ContactFilter
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -359,4 +359,16 @@ def delete_contact(delete_contact:Contactor_del = Body(default=None)):
     except AttributeError:
         return {"message": "Invalid Token"}
     dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+
+@app.post("/user/personalcontactlist")
+def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
+    URL = "contactorList"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(contact_list.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invaild Token"}
+    BODY = {'contactorFilter':contact_list.dict()}
+    del BODY['contactorFilter']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
     return dict1
