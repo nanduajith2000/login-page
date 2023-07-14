@@ -8,9 +8,9 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 // import { userDetailsContextThree } from "../pages/Home";
-
+import API from "../api/API"
 import logo from "../images/bsnl-logo.jpeg";
-const Logout = require("../api/Logout.js");
+// const Logout = require("../api/Logout.js");
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -136,7 +136,7 @@ export default function Sidenav(props) {
       }
       const token = getCookie("user");
       // console.log(token);
-      Logout(token)
+      API.Logout(token)
         .then((res) => {
           console.log("Logout response: ", res);
           clearAllCookies();

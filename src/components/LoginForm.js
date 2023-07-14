@@ -12,9 +12,10 @@ import {
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
 import API from '../api/API.js';
+
 // const Login = require("../api/Login.js");
 
-const ConferenceInfo = require("../api/ConferenceInfo.js");
+// const ConferenceInfo = require("../api/ConferenceInfo.js");
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -107,7 +108,7 @@ const LoginForm = () => {
           document.cookie = "cred=" + res.token;
           console.log(document.cookie);
           var token = getCookie("cred");
-          ConferenceInfo(token, conferenceId, "0")
+          API.ConferenceInfo(token, conferenceId, "0")
             .then((res) => {
               console.log("Conference info: ", res);
               if (

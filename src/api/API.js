@@ -1,6 +1,8 @@
+const URL = "http://35.154.233.185:8000"
+
 class API {
     static ConferenceInfo(token, conID, subconfID) {
-      const url = `http://35.154.233.185:8000/user/queryconferenceinfo`;
+      const url = `${URL}/user/queryconferenceinfo`;
   
       return fetch(url, {
         method: "POST",
@@ -18,7 +20,7 @@ class API {
     }
   
     static ConferenceTemplateList(token) {
-      const url = `http://35.154.233.185:8000/user/templatelist`;
+      const url = `${URL}/user/templatelist`;
   
       return fetch(url, {
         method: "POST",
@@ -43,7 +45,7 @@ class API {
     }
 
     static createconference(token, length, size, timeZone, language, subject, startTime, attendees) {
-        const url = `http://35.154.233.185:8000/user/createconference`;
+        const url = `${URL}/user/createconference`;
     
         return fetch(url, {
           method: "POST",
@@ -67,7 +69,7 @@ class API {
     }
 
     static createconferencetemplate(token, templateId, length, size, timeZone, language, templateName) {
-        const url = `http://35.154.233.185:8000/user/conferencetemplate`;
+        const url = `${URL}/user/conferencetemplate`;
     
         return fetch(url, {
           method: "POST",
@@ -90,7 +92,7 @@ class API {
     }
     
     static EndConference(token,conferenceID) {
-        const url = `http://35.154.233.185:8000/user/`;
+        const url = `${URL}/user/`;
     
         return fetch(url, {
           method: "POST",
@@ -107,7 +109,7 @@ class API {
     }
 
     static InviteParticipants(token, conID, body) {
-        const url = `http://35.154.233.185:8000/user/inviteparticipants`;
+        const url = `${URL}/user/inviteparticipants`;
     
         return fetch(url, {
           method: "POST",
@@ -127,7 +129,7 @@ class API {
     }
 
     static LeaveParticipant(token,conferenceID,participantID) {
-        const url = `http://35.154.233.185:8000/user/inviteparticipants`;
+        const url = `${URL}/user/inviteparticipants`;
     
         return fetch(url, {
           method: "POST",
@@ -145,7 +147,7 @@ class API {
     }
 
     static Login(accountName, password, accountType) {
-        const url = `http://35.154.233.185:8000/user/login`;
+        const url = `${URL}/user/login`;
     
         return fetch(url, {
           method: "POST",
@@ -163,7 +165,7 @@ class API {
     }
 
     static Logout(token) {
-        const url = `http://35.154.233.185:8000/user/logout`;
+        const url = `${URL}/user/logout`;
     
         return fetch(url, {
           method: "POST",
@@ -179,7 +181,7 @@ class API {
     }
 
     static modifyuserpassword(token, account, oldPassWord, newPassWord, newPassWordAffirm) {
-        const url = `http://35.154.233.185:8000/user/modifyuserpassword`;
+        const url = `${URL}/user/modifyuserpassword`;
     
         return fetch(url, {
           method: "POST",
@@ -199,7 +201,7 @@ class API {
     }
 
     static MuteConference(token,conferenceID,mute) {
-        const url = `http://35.154.233.185:8000/user/mute`;
+        const url = `${URL}/user/mute`;
     
         return fetch(url, {
           method: "POST",
@@ -217,7 +219,7 @@ class API {
     }
 
     static queryConferencehistory(token, pageIndex) {
-        const url = `http://35.154.233.185:8000/user/conferencelistX`;
+        const url = `${URL}/user/conferencelistX`;
     
         return fetch(url, {
           method: "POST",
@@ -259,7 +261,7 @@ class API {
     }
 
     static queryConferenceList(token) {
-        const url = `http://35.154.233.185:8000/user/conferencelist`;
+        const url = `${URL}/user/conferencelist`;
     
         return fetch(url, {
           method: "POST",
@@ -301,7 +303,7 @@ class API {
     }
 
     static RemoveConference(token, conferenceID, subconferenceID) {
-        const url = `http://35.154.233.185:8000/user/deleteconference`;
+        const url = `${URL}/user/deleteconference`;
     
         return fetch(url, {
           method: "POST",

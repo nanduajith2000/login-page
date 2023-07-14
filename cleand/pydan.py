@@ -70,7 +70,6 @@ class ConferenceTemplate(BaseModel):
 class DeleteConferencetemplate(BaseModel):
      token:str
      templateID:str
-     
 class Conditions(BaseModel):
 	key:str
 	value:str
@@ -157,6 +156,19 @@ class LeaveParti(BaseModel):
 
 class Contactor(BaseModel):
      token:str
+     name:str
+     phone:str
+     mobile:str
+     otherPhone1:str
+     otherPhone2:str
+     otherPhone3:str
+     email:str
+     impu:str
+     description:str
+
+class Contactor_mod(BaseModel):
+     token:str
+     contactorID:str
      name:str
      phone:str
      mobile:str

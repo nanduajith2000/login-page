@@ -20,8 +20,8 @@ import AddIcon from "@material-ui/icons/Add";
 import EditConfirmation from "./EditConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
-
-const ModifyConference = require("../api/modifyConference.js");
+import API from "../api/API"
+// const ModifyConference = require("../api/modifyConference.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -243,7 +243,7 @@ const EditConference = () => {
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
 
-    ModifyConference(
+    API.ModifyConference(
       token,
       meeting.conferenceKey.conferenceID,
       "0",

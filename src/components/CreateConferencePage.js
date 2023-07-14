@@ -20,8 +20,9 @@ import AddIcon from "@material-ui/icons/Add";
 import CreateConfirmation from "./CreateConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
+import API from "../api/API.js"
 
-const createconference = require("../api/CreateConference.js");
+// const createconference = require("../api/CreateConference.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -175,7 +176,7 @@ const CreateConference = () => {
 
     const autoInvite = true;
 
-    createconference(
+    API.createconference(
       token,
       durationInMilliseconds,
       participants,
