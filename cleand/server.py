@@ -240,7 +240,14 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     i=0
     for item in data_list:
         if isinstance(item, str):
+            for entry in data_list["entry"]:
+                key = entry["key"]
+                value = entry["value"]
+                conf_details[key] = value
+            # conf_details.update(data_list)
+            i+=1
             continue
+
         entry_list = item["entry"]
         extracted_dict = {}
         for entry in entry_list:
@@ -383,7 +390,7 @@ def delete_contact(delete_contact:Contactor_info = Body(default=None)):
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
-@app.post("/user/personalcontactlist")
+@app.post("/user/listpersonalcontact")
 def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     URL = "contactorList"
     try:
