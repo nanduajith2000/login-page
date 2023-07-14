@@ -11,7 +11,7 @@ import {
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
-import API from '../api/API.js';
+import API from "../api/API.js";
 // const Login = require("../api/Login.js");
 
 const ConferenceInfo = require("../api/ConferenceInfo.js");
@@ -109,7 +109,6 @@ const LoginForm = () => {
           var token = getCookie("cred");
           ConferenceInfo(token, conferenceId, "0")
             .then((res) => {
-              console.log("Conference info: ", res);
               if (
                 res.conferenceResult.conferenceInfo.conferenceState ===
                 "Destroyed"
@@ -132,7 +131,11 @@ const LoginForm = () => {
                   "meetingDetails",
                   JSON.stringify(res.conferenceResult.conferenceInfo)
                 );
-                navigate("/home/startConference");
+                console.log(
+                  "Joining the meeting: ",
+                  JSON.parse(localStorage.getItem("meetingDetails"))
+                );
+                window.open("/home/startConference");
               }
             })
             .catch((err) => {

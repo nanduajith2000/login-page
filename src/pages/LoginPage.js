@@ -1,10 +1,10 @@
 import LoginForm from "../components/LoginForm.js";
 import Navbar from "../components/Navbar.js";
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import PhotoCarousel from "../components/PhotoCarousel.js";
 import { userDetailsContext } from "../App.js";
 import "./LoginPage.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import About from "../components/About.js";
 import Download from "../components/Download.js";
 
@@ -15,6 +15,12 @@ function LoginPage() {
   const [conferenceId, setConferenceId] = useState("");
   const webAccount = useContext(userDetailsContext).webAccount;
   const setWebAccount = useContext(userDetailsContext).setWebAccount;
+  const location = useLocation();
+
+  useEffect(() => {
+    // Scroll to top on route change
+    window.scrollTo(0, 0);
+  }, [location]);
 
   return (
     <div className="container">
@@ -24,7 +30,11 @@ function LoginPage() {
         <Route
           path="/"
           element={
-            <div className="login">
+            <div
+              className={`login ${
+                location.pathname === "/" ? "slide-in active" : "slide-in"
+              }`}
+            >
               <userDetailsContextTwo.Provider
                 value={{
                   webAccount,

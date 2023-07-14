@@ -129,19 +129,19 @@ const OngoingConference = () => {
 
   useEffect(() => {
     clearAllCookies();
-    Login(
-      meeting.conferenceKey.conferenceID,
-      meeting.chair,
-      "ConferenceID"
-    ).then((res) => {
-      console.log(res);
-      if (res.message === "success") {
-        document.cookie = "cred=" + res.token;
-        localStorage.setItem("ConferenceID", meeting.conferenceID);
-        localStorage.setItem("Password", meeting.chair);
-        console.log(document.cookie);
-      } else alert("Invalid Credentials");
-    });
+    Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
+      .then((res) => {
+        console.log("Join response: ", res);
+        if (res.message === "success") {
+          document.cookie = "cred=" + res.token;
+          localStorage.setItem("ConferenceID", meeting.conferenceID);
+          localStorage.setItem("Password", meeting.chair);
+          console.log(document.cookie);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
   const handleCheckedUser = (participantId) => {

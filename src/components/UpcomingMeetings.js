@@ -12,8 +12,7 @@ import {
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import { useNavigate } from "react-router-dom";
-import API from '../api/API.js';
-
+import API from "../api/API.js";
 
 // const queryConferenceList = require("../api/QueryConferenceList");
 // const EndConference = require("../api/RemoveConference");
@@ -117,6 +116,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: 18,
     right: 16,
+    gap: 20,
   },
   buttonContainerExpanded: {
     display: "flex",
@@ -323,6 +323,8 @@ const UpcomingMeetings = () => {
     );
   };
 
+  const currentTime = new Date().getTime();
+
   return (
     <Container className={classes.root}>
       <Container>
@@ -418,21 +420,26 @@ const UpcomingMeetings = () => {
                         : classes.buttonContainerExpanded
                     }
                   >
-                    <Button
-                      variant="contained"
-                      className={classes.joinButton}
-                      onClick={() => handleJoinConference(meeting)}
-                    >
-                      Join
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      className={classes.editButton}
-                      onClick={() => handleEditConference(meeting)}
-                    >
-                      Edit
-                    </Button>
-                    {meeting.expanded && (
+                    {meeting.startTime <= currentTime && (
+                      <Button
+                        variant="contained"
+                        className={classes.joinButton}
+                        onClick={() => handleJoinConference(meeting)}
+                      >
+                        Join
+                      </Button>
+                    )}
+                    {meeting.startTime > currentTime && (
+                      <Button
+                        variant="outlined"
+                        className={classes.editButton}
+                        onClick={() => handleEditConference(meeting)}
+                      >
+                        Edit
+                      </Button>
+                    )}
+
+                    {meeting.startTime > currentTime && (
                       <Button
                         variant="contained"
                         className={classes.endButton}

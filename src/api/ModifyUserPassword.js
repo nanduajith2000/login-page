@@ -8,7 +8,7 @@ function modifyuserpassword(
   newPassWordAffirm
 ) {
   return fetch(url, {
-    method: "PUT", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
+    method: "POST", // Adjust the HTTP method (GET, POST, PUT, etc.) as required by your API
     headers: {
       "Content-Type": "application/json",
     },
