@@ -395,7 +395,7 @@ def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(contact_list.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invaild Token"}
+        return {"message":"UNAUTHORIZED"}
     BODY = {'contactorFilter':contact_list.dict()}
     del BODY['contactorFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
@@ -416,7 +416,7 @@ def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
 def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None)):
     URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID+"/resetConferencePassword"
     try:
-        head = {'Authorization': "Basic " + redis_client.get(mod_password.token).decode("utf-8")}
+        head = {'Authorization': "Basic " + redis_client.get(reset_password.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
     BODY= {}
