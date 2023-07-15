@@ -10,6 +10,7 @@ import {
   SubdirectoryArrowRight,
   CallEnd as CallEndIcon,
 } from "@mui/icons-material";
+import API from "../api/API"
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -55,9 +56,33 @@ export default function Sidenav(props) {
   const [participants, setParticipants] = useState(
     JSON.parse(localStorage.getItem("meetingDetails")).attendees
   );
-
+console.log("meetingDetails", JSON.parse(localStorage.getItem("meetingDetails")));
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
+    const handleAddParticipants = (participant) => {
+      const { name, phone } = participant;
+      const token = localStorage.getItem("token");
+      const conferenceID = localStorage.getItem("ConferenceID");
+    
+      const invitePara = [
+        {
+          name: name,
+          phone: phone,
+        },
+      ];
+    
+      API.InviteParticipants(token, conferenceID, invitePara)
+        .then((res) => {
+          console.log(res);
+          // Handle the success response
+        })
+        .catch((err) => {
+          console.log(err);
+          // Handle the error response
+        });
+    
+      setIsAddParticipantsOpen(false);
+    };
     console.log(participant);
     setIsAddParticipantsOpen(false);
   };
@@ -91,9 +116,25 @@ export default function Sidenav(props) {
       ...participant,
       muted: true,
     }));
+  
+    const token = localStorage.getItem("token");
+    const conferenceID = localStorage.getItem("ConferenceID");
+  
     props.setParticipants(updatedParticipants);
+  
+    API.MuteConference(token, conferenceID, true)
+      .then((res) => {
+        console.log(res);
+        // Handle the success response
+      })
+      .catch((err) => {
+        console.log(err);
+        // Handle the error response
+      });
+  
     setAreAllParticipantsMuted(true);
   };
+  
 
   const handleCreateSubconference = () => {
     // logic to create subconference

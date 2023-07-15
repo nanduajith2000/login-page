@@ -137,12 +137,56 @@ const OngoingConference = () => {
           localStorage.setItem("ConferenceID", meeting.conferenceID);
           localStorage.setItem("Password", meeting.chair);
           console.log(document.cookie);
+          
+          // Start the loop function after successful login
+          const loopFunction = setInterval(() => {
+            API.ConferenceInfo(res.token, meeting.conferenceKey.conferenceID, 0)
+              .then((confInfoRes) => {
+                // Process the conference info response here
+                console.log("Conference Info: ", confInfoRes);
+  
+                // Extract inviteStates from conferenceResult
+                const inviteStates = confInfoRes.conferenceResult.inviteStates;
+  
+                // Update the meetingDetails with inviteStates
+                const updatedMeetingDetails = {
+                  ...meeting,
+                  attendees: meeting.attendees.map((participant) => {
+                    const inviteState = inviteStates.find(
+                      (state) => state.name === participant.attendeeName
+                    );
+  
+                    return {
+                      ...participant,
+                      inviteState: {
+                        updateTime: inviteState.updateTime,
+                        name: inviteState.name,
+                        phone: inviteState.phone,
+                        state: inviteState.state,
+                      },
+                    };
+                  }),
+                };
+  
+                // Update the state with the modified meetingDetails
+                setMeeting(updatedMeetingDetails);
+              })
+              .catch((err) => {
+                console.log(err);
+                // Handle errors here
+              });
+          }, 5000); // 5 seconds interval
+  
+          // Clean up the loop function when the component unmounts
+          return () => clearInterval(loopFunction);
         }
       })
       .catch((err) => {
         console.log(err);
+        // Handle errors here
       });
   }, []);
+  
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -210,10 +254,20 @@ const OngoingConference = () => {
     setSearchQuery(event.target.value);
   };
 
-  // Filter participants based on search query
-  const filteredParticipants = participants.filter((participant) =>
-    participant.attendeeName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredParticipants = participants
+    ? participants.filter(
+        (participant) =>
+          participant.attendeeName &&
+          participant.attendeeName
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  // Determine the number of participants on call
+  const participantsOnCall = participants
+    ? participants.filter((participant) => participant.connected).length
+    : 0;
 
   return (
     <div className={classes.root}>
@@ -226,8 +280,7 @@ const OngoingConference = () => {
           {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          {/* {participants.filter((participant) => participant.connected).length} */}
-          0/{participants.length} on call
+          {participantsOnCall}/{participants ? participants.length : 0} on call
         </Typography>
         <div className={classes.section}>
           <TextField
