@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -394,3 +394,16 @@ def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
     
     dict1=ssl1.data_GET(URL,head)
     return dict1
+
+@app.post("/user/resetconferencepassword")
+def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None)):
+    URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID+"/resetConferencePassword"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(mod_password.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    BODY= {}
+    dict1=ssl1.update_PUT(URL,head,BODY)
+    URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
+    dict2 = ssl1.data_GET(URL,head)
+    return dict2

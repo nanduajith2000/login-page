@@ -184,10 +184,10 @@ class Contactor_info(BaseModel):
      contactorID:str
 
 class ResultField(BaseModel):
-     xsi_nil:True
+     xsi_nil:bool=True
 
 class SortField(BaseModel):
-     xsi_nil:True
+     xsi_nil:bool=True
 
 class Conditions(BaseModel):
      key:str
@@ -196,11 +196,14 @@ class Conditions(BaseModel):
 
 class ContactFilter(BaseModel):
      token:str
-     resultField:ResultField
+     resultField:Optional[ResultField]
      conditions:Conditions
      isAscend:bool
-     sortField:SortField
+     sortField:Optional[SortField]
      pageIndex:int
      pageSize:int
 
-
+class ResetConfPassword(BaseModel):
+     token:str
+     conferenceID:str
+     subConferenceID:str="0"
