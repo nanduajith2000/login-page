@@ -10,7 +10,7 @@ import {
   SubdirectoryArrowRight,
   CallEnd as CallEndIcon,
 } from "@mui/icons-material";
-import API from "../api/API"
+import API from "../api/API";
 
 const useStyles = makeStyles(() => ({
   sidenavContainer: {
@@ -56,33 +56,33 @@ export default function Sidenav(props) {
   const [participants, setParticipants] = useState(
     JSON.parse(localStorage.getItem("meetingDetails")).attendees
   );
-console.log("meetingDetails", JSON.parse(localStorage.getItem("meetingDetails")));
+  console.log(
+    "meetingDetails",
+    JSON.parse(localStorage.getItem("meetingDetails"))
+  );
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
-    const handleAddParticipants = (participant) => {
-      const { name, phone } = participant;
-      const token = localStorage.getItem("token");
-      const conferenceID = localStorage.getItem("ConferenceID");
-    
-      const invitePara = [
-        {
-          name: name,
-          phone: phone,
-        },
-      ];
-    
-      API.InviteParticipants(token, conferenceID, invitePara)
-        .then((res) => {
-          console.log(res);
-          // Handle the success response
-        })
-        .catch((err) => {
-          console.log(err);
-          // Handle the error response
-        });
-    
-      setIsAddParticipantsOpen(false);
-    };
+    const { name, phone } = participant;
+    const token = localStorage.getItem("token");
+    const conferenceID = localStorage.getItem("ConferenceID");
+
+    const invitePara = [
+      {
+        name: name,
+        phone: phone,
+      },
+    ];
+
+    API.InviteParticipants(token, conferenceID, invitePara)
+      .then((res) => {
+        console.log(res);
+        // Handle the success response
+      })
+      .catch((err) => {
+        console.log(err);
+        // Handle the error response
+      });
+
     console.log(participant);
     setIsAddParticipantsOpen(false);
   };
@@ -103,38 +103,31 @@ console.log("meetingDetails", JSON.parse(localStorage.getItem("meetingDetails"))
   };
 
   const handleUnmuteAll = () => {
-    const updatedParticipants = props.participants.map((participant) => ({
-      ...participant,
-      muted: false,
-    }));
-    props.setParticipants(updatedParticipants);
+    const token = localStorage.getItem("cred");
+    API.MuteConference(token, meeting.conferenceKey.conferenceID, false)
+      .then((res) => {
+        console.log("Unmute all response: ", res);
+      })
+      .catch((err) => {
+        console.log("Unmute all error: ", err);
+        alert("Error in unmuting all participants");
+      });
     setAreAllParticipantsMuted(false);
   };
 
   const handleMuteAll = () => {
-    const updatedParticipants = props.participants.map((participant) => ({
-      ...participant,
-      muted: true,
-    }));
-  
-    const token = localStorage.getItem("token");
-    const conferenceID = localStorage.getItem("ConferenceID");
-  
-    props.setParticipants(updatedParticipants);
-  
-    API.MuteConference(token, conferenceID, true)
+    const token = localStorage.getItem("cred");
+    API.MuteConference(token, meeting.conferenceKey.conferenceID, true)
       .then((res) => {
-        console.log(res);
-        // Handle the success response
+        console.log("Mute all response: ", res);
       })
       .catch((err) => {
-        console.log(err);
-        // Handle the error response
+        console.log("Mute all error: ", err);
+        alert("Error in muting all participants");
       });
-  
+
     setAreAllParticipantsMuted(true);
   };
-  
 
   const handleCreateSubconference = () => {
     // logic to create subconference

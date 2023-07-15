@@ -265,8 +265,9 @@ const UpcomingMeetings = () => {
           } else {
             const meetingArray = Object.values(res)
               .filter((value) => typeof value === "object")
-              .map((meeting) => ({
+              .map((meeting, index) => ({
                 ...meeting,
+                id: index + 1,
                 expanded: false,
               }));
             setMeetings(meetingArray);
