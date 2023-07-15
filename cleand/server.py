@@ -259,9 +259,14 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
         dict1 = ssl1.data_GET(URL, head)
         info=dict1["conferenceResult"]["conferenceInfo"]
         i+=1
-        info["chair"]=info["passwords"][1]["password"]
-        info["general"]=info["passwords"][0]["password"]
+
+        passwords = dict1['conferenceResult']['conferenceInfo']['passwords']
+        for password in passwords:
+            role = password['conferenceRole']
+            value = password['password']
+            info[role] = value
         del info['passwords']
+        
         conf_details[i]=info
         # print(conf_details)
         ans.update({i:extracted_dict})
@@ -395,7 +400,7 @@ def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(contact_list.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invaild Token"}
+        return {"message":"UNAUTHORIZED"}
     BODY = {'contactorFilter':contact_list.dict()}
     del BODY['contactorFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
