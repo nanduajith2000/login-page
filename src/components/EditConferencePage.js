@@ -20,7 +20,7 @@ import AddIcon from "@material-ui/icons/Add";
 import EditConfirmation from "./EditConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
-import API from "../api/API"
+import API from "../api/API";
 // const ModifyConference = require("../api/modifyConference.js");
 
 const useStyles = makeStyles((theme) => ({
@@ -250,13 +250,17 @@ const EditConference = () => {
       durationInMilliseconds,
       participants,
       48,
-      "en_US",
+      "en-US",
       subject,
       formattedStartTimeUTC,
       contacts
     )
       .then((res) => {
         console.log(res);
+        if (res.message === "UNAUTHORIZED") {
+          alert("Session Expired. Please login again.");
+          navigate("/");
+        }
       })
 
       .catch((err) => {

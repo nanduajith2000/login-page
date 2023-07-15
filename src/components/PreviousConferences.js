@@ -11,6 +11,7 @@ import {
   IconButton,
   CircularProgress,
 } from "@material-ui/core";
+import { useNavigate } from "react-router-dom";
 import { NavigateNext, NavigateBefore } from "@material-ui/icons";
 import API from "../api/API";
 
@@ -60,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const PreviousConferences = () => {
+  const navigate = useNavigate();
   function convertUTCMillisecondsToDate(utcMilliseconds) {
     // Create a new Date object with the UTC milliseconds
     var date = new Date(parseInt(utcMilliseconds, 10));
@@ -112,7 +114,7 @@ const PreviousConferences = () => {
     return null; // Return null if the cookie is not found
   }
 
-  const [totalPages, setTotalPages] = React.useState(23);
+  const [totalPages, setTotalPages] = React.useState(29);
 
   // React.useEffect(() => {
   //   const token = getCookie("user");
@@ -126,13 +128,19 @@ const PreviousConferences = () => {
 
   React.useEffect(() => {
     const token = getCookie("user");
+    setLoading(true);
     API.queryConferencehistory(token, pageIndex)
       .then((res) => {
-        const meetingArray = Object.values(res)
-          .filter((value) => typeof value === "object")
-          .map((meeting) => meeting);
-        setMeetings(meetingArray.reverse());
-        setTotalPages(res.totalPages);
+        console.log("Previous conferences: ", res);
+        if (res.message === "UNAUTHORIZED") {
+          alert("Session expired. Please login again.");
+          navigate("/");
+        } else {
+          const meetingArray = Object.values(res)
+            .filter((value) => typeof value === "object")
+            .map((meeting) => meeting);
+          setMeetings(meetingArray.reverse());
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -157,14 +165,14 @@ const PreviousConferences = () => {
         <div className={classes.paginationContainer}>
           <IconButton
             className={classes.paginationButton}
-            disabled={pageIndex === 1}
+            disabled={pageIndex === totalPages}
             onClick={() => handlePageChange(pageIndex + 1)}
           >
             <NavigateBefore />
           </IconButton>
           <IconButton
             className={classes.paginationButton}
-            disabled={pageIndex === totalPages}
+            disabled={pageIndex === 1}
             onClick={() => handlePageChange(pageIndex - 1)}
           >
             <NavigateNext />

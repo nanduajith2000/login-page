@@ -58,7 +58,7 @@ class conferenceInfo (BaseModel):
 
 class ConferenceTemplate(BaseModel):
     token:str
-    conferenceTemplate: int
+    templateID: int
     templateName: str
     timeZone: int
     length: int
@@ -70,6 +70,7 @@ class ConferenceTemplate(BaseModel):
 class DeleteConferencetemplate(BaseModel):
      token:str
      templateID:str
+     
 class Conditions(BaseModel):
 	key:str
 	value:str
@@ -117,7 +118,7 @@ class VerifyParticipant(BaseModel):
 class ProlongConf(BaseModel):
     token:str
     conferenceID: str
-    length: int  
+    length: str  
 
 class QueryConfInfo(BaseModel):
     token:str
@@ -146,7 +147,7 @@ class FindUserPasswordInfo(BaseModel):
 class IsAllMute(BaseModel):
     token:str
     conferenceID: str
-    isAllMute: bool
+    isAllMute: str
 
 class LeaveParti(BaseModel):
     token:str
@@ -182,7 +183,6 @@ class Contactor_mod(BaseModel):
 class Contactor_info(BaseModel):
      token:str
      contactorID:str
-
 class ResultField(BaseModel):
      xsi_nil:bool=True
 

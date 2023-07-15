@@ -17,7 +17,8 @@ import {
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import Homenavbarlite from "./Homenavbarlite";
-import API from "../api/API"
+import API from "../api/API";
+import { useNavigate } from "react-router-dom";
 
 // const modifyuserpassword = require("../api/ModifyUserPassword.js");
 
@@ -144,6 +145,8 @@ function Settings() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
+  const navigate = useNavigate();
+
   const handlePasswordSave = () => {
     if (newPassword !== confirmPassword) {
       setPasswordMatchError(true);
@@ -165,7 +168,10 @@ function Settings() {
       )
         .then((res) => {
           console.log(res);
-          alert("Password changed successfully!");
+          if (res.message === "UNAUTHORIZED") {
+            alert("Session expired. Please login again.");
+            navigate("/");
+          } else alert("Password changed successfully!");
         })
         .catch((err) => {
           console.log(err);

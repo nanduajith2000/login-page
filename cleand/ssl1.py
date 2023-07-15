@@ -38,7 +38,7 @@ def create_POST(URL, head, body):
     headers.update(head)
 
 #     body_dict = body.dict()
-    
+    # print("\nBody IN\n",body)
     body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
     print("\nBody IN\n",body_xml)
 
@@ -49,7 +49,7 @@ def create_POST(URL, head, body):
     # print("\n Content Out \n",r)
     data_dict = xmltodict.parse(r.content)
 
-    print("Body OUT\n",data_dict)
+    print("\nBody OUT\n",data_dict)
     
     print("The time of execution is:", (end - start) * 10**3, "ms")
 
@@ -77,7 +77,7 @@ def update_PUT(URL, head, body):
     # print("\nBody OUT\n",r.content)
     data_dict = xmltodict.parse(r.content)
 
-    print("Body OUT\n",data_dict)
+    print("\nBody OUT\n",data_dict)
     
     print("The time of execution is:", (end - start) * 10**3, "ms")
 
@@ -92,11 +92,11 @@ def encoded_PUT(URL,head,body):
 
     url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
 
-    body_encoded = urllib.parse.urlencode(body)
-    print ("\nBody in\n",body_encoded)
+    # body_encoded = urllib.parse.urlencode(body)
+    print ("\nBody in\n",body)
 
     start = time.time()
-    r = requests.put(url, headers=headers, data=body_encoded, verify=False)
+    r = requests.put(url, headers=headers, data=body, verify=False)
     end = time.time()
 
     # print("\ncontent out\n",r.content)
