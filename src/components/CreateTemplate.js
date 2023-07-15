@@ -17,7 +17,7 @@ import AddIcon from "@material-ui/icons/Add";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
 import TemplateCreated from "./TemplateCreated";
-import API from "../api/API"
+import API from "../api/API";
 // const createconferencetemplate = require("../api/CreateConferenceTemplate");
 
 const useStyles = makeStyles((theme) => ({
@@ -118,6 +118,10 @@ const CreateTemplate = () => {
     )
       .then((res) => {
         console.log(res);
+        if (res.message === "UNAUTHORIZED") {
+          alert("Session Expired. Please login again.");
+          navigate("/");
+        }
       })
 
       .catch((err) => {

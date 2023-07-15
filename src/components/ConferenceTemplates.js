@@ -118,8 +118,6 @@ function getCookie(cookieName) {
   return null; // Return null if the cookie is not found
 }
 
-const token = getCookie("user");
-
 const ConferenceTemplates = () => {
   const classes = useStyles();
   const navigate = useNavigate();
@@ -128,13 +126,20 @@ const ConferenceTemplates = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = getCookie("user");
     API.ConferenceTemplateList(token)
       .then((res) => {
-        const templateArray = Object.values(res)
-          .filter((value) => typeof value === "object")
-          .map((template) => template);
-        setTemplateData(templateArray);
-        setLoading(false);
+        if (res.message === "UNAUTHORIZED") {
+          alert("Session expired. Please login again");
+          navigate("/");
+        } else {
+          console.log("Conference template list: ", res);
+          const templateArray = Object.values(res)
+            .filter((value) => typeof value === "object")
+            .map((template) => template);
+          setTemplateData(templateArray);
+          setLoading(false);
+        }
       })
       .catch((err) => {
         console.log(

@@ -20,7 +20,7 @@ import AddIcon from "@material-ui/icons/Add";
 import CreateConfirmation from "./CreateConfirmation";
 import Homenavbarlite from "./Homenavbarlite";
 import { useNavigate } from "react-router-dom";
-import API from "../api/API.js"
+import API from "../api/API.js";
 
 // const createconference = require("../api/CreateConference.js");
 
@@ -189,19 +189,25 @@ const CreateConference = () => {
     )
       .then((res) => {
         console.log(res);
-        setConferenceID(
-          res.scheduleConferenceResult.conferenceInfo.conferenceKey.conferenceID
-        );
-        setAccessNumber(
-          res.scheduleConferenceResult.conferenceInfo.accessNumber
-        );
-        setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
-        setChairpersonPassword(
-          res.scheduleConferenceResult.conferenceInfo.passwords[0].password
-        );
-        setGuestPassword(
-          res.scheduleConferenceResult.conferenceInfo.passwords[1].password
-        );
+        if (res.message === "UNAUTHORIZED") {
+          navigate("/");
+          alert("Session expired. Please login again.");
+        } else {
+          setConferenceID(
+            res.scheduleConferenceResult.conferenceInfo.conferenceKey
+              .conferenceID
+          );
+          setAccessNumber(
+            res.scheduleConferenceResult.conferenceInfo.accessNumber
+          );
+          setCreator(res.scheduleConferenceResult.conferenceInfo.scheduserName);
+          setChairpersonPassword(
+            res.scheduleConferenceResult.conferenceInfo.passwords[0].password
+          );
+          setGuestPassword(
+            res.scheduleConferenceResult.conferenceInfo.passwords[1].password
+          );
+        }
       })
 
       .catch((err) => {

@@ -52,6 +52,7 @@ class API {
     language,
     subject,
     startTime,
+    autoInvite,
     attendees
   ) {
     const url = `${URL}/user/createconference`;
@@ -70,6 +71,7 @@ class API {
         subject: `${subject}`,
         startTime: `${startTime}`,
         mediaTypes: `Voice`,
+        autoInvite: autoInvite,
         attendees: attendees,
       }),
     })
@@ -86,7 +88,7 @@ class API {
     language,
     templateName
   ) {
-    const url = `${URL}/user/conferencetemplate`;
+    const url = `${URL}/user/createconferencetemplate`;
 
     return fetch(url, {
       method: "POST",
@@ -95,7 +97,7 @@ class API {
       },
       body: JSON.stringify({
         token: `${token}`,
-        templateId: `${templateId}`,
+        templateID: `${templateId}`,
         length: `${length}`,
         size: `${size}`,
         timeZone: `${timeZone}`,
@@ -185,7 +187,7 @@ class API {
     const url = `${URL}/user/logout`;
 
     return fetch(url, {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/json",
       },
@@ -345,3 +347,47 @@ class API {
 }
 
 export default API;
+
+// API.createconference(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk1NTcyNDUuNTI0NjM1fQ.2ar0NO2jj8hNaa_FB1docfqUYTyG-HToNDXO11ZXj4Y",
+//   600000,
+//   3,
+//   48,
+//   "en_US",
+//   "testing",
+//   1689975800000,
+//   [
+//     {
+//       attendeeName: "albert",
+//       conferenceRole: "chair",
+//       addressEntry: [
+//         {
+//           address: "919744139903",
+//           type: "phone",
+//         },
+//       ],
+//     },
+//     {
+//       attendeeName: "akshay",
+//       conferenceRole: "general",
+//       addressEntry: [
+//         {
+//           address: "919746455089",
+//           type: "phone",
+//         },
+//       ],
+//     },
+//     {
+//       attendeeName: "gk",
+//       conferenceRole: "general",
+//       addressEntry: [
+//         {
+//           address: "919020255100",
+//           type: "phone",
+//         },
+//       ],
+//     },
+//   ]
+// )
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));
