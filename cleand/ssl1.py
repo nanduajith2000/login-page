@@ -38,7 +38,7 @@ def create_POST(URL, head, body):
     headers.update(head)
 
 #     body_dict = body.dict()
-    
+    # print("\nBody IN\n",body)
     body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
     print("\nBody IN\n",body_xml)
 
