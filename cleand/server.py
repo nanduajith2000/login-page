@@ -436,15 +436,12 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
 def modifyuser(modify_user:Usermodel = Body(default=None)):
     URL="modifyuser"
     try:
-        head = {'Authorization': "Basic " + redis_client.get(reset_password.token).decode("utf-8")}
+        head = {'Authorization': "Basic " + redis_client.get(modify_user.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
-    dict1=ssl1.update_PUT(URL,head)
-    URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
-    dict2 = ssl1.data_GET(URL,head)
-    return dict2
-
-
+    BODY={"user":modify_user.dict()}
+    dict1=ssl1.update_PUT(URL,head,BODY)
+    return dict1
 
 
 
@@ -470,6 +467,6 @@ def enablemute(enableMute:EnableMute=Body(default=None)):
 
     BODY="isMute ="+enableMute.isMute
 
-    dict1 = ssl1.update_PUT(URL,head,BODY)
+    dict1 = ssl1.encoded_PUT(URL,head,BODY)
 
     return dict1
