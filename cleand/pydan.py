@@ -187,23 +187,44 @@ class ResultField(BaseModel):
      xsi_nil:bool=True
 
 class SortField(BaseModel):
-     xsi_nil:bool=True
+    xsi_nil:bool=True
 
 class Conditions(BaseModel):
-     key:str
-     value:str
-     matching:str
+    key:str
+    value:str
+    matching:str
 
 class ContactFilter(BaseModel):
-     token:str
-     resultField:Optional[ResultField]
-     conditions:Conditions
-     isAscend:bool
-     sortField:Optional[SortField]
-     pageIndex:int
-     pageSize:int
+    token:str
+    resultField:Optional[ResultField]
+    conditions:Conditions
+    isAscend:bool
+    sortField:Optional[SortField]
+    pageIndex:int
+    pageSize:int
 
 class ResetConfPassword(BaseModel):
+    token:str
+    conferenceID:str
+    subConferenceID:str="0"
+class RaiseHand(BaseModel):
+    token:str
+    conferenceID:str
+    participantIDs:str
+    handsState:str="Down"
+
+class EnableMute(BaseModel):
+    token:str
+    conferenceID:str
+    participantID:str
+    isMute:str
+
+class Account(BaseModel):
+     name:str
+     type:str
+
+class Usermodel(BaseModel):
      token:str
-     conferenceID:str
-     subConferenceID:str="0"
+     account:Account
+     mobile:str
+

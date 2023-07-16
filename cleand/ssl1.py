@@ -56,7 +56,7 @@ def create_POST(URL, head, body):
     return data_dict
 
 
-def update_PUT(URL, head, body):
+def update_PUT(URL, head, body=None):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings()
 
