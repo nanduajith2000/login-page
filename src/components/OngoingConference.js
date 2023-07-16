@@ -15,7 +15,6 @@ import {
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
-import { useNavigate } from "react-router-dom";
 import API from "../api/API";
 // const Login = require("../api/Login");
 
@@ -87,36 +86,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const InviteParticipants = require("../api/InviteParticipants");
-function clearAllCookies() {
-  const cookies = document.cookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-  }
-}
-
-function getCookie(cookieName) {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split(":");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith(cookieName + "=")) {
-      return cookie.substring(cookieName.length + 1);
-    }
-  }
-
-  return null; // Return null if the cookie is not found
-}
-
 const OngoingConference = () => {
-  const navigate = useNavigate();
-
-  const userID = localStorage.getItem("userID");
   const classes = useStyles();
   const [meeting, setMeeting] = useState(
     JSON.parse(localStorage.getItem("meetingDetails"))
