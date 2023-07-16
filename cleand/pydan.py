@@ -207,3 +207,13 @@ class ResetConfPassword(BaseModel):
      token:str
      conferenceID:str
      subConferenceID:str="0"
+
+class Account(BaseModel):
+     name:str
+     type:str
+
+class Usermodel(BaseModel):
+     token:str
+     account:Account
+     mobile:str
+

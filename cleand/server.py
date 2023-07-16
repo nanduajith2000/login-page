@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,Usermodel,Mute
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -424,8 +424,22 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
         head = {'Authorization': "Basic " + redis_client.get(reset_password.token).decode("utf-8")}
     except AttributeError:
         return {"message":"Invalid Token"}
-    BODY= {}
-    dict1=ssl1.update_PUT(URL,head,BODY)
+    dict1=ssl1.update_PUT(URL,head)
     URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
     dict2 = ssl1.data_GET(URL,head)
     return dict2
+
+@app.post("/user/modifyuser")
+def modifyuser(modify_user:Usermodel = Body(default=None)):
+    URL="modifyuser"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(reset_password.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    dict1=ssl1.update_PUT(URL,head)
+    URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
+    dict2 = ssl1.data_GET(URL,head)
+    return dict2
+
+
+
