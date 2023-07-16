@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,Mute
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -468,5 +468,18 @@ def enablemute(enableMute:EnableMute=Body(default=None)):
     BODY="isMute ="+enableMute.isMute
 
     dict1 = ssl1.encoded_PUT(URL,head,BODY)
+
+    return dict1
+
+@app.post("/user/queryonlineconferenceinfo")
+def queryonlineconferenceinformation(onlineConf_Info:OnlineConfInfo=Body(default=None)):
+    URL="conferences/"+onlineConf_Info.conferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(onlineConf_Info.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    
+    head["If-Modified-Since"]="Sat, 16 Jul 2069 22:22:06 GMT"
+    dict1=ssl1.data_GET(URL,head)
 
     return dict1
