@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -217,6 +217,9 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     del BODY['conferenceFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
     # return dict1
+    
+    if (dict1['conferenceList']["result"]["resultDesc"]!="SUCCESS"):
+        return dict1
 
     if (dict1["conferenceList"]["page"]["total"]=="0"):
         return {"message":"no_upcoming_meetings"}
@@ -429,3 +432,29 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
     URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
     dict2 = ssl1.data_GET(URL,head)
     return dict2
+
+@app.post("/user/raisehand")
+def raisehand(raiseHand:RaiseHand=Body(default=None)):
+    URL="conferences/"+raiseHand.conferenceID+"/participants/"+raiseHand.participantIDs+"/handsState"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(raiseHand.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+    
+    BODY = "handsState="+raiseHand.handsState
+    dict1=ssl1.encoded_PUT(URL,head,BODY)
+    return dict1
+
+@app.post("/user/enablemute")
+def enablemute(enableMute:EnableMute=Body(default=None)):
+    URL="conferences/"+enableMute.conferenceID+"/participants/"+enableMute.participantID+"/isMute"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(enableMute.token).decode("utf-8")}
+    except AttributeError:
+        return {"message":"Invalid Token"}
+
+    BODY="isMute ="+enableMute.isMute
+
+    dict1 = ssl1.update_PUT(URL,head,BODY)
+
+    return dict1
