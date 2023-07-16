@@ -15,7 +15,6 @@ import {
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
-import { useNavigate } from "react-router-dom";
 import API from "../api/API";
 // const Login = require("../api/Login");
 
@@ -87,36 +86,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const InviteParticipants = require("../api/InviteParticipants");
-function clearAllCookies() {
-  const cookies = document.cookie.split(";");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i];
-    const eqPos = cookie.indexOf("=");
-    const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
-    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
-  }
-}
-
-function getCookie(cookieName) {
-  const cookieString = document.cookie;
-  const cookies = cookieString.split(":");
-
-  for (let i = 0; i < cookies.length; i++) {
-    const cookie = cookies[i].trim();
-    if (cookie.startsWith(cookieName + "=")) {
-      return cookie.substring(cookieName.length + 1);
-    }
-  }
-
-  return null; // Return null if the cookie is not found
-}
-
 const OngoingConference = () => {
-  const navigate = useNavigate();
-
-  const userID = localStorage.getItem("userID");
   const classes = useStyles();
   const [meeting, setMeeting] = useState(
     JSON.parse(localStorage.getItem("meetingDetails"))
@@ -128,26 +98,29 @@ const OngoingConference = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    clearAllCookies();
+    // clearAllCookies();
     API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
       .then((res) => {
         console.log("Join response: ", res);
         if (res.message === "success") {
-          document.cookie = "cred=" + res.token;
-          localStorage.setItem("ConferenceID", meeting.conferenceID);
+          localStorage.setItem("cred", res.token);
+          localStorage.setItem(
+            "ConferenceID",
+            meeting.conferenceKey.conferenceID
+          );
           localStorage.setItem("Password", meeting.chair);
           console.log(document.cookie);
-          
+
           // Start the loop function after successful login
           const loopFunction = setInterval(() => {
             API.ConferenceInfo(res.token, meeting.conferenceKey.conferenceID, 0)
               .then((confInfoRes) => {
                 // Process the conference info response here
                 console.log("Conference Info: ", confInfoRes);
-  
+
                 // Extract inviteStates from conferenceResult
                 const inviteStates = confInfoRes.conferenceResult.inviteStates;
-  
+
                 // Update the meetingDetails with inviteStates
                 const updatedMeetingDetails = {
                   ...meeting,
@@ -155,7 +128,7 @@ const OngoingConference = () => {
                     const inviteState = inviteStates.find(
                       (state) => state.name === participant.attendeeName
                     );
-  
+
                     return {
                       ...participant,
                       inviteState: {
@@ -167,7 +140,7 @@ const OngoingConference = () => {
                     };
                   }),
                 };
-  
+
                 // Update the state with the modified meetingDetails
                 setMeeting(updatedMeetingDetails);
               })
@@ -175,8 +148,8 @@ const OngoingConference = () => {
                 console.log(err);
                 // Handle errors here
               });
-          }, 5000); // 5 seconds interval
-  
+          }, 10000); // 5 seconds interval
+
           // Clean up the loop function when the component unmounts
           return () => clearInterval(loopFunction);
         }
@@ -186,7 +159,6 @@ const OngoingConference = () => {
         // Handle errors here
       });
   }, []);
-  
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -219,31 +191,28 @@ const OngoingConference = () => {
   };
 
   const handleCall = (participant) => {
-    const credCookie = document.cookie
-      .split(";")
-      .map((cookie) => cookie.trim())
-      .find((cookie) => cookie.startsWith("cred="));
+    const credValue = localStorage.getItem("cred");
 
-    if (credCookie) {
-      var credValue = credCookie.substring(5);
-      // Output: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMxNzk1MjQwIiwiZXhwaXJ5IjoxNjg5NDUwOTQxLjU2MzIyN30.RhWViXoOUMiRe_w7HRXesNTahYZkFkBK9ThUFklykXI
-    }
     console.log("Participant: ", participant);
 
     const invitePara = [
       {
         name: participant.attendeeName,
         phone: participant.addressEntry.address,
+        role: "general",
+        isMute: false,
       },
     ];
+
     console.log("Cred:", credValue);
-    console.log("Conference ID: ", meeting.conferenceKey.conferenceID);
     API.InviteParticipants(
       credValue,
       meeting.conferenceKey.conferenceID,
       invitePara
     )
-      .then((res) => console.log(res))
+      .then((res) => {
+        console.log(res);
+      })
       .catch((err) => {
         console.log(err);
         alert("Could not call attendee. Please try again later.");
