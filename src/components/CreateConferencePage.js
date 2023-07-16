@@ -241,7 +241,7 @@ const CreateConference = () => {
 
   const handleAddContact = () => {
     const newContact = {
-      attendeeName,
+      attendeeName: `${attendeeName}`,
       conferenceRole: "general",
       addressEntry: [
         {
