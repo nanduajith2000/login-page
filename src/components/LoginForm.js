@@ -103,9 +103,9 @@ const LoginForm = () => {
         console.log("Join response: ", res);
 
         if (res.message === "success") {
-          document.cookie = "cred=" + res.token;
+          localStorage.setItem("cred", res.token);
           console.log(document.cookie);
-          var token = getCookie("cred");
+          var token = localStorage.getItem("cred");
           API.ConferenceInfo(token, conferenceId, "0")
             .then((res) => {
               if (

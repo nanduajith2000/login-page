@@ -174,7 +174,7 @@ const CreateConference = () => {
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
 
-    const autoInvite = true;
+    const autoInvite = false;
 
     API.createconference(
       token,

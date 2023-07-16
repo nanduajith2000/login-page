@@ -138,13 +138,11 @@ class API {
       body: JSON.stringify({
         token: `${token}`,
         conferenceID: `${conID}`,
-        inviteParas: {
-          invitePara: [body],
-        },
+        invitePara: body,
       }),
     })
       .then((response) => response.json())
-      .then((data) => data);
+      .then((data) => console.log(data));
   }
 
   static LeaveParticipant(token, conferenceID, participantID) {
@@ -344,50 +342,32 @@ class API {
       .then((response) => response.json())
       .then((data) => data);
   }
+
+  static ModifyConference(token, conferenceID, SubconferenceID, length, size, timeZone, language, subject, startTime, attendees) {
+    const url = `${URL}/user/modifyconference`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conferenceID: `${conferenceID}`,
+        subconferenceID: `${SubconferenceID}`,
+        length: `${length}`,
+        size: `${size}`,
+        timeZone: `${timeZone}`,
+        language: `${language}`,
+        subject: `${subject}`,
+        startTime: `${startTime}`,
+        mediaTypes: `Voice`,
+        attendees: attendees,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
 }
 
 export default API;
-
-// API.createconference(
-//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk1NTcyNDUuNTI0NjM1fQ.2ar0NO2jj8hNaa_FB1docfqUYTyG-HToNDXO11ZXj4Y",
-//   600000,
-//   3,
-//   48,
-//   "en_US",
-//   "testing",
-//   1689975800000,
-//   [
-//     {
-//       attendeeName: "albert",
-//       conferenceRole: "chair",
-//       addressEntry: [
-//         {
-//           address: "919744139903",
-//           type: "phone",
-//         },
-//       ],
-//     },
-//     {
-//       attendeeName: "akshay",
-//       conferenceRole: "general",
-//       addressEntry: [
-//         {
-//           address: "919746455089",
-//           type: "phone",
-//         },
-//       ],
-//     },
-//     {
-//       attendeeName: "gk",
-//       conferenceRole: "general",
-//       addressEntry: [
-//         {
-//           address: "919020255100",
-//           type: "phone",
-//         },
-//       ],
-//     },
-//   ]
-// )
-//   .then((res) => console.log(res))
-//   .catch((err) => console.log(err));

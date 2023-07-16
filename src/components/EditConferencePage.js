@@ -175,7 +175,7 @@ const EditConference = () => {
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
   const [addedParticipants, setAddedParticipants] = useState(
-    meeting.attendees.length > 2 ? meeting.attendees : []
+    meeting.attendees === undefined ? [] : meeting.attendees
   );
   const [chairpersonPassword, setChairpersonPassword] = useState(meeting.chair);
   const [guestPassword, setGuestPassword] = useState(meeting.general);

@@ -132,15 +132,15 @@ const PreviousConferences = () => {
     API.queryConferencehistory(token, pageIndex)
       .then((res) => {
         console.log("Previous conferences: ", res);
-        if (res.message === "UNAUTHORIZED") {
-          alert("Session expired. Please login again.");
-          navigate("/");
-        } else {
-          const meetingArray = Object.values(res)
-            .filter((value) => typeof value === "object")
-            .map((meeting) => meeting);
-          setMeetings(meetingArray.reverse());
-        }
+        // if (res.message === "UNAUTHORIZED") {
+        //   alert("Session expired. Please login again.");
+        //   navigate("/");
+        // } else {
+        const meetingArray = Object.values(res)
+          .filter((value) => typeof value === "object")
+          .map((meeting) => meeting);
+        setMeetings(meetingArray.reverse());
+        // }
         setLoading(false);
       })
       .catch((err) => {

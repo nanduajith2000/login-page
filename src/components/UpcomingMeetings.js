@@ -8,6 +8,7 @@ import {
   Button,
   IconButton,
   makeStyles,
+  Chip,
   CircularProgress,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -174,6 +175,18 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     marginTop: "20vh",
   },
+  chipContainer: {
+    display: "flex",
+    gap: 8,
+    flexWrap: "wrap",
+    marginTop: 10,
+    alignItems: "center",
+  },
+  chip: {
+    height: 12,
+    fontSize: 8,
+    textAlign: "center",
+  },
 }));
 
 const UpcomingMeetings = () => {
@@ -265,8 +278,9 @@ const UpcomingMeetings = () => {
           } else {
             const meetingArray = Object.values(res)
               .filter((value) => typeof value === "object")
-              .map((meeting) => ({
+              .map((meeting, index) => ({
                 ...meeting,
+                id: index + 1,
                 expanded: false,
               }));
             setMeetings(meetingArray);
@@ -409,7 +423,8 @@ const UpcomingMeetings = () => {
   };
 
   const renderMeetingDetails = (meeting) => {
-    const { accessNumber, conferenceKey, chair, general, size } = meeting;
+    const { accessNumber, conferenceKey, chair, general, size, attendees } =
+      meeting;
 
     return (
       <React.Fragment>
@@ -445,6 +460,17 @@ const UpcomingMeetings = () => {
             >
               Participants: {size}
             </Typography>
+            {attendees !== undefined && (
+              <Container disableGutters className={classes.chipContainer}>
+                {attendees.map((attendee) => (
+                  <Chip
+                    key={attendee.attendeeName}
+                    label={attendee.attendeeName}
+                    className={classes.chip}
+                  />
+                ))}
+              </Container>
+            )}
           </Container>
         )}
         {isSingleMeeting && (
