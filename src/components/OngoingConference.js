@@ -91,14 +91,19 @@ const OngoingConference = () => {
   const [meeting, setMeeting] = useState(
     JSON.parse(localStorage.getItem("meetingDetails"))
   );
-  const [participants, setParticipants] = useState(
-    JSON.parse(localStorage.getItem("meetingDetails")).attendees
-  );
-  console.log(participants);
+
+  let parsedAttendees = JSON.parse(
+    localStorage.getItem("meetingDetails")
+  ).attendees;
+  const [participants, setParticipants] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    // clearAllCookies();
+    if (!Array.isArray(parsedAttendees)) {
+      setParticipants([parsedAttendees]);
+    } else setParticipants(parsedAttendees);
+
     API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
       .then((res) => {
         console.log("Join response: ", res);

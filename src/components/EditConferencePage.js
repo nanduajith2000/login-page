@@ -174,16 +174,24 @@ const EditConference = () => {
   const [participants, setParticipants] = useState(meeting.size);
   const [addContacts, setAddContacts] = useState("");
   const [addGroups, setAddGroups] = useState("");
-  const [addedParticipants, setAddedParticipants] = useState(
-    meeting.attendees === undefined ? [] : meeting.attendees
-  );
+  const [addedParticipants, setAddedParticipants] = useState([]);
   const [chairpersonPassword, setChairpersonPassword] = useState(meeting.chair);
   const [guestPassword, setGuestPassword] = useState(meeting.general);
   const [conferenceID, setConferenceID] = useState(
     meeting.conferenceKey.conferenceID
   );
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(
+    meeting.attendees === undefined
+      ? []
+      : Array.isArray(meeting.attendees)
+      ? meeting.attendees
+      : [meeting.attendees]
+  );
 
+  useEffect(() => {
+    console.log("Meeting.attendees: ", meeting.attendees);
+    console.log("Contacts: ", contacts);
+  }, []);
   const [creator, setCreator] = useState(meeting.scheduserName);
   const [accessNumber, setAccessNumber] = useState(meeting.accessNumber);
   const [attendeeName, setAttendeeName] = useState("");
@@ -242,7 +250,8 @@ const EditConference = () => {
     // console.log("Duration: ", durationInMilliseconds);
     // console.log("Participants: ", participants);
     // // console.log("Added Participants: ", addedParticipants);
-
+    console.log("Contacts: ", contacts);
+    console.log("Is array?: ", Array.isArray(contacts));
     API.ModifyConference(
       token,
       meeting.conferenceKey.conferenceID,
@@ -305,18 +314,19 @@ const EditConference = () => {
     };
 
     setContacts((prevContacts) => [...prevContacts, newContact]);
-
     handleCloseDialog();
   };
 
-  const handleDeleteParticipant = (id) => {
+  const handleDeleteParticipant = (attendeeName) => {
     setAddedParticipants((prevParticipants) =>
-      prevParticipants.filter((participant) => participant.id !== id)
+      prevParticipants.filter(
+        (participant) => participant.attendeeName !== attendeeName
+      )
     );
   };
-  const handleDeleteContact = (id) => {
+  const handleDeleteContact = (attendeeName) => {
     setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
+      prevContacts.filter((contact) => contact.attendeeName !== attendeeName)
     );
   };
 
@@ -671,15 +681,17 @@ const EditConference = () => {
                   <Chip
                     key={participant.id}
                     label={participant.attendeeName}
-                    onDelete={() => handleDeleteParticipant(participant.id)}
+                    onDelete={() =>
+                      handleDeleteParticipant(participant.attendeeName)
+                    }
                     className={classes.chip}
                   />
                 ))}
-                {contacts.map((contact, index) => (
+                {contacts.map((contact) => (
                   <Chip
-                    key={contact.id}
+                    key={contact.attendeeName}
                     label={contact.attendeeName}
-                    onDelete={() => handleDeleteContact(contact.id)}
+                    onDelete={() => handleDeleteContact(contact.attendeeName)}
                     className={classes.chip}
                   />
                 ))}
