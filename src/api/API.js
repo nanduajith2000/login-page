@@ -342,6 +342,32 @@ class API {
       .then((response) => response.json())
       .then((data) => data);
   }
+
+  static ModifyConference(token, conferenceID, SubconferenceID, length, size, timeZone, language, subject, startTime, attendees) {
+    const url = `${URL}/user/modifyconference`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conferenceID: `${conferenceID}`,
+        subconferenceID: `${SubconferenceID}`,
+        length: `${length}`,
+        size: `${size}`,
+        timeZone: `${timeZone}`,
+        language: `${language}`,
+        subject: `${subject}`,
+        startTime: `${startTime}`,
+        mediaTypes: `Voice`,
+        attendees: attendees,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
 }
 
 export default API;
