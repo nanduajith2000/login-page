@@ -486,9 +486,9 @@ def queryonlineconferenceinformation(onlineConf_Info:OnlineConfInfo=Body(default
 
 @app.post("/user/cancelinviteuser")
 def cancelinviteuser(cancel_invite:CancelInvite = Body(default=None)):
-    URL="conferences/"+CancelInvite.conferenceID+"/phone/"+CancelInvite.number
+    URL="conferences/"+cancel_invite.conferenceID+"/phone/"+cancel_invite.number
     try:
-        head = {'Authorization': "Basic " + redis_client.get(delete_contact.token).decode('utf8')}
+        head = {'Authorization': "Basic " + redis_client.get(cancel_invite.token).decode('utf8')}
     except AttributeError:
         return {"message": "UNAUTHORIZED"}
     dict1=ssl1.remove_DELETE(URL,head)
