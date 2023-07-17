@@ -230,7 +230,10 @@ class Usermodel(BaseModel):
 
 class OnlineConfInfo(BaseModel):
      token:str
-     conferenceID:strclass CancelInvite(BaseModel):
+     conferenceID:str
+
+
+class CancelInvite(BaseModel):
      token:str
      conferenceID:str
      phone:str
