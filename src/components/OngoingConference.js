@@ -118,7 +118,7 @@ const OngoingConference = () => {
 
           // Start the loop function after successful login
           const loopFunction = setInterval(() => {
-            API.ConferenceInfo(res.token, meeting.conferenceKey.conferenceID, 0)
+            API.OnlineConferenceInfo(res.token, meeting.conferenceKey.conferenceID, 0)
               .then((confInfoRes) => {
                 // Process the conference info response here
                 console.log("Conference Info: ", confInfoRes);

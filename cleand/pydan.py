@@ -228,3 +228,12 @@ class Usermodel(BaseModel):
      account:Account
      mobile:str
 
+class OnlineConfInfo(BaseModel):
+     token:str
+     conferenceID:strclass CancelInvite(BaseModel):
+     token:str
+     conferenceID:str
+     phone:str
+
+
+

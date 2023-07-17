@@ -379,6 +379,25 @@ class API {
       .then((response) => response.json())
       .then((data) => console.log(data));
   }
+
+  static OnlineConferenceInfo(token, conID, subconfID) {
+    const url = `${URL}/user/queryonlineconferenceinfo`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conferenceID: `${conID}`,
+        SubconferenceID: `${subconfID}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
+
 }
 
 export default API;
