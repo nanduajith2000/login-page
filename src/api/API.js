@@ -397,10 +397,17 @@ class API {
       .then((response) => response.json())
       .then((data) => data);
   }
-
 }
 
 export default API;
+
+// API.LeaveParticipant(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiIxMjMxODc5MjA5IiwiZXhwaXJ5IjoxNjg5ODIzNjQ2LjgxNDM1NDd9.uuwZ3T1Z8WXb9jWYEKSOuP_EFavfiQAQTAQeBZ1-zB0",
+//   "1231879209",
+//   "session##1689624077731299194@172.24.128.80_OUT##"
+// )
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));
 
 // API.ModifyConference(
 //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk2OTE5OTAuNDkyNTcxOH0.5Z7aq63Jo3KhsLZy7SJH757bn63A_2S01jzXuS7oGn8",
