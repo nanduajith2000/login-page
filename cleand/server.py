@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -482,4 +482,14 @@ def queryonlineconferenceinformation(onlineConf_Info:OnlineConfInfo=Body(default
     head["If-Modified-Since"]="Sat, 16 Jul 2069 22:22:06 GMT"
     dict1=ssl1.data_GET(URL,head)
 
+    return dict1
+
+@app.post("/user/cancelinviteuser")
+def cancelinviteuser(cancel_invite:CancelInvite = Body(default=None)):
+    URL="conferences/"+CancelInvite.conferenceID+"/phone/"+CancelInvite.number
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(delete_contact.token).decode('utf8')}
+    except AttributeError:
+        return {"message": "UNAUTHORIZED"}
+    dict1=ssl1.remove_DELETE(URL,head)
     return dict1
