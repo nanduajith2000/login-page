@@ -343,7 +343,18 @@ class API {
       .then((data) => data);
   }
 
-  static ModifyConference(token, conferenceID, SubconferenceID, length, size, timeZone, language, subject, startTime, attendees) {
+  static ModifyConference(
+    token,
+    conferenceID,
+    SubconferenceID,
+    length,
+    size,
+    timeZone,
+    language,
+    subject,
+    startTime,
+    attendees
+  ) {
     const url = `${URL}/user/modifyconference`;
 
     return fetch(url, {
@@ -366,8 +377,67 @@ class API {
       }),
     })
       .then((response) => response.json())
+      .then((data) => console.log(data));
+  }
+
+  static OnlineConferenceInfo(token, conID, subconfID) {
+    const url = `${URL}/user/queryonlineconferenceinfo`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conferenceID: `${conID}`,
+        SubconferenceID: `${subconfID}`,
+      }),
+    })
+      .then((response) => response.json())
       .then((data) => data);
   }
+
 }
 
 export default API;
+
+// API.ModifyConference(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk2OTE5OTAuNDkyNTcxOH0.5Z7aq63Jo3KhsLZy7SJH757bn63A_2S01jzXuS7oGn8",
+//   "1231011822",
+//   "0",
+//   "6000000",
+//   3,
+//   48,
+//   "en-US",
+//   "testesh",
+//   1689585600000,
+//   [
+//     {
+//       attendeeName: "pradchan",
+//       conferenceRole: "general",
+//       addressEntry: [
+//         {
+//           address: "8921300865",
+//           type: "phone",
+//         },
+//       ],
+//       isDefaultMute: "false",
+//       regionID: "0",
+//       type: "normal",
+//     },
+//     {
+//       attendeeName: "nandu ",
+//       conferenceRole: "general",
+//       addressEntry: [
+//         {
+//           address: "8848750913",
+//           type: "phone",
+//         },
+//       ],
+//       isDefaultMute: "false",
+//       regionID: "0",
+//       type: "normal",
+//     },
+//   ]
+// );

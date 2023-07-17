@@ -423,8 +423,12 @@ const UpcomingMeetings = () => {
   };
 
   const renderMeetingDetails = (meeting) => {
-    const { accessNumber, conferenceKey, chair, general, size, attendees } =
+    let { accessNumber, conferenceKey, chair, general, size, attendees } =
       meeting;
+
+    if (!Array.isArray(attendees)) {
+      attendees = attendees ? [attendees] : [];
+    }
 
     return (
       <React.Fragment>
@@ -458,7 +462,7 @@ const UpcomingMeetings = () => {
               variant="body2"
               className={classes.listItemSecondaryText}
             >
-              Participants: {size}
+              Meeting Size: {size}
             </Typography>
             {attendees !== undefined && (
               <Container disableGutters className={classes.chipContainer}>
