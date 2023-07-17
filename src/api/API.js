@@ -421,5 +421,3 @@ class API {
 }
 
 export default API;
-
-// API.deleteconferencetemplate("eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2ODk4MTk0MzYuMjQwNTZ9.w7kCUpWMu43XDV-lJeRcgVWnTzscjNm0Gxmz4_PBJLE","14185978")
