@@ -5,6 +5,8 @@ from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
 import xml.parsers.expat
 from typing import Dict, Any
+from config import ERROR_MESSAGE
+
 
 
 from fastapi.middleware.cors import CORSMiddleware
@@ -79,7 +81,7 @@ def CreateConferenceTemplate(conf_template: ConferenceTemplate =Body(default=Non
     try:
         head = {'Authorization': "Basic " + redis_client.get(conf_template.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invaild Token"}
+        return ERROR_MESSAGE
     BODY = {'conferenceTemplate':conf_template.dict()}
     del BODY['conferenceTemplate']['token']
     dict1 = ssl1.create_POST(URL,head,BODY)
@@ -91,7 +93,7 @@ def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(mod_template.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY= {"conferenceTemplate":mod_template.dict()}
     del BODY["conferenceTemplate"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
@@ -103,7 +105,7 @@ def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None))
     try:
         head = {'Authorization': "Basic " + redis_client.get(del_template.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
@@ -115,7 +117,7 @@ def templatelist(template_list: TemplateList = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(template_list.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     Body = {"conferenceTemplateFilter": template_list.dict()}
     del Body["conferenceTemplateFilter"]["token"]
     dict1 = ssl1.create_POST(URL, head, Body)
@@ -144,7 +146,7 @@ def createconference(create_conference: createConferenceInfo =Body(default=None)
     try:
         head = {'Authorization': "Basic " + redis_client.get(create_conference.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invaild Token"}
+        return ERROR_MESSAGE
     BODY = {'conferenceInfo':create_conference.dict()}
     del BODY['conferenceInfo']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
@@ -156,7 +158,7 @@ def createconference(modify_conference: conferenceInfo =Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_conference.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY = {'conferenceInfo':modify_conference.dict()}
     del BODY["conferenceInfo"]["conferenceID"]
     del BODY["conferenceInfo"]["subconferenceID"]
@@ -170,7 +172,7 @@ def delete_conference(delete_conf:QueryConfInfo = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_conf.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
@@ -180,7 +182,7 @@ def end_conference(end_conf:QueryConfInfo = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(end_conf.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
@@ -193,7 +195,7 @@ def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(prolog_Conf.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
 
     BODY="length="+prolog_Conf.length
 
@@ -210,7 +212,7 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(conference_list.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     
     BODY = {'conferenceFilter': conference_list.dict()}
@@ -258,9 +260,13 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
             value = entry["value"]
             if key in keys_to_extract:
                 extracted_dict[key] = value
+        
         URL = "conferences/" + extracted_dict['ConferenceID'] + "/subConferenceID/0"
         dict1 = ssl1.data_GET(URL, head)
-        info=dict1["conferenceResult"]["conferenceInfo"]
+        try:
+            info=dict1["conferenceResult"]["conferenceInfo"]
+        except KeyError:
+            return dict1
         i+=1
 
         passwords = dict1['conferenceResult']['conferenceInfo']['passwords']
@@ -284,7 +290,7 @@ def queryConferenceInfo(confInfo: QueryConfInfo=Body(default=None)):
     try:
         head= {'Authorization': "Basic " +redis_client.get(confInfo.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
 
     dict1=ssl1.data_GET(URL,head)
 
@@ -296,7 +302,7 @@ def mod_userpass(mod_password:UserPasswordInfo = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(mod_password.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY= {"userPasswordInfo":mod_password.dict()}
     del BODY["userPasswordInfo"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
@@ -309,7 +315,7 @@ def InviteParticipant(invite_participant:ConferenceInvite = Body(default=None)):
     try:
         head= {'Authorization': "Basic " +redis_client.get(invite_participant.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
 
     BODY={"inviteParas":invite_participant.dict()}
     del BODY["inviteParas"]["token"]
@@ -334,7 +340,7 @@ def leaveConference(leave_conf:LeaveParti=Body(default=None)):
     try:
         head = {'Authorization':'Basic ' + redis_client.get(leave_conf.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     dict1 = ssl1.remove_DELETE(URL,head)
     return dict1
@@ -345,7 +351,7 @@ def finduserpassword(find_password: FindUserPasswordInfo = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(find_password.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY = {'findUserPasswordInfo':find_password.dict()}
     del BODY["findUserPasswordInfo"]["token"]
     dict1 = ssl1.update_PUT(URL, head, BODY)
@@ -357,7 +363,7 @@ def isallmute(is_mute: IsAllMute = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(is_mute.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     BODY = "isAllMute="+is_mute.isAllMute
     dict1 = ssl1.encoded_PUT(URL, head, BODY)
@@ -369,7 +375,7 @@ def createpersonalcontact(create_contact: Contactor = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(create_contact.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY = {'contactor':create_contact.dict()}
     del BODY['contactor']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
@@ -381,7 +387,7 @@ def modifypersonalcontact(modify_contact: Contactor_mod = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_contact.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY= {"contactor":modify_contact.dict()}
     del BODY["contactor"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
@@ -393,7 +399,7 @@ def delete_contact(delete_contact:Contactor_info = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_contact.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
@@ -403,7 +409,7 @@ def personalcontactlist(contact_list: ContactFilter = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(contact_list.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"UNAUTHORIZED"}
+        return ERROR_MESSAGE
     BODY = {'contactorFilter':contact_list.dict()}
     del BODY['contactorFilter']['token']
     dict1 = ssl1.create_POST(URL, head, BODY)
@@ -415,7 +421,7 @@ def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(query_contact.token).decode('utf8')}
     except AttributeError:
-        return {"message": "UNAUTHORIZED"}
+        return ERROR_MESSAGE
     
     dict1=ssl1.data_GET(URL,head)
     return dict1
@@ -426,7 +432,7 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
     try:
         head = {'Authorization': "Basic " + redis_client.get(reset_password.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invalid Token"}
+        return ERROR_MESSAGE
     dict1=ssl1.update_PUT(URL,head)
     URL="conferences/"+reset_password.conferenceID+"/subConferenceID/"+reset_password.subConferenceID
     dict2 = ssl1.data_GET(URL,head)
@@ -438,7 +444,7 @@ def modifyuser(modify_user:Usermodel = Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_user.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invalid Token"}
+        return ERROR_MESSAGE
     BODY={"user":modify_user.dict()}
     dict1=ssl1.update_PUT(URL,head,BODY)
     return dict1
@@ -451,7 +457,7 @@ def raisehand(raiseHand:RaiseHand=Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(raiseHand.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invalid Token"}
+        return ERROR_MESSAGE
     
     BODY = "handsState="+raiseHand.handsState
     dict1=ssl1.encoded_PUT(URL,head,BODY)
@@ -463,10 +469,36 @@ def enablemute(enableMute:EnableMute=Body(default=None)):
     try:
         head = {'Authorization': "Basic " + redis_client.get(enableMute.token).decode("utf-8")}
     except AttributeError:
-        return {"message":"Invalid Token"}
+        return ERROR_MESSAGE
 
     BODY="isMute ="+enableMute.isMute
 
     dict1 = ssl1.encoded_PUT(URL,head,BODY)
 
     return dict1
+
+@app.post("/user/queryonlineconferenceinfo")
+def queryonlineconferenceinformation(onlineConf_Info:OnlineConfInfo=Body(default=None)):
+    URL="conferences/"+onlineConf_Info.conferenceID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(onlineConf_Info.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
+    
+    head["If-Modified-Since"]="Sat, 16 Jul 2069 22:22:06 GMT"
+    dict1=ssl1.data_GET(URL,head)
+
+    return dict1
+
+@app.post("/user/cancelinviteuser")
+def cancelinviteuser(cancel_invite:CancelInvite = Body(default=None)):
+    URL="conferences/"+cancel_invite.conferenceID+"/phone/"+cancel_invite.number
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(cancel_invite.token).decode('utf8')}
+    except AttributeError:
+        return ERROR_MESSAGE
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+
+
+

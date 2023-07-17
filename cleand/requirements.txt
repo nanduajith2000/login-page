@@ -4,5 +4,7 @@ pydantic
 xmltodict
 requests
 typing
-decouple
+python-decouple
+typing-extensions
+python3-pip
 jwt

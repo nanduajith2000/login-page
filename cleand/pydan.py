@@ -28,6 +28,12 @@ class attendeeSchema(BaseModel):
      conferenceRole: str
      addressEntry: Optional[List[addressEntrySchema]]=[]
 
+class CycleParams(BaseModel):
+    startDate: int
+    endDate: int
+    cycle: str
+    point: int
+
 class createConferenceInfo(BaseModel):
     token:str
     length:int
@@ -38,9 +44,11 @@ class createConferenceInfo(BaseModel):
     timeZone:int
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
+    # cycleParams: Optional[CycleParams]=[]
+    # accessValidateType: Optional[int]=None
+    # isCycleType: Optional[bool]=None
     isAllowInvite:Optional [bool]=True
     isAutoInvite: Optional [bool]=True
-
 
 class conferenceInfo (BaseModel):
     token:str
@@ -230,7 +238,10 @@ class Usermodel(BaseModel):
 
 class OnlineConfInfo(BaseModel):
      token:str
-     conferenceID:strclass CancelInvite(BaseModel):
+     conferenceID:str
+
+
+class CancelInvite(BaseModel):
      token:str
      conferenceID:str
      phone:str
