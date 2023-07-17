@@ -124,36 +124,20 @@ const OngoingConference = () => {
                 console.log("Conference Info: ", confInfoRes);
 
                 // Extract inviteStates from conferenceResult
-                const inviteStates = confInfoRes.conferenceResult.inviteStates;
-
-                // Update the meetingDetails with inviteStates
-                const updatedMeetingDetails = {
-                  ...meeting,
-                  attendees: meeting.attendees.map((participant) => {
-                    const inviteState = inviteStates.find(
-                      (state) => state.name === participant.attendeeName
-                    );
-
-                    return {
-                      ...participant,
-                      inviteState: {
-                        updateTime: inviteState.updateTime,
-                        name: inviteState.name,
-                        phone: inviteState.phone,
-                        state: inviteState.state,
-                      },
-                    };
-                  }),
-                };
-
-                // Update the state with the modified meetingDetails
-                setMeeting(updatedMeetingDetails);
+                const inviteState =
+                  confInfoRes.conferenceResult.conferenceInfo.inviteStates
+                    .inviteState;
+                inviteState.map((invite) => {
+                  console.log("Invite: ", invite);
+                  console.log("Invite State: ", invite.state);
+                });
               })
+
               .catch((err) => {
                 console.log(err);
                 // Handle errors here
               });
-          }, 10000); // 5 seconds interval
+          }, 15000); // 5 seconds interval
 
           // Clean up the loop function when the component unmounts
           return () => clearInterval(loopFunction);
