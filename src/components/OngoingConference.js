@@ -99,6 +99,12 @@ const OngoingConference = () => {
 
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [inviteState, setInviteState] = useState([]);
+  const [participantsDetails, setParticipantsDetails] = useState([]);
+  const [updatedParticipants, setUpdatedParticipants] = useState([]);
+
+  const [callState, setCallState] = useState("");
+
   useEffect(() => {
     if (!Array.isArray(parsedAttendees)) {
       setParticipants([parsedAttendees]);
@@ -106,7 +112,6 @@ const OngoingConference = () => {
 
     API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
       .then((res) => {
-        console.log("Join response: ", res);
         if (res.message === "success") {
           localStorage.setItem("cred", res.token);
           localStorage.setItem(
@@ -114,22 +119,68 @@ const OngoingConference = () => {
             meeting.conferenceKey.conferenceID
           );
           localStorage.setItem("Password", meeting.chair);
-          console.log(document.cookie);
 
           // Start the loop function after successful login
           const loopFunction = setInterval(() => {
-            API.OnlineConferenceInfo(res.token, meeting.conferenceKey.conferenceID, 0)
+            API.OnlineConferenceInfo(
+              res.token,
+              meeting.conferenceKey.conferenceID,
+              0
+            )
               .then((confInfoRes) => {
                 // Process the conference info response here
                 console.log("Conference Info: ", confInfoRes);
 
                 // Extract inviteStates from conferenceResult
-                const inviteState =
-                  confInfoRes.conferenceResult.conferenceInfo.inviteStates
-                    .inviteState;
-                inviteState.map((invite) => {
-                  console.log("Invite: ", invite);
-                  console.log("Invite State: ", invite.state);
+                const conferenceDetails =
+                  confInfoRes.spellQueryconference.conference;
+                let inviteState = conferenceDetails.inviteStates.inviteState;
+                let participantsDetails = conferenceDetails.participants
+                  ? conferenceDetails.participants.participant
+                  : [];
+                console.log("Invite states: ", inviteState);
+                if (!Array.isArray(inviteState)) {
+                  inviteState = inviteState ? [inviteState] : [];
+                }
+
+                if (!Array.isArray(participantsDetails)) {
+                  participantsDetails = participantsDetails
+                    ? [participantsDetails]
+                    : [];
+                }
+
+                // console.log("Invite state: ", inviteState);
+                // console.log("Participants details: ", participantsDetails);
+                inviteState.forEach((invite) => {
+                  if (invite.state === "200") {
+                    participantsDetails.forEach((participantDetail) => {
+                      if (
+                        invite.phone ===
+                        participantDetail.subscribers.subscriber.subscriberID
+                      ) {
+                        setParticipants((prevParticipants) =>
+                          prevParticipants.reduce((acc, participant) => {
+                            if (
+                              participant.addressEntry.address ===
+                                invite.phone &&
+                              !participant.participantID
+                            ) {
+                              return [
+                                ...acc,
+                                {
+                                  ...participant,
+                                  participantID:
+                                    participantDetail.subscribers.subscriber
+                                      .callID,
+                                },
+                              ];
+                            }
+                            return [...acc, participant];
+                          }, [])
+                        );
+                      }
+                    });
+                  }
                 });
               })
 
@@ -137,7 +188,7 @@ const OngoingConference = () => {
                 console.log(err);
                 // Handle errors here
               });
-          }, 15000); // 5 seconds interval
+          }, 5000); // 5 seconds interval
 
           // Clean up the loop function when the component unmounts
           return () => clearInterval(loopFunction);
@@ -148,6 +199,10 @@ const OngoingConference = () => {
         // Handle errors here
       });
   }, []);
+
+  useEffect(() => {
+    console.log("Participants: ", participants);
+  }, [participants]);
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -205,6 +260,24 @@ const OngoingConference = () => {
       .catch((err) => {
         console.log(err);
         alert("Could not call attendee. Please try again later.");
+      });
+  };
+
+  const handleDisconnect = (participant) => {
+    const credValue = localStorage.getItem("cred");
+    console.log("PARTICIPANT ID: ", participant.participantID);
+
+    API.LeaveParticipant(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      participant.participantID
+    )
+      .then((res) => {
+        console.log("Disconnecting call... ", res);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Could not disconnect call. Please try again later.");
       });
   };
 
@@ -289,23 +362,20 @@ const OngoingConference = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
-                        onClick={() => handleCall(participant)}
+                        onClick={() =>
+                          participant.participantID === undefined
+                            ? handleCall(participant)
+                            : handleDisconnect(participant)
+                        }
                         // disabled={
                         //   !participant.connected && participant.selected
                         // }
                       >
-                        <Call />
-                        {/* {participant.connected ? (
-                          <CallEnd
-                            className={
-                              participant.connected
-                                ? classes.disconnectedCall
-                                : ""
-                            }
-                          />
+                        {participant.participantID !== undefined ? (
+                          <CallEnd />
                         ) : (
                           <Call />
-                        )} */}
+                        )}
                       </IconButton>
                     </TableCell>
                     <TableCell className={classes.tableCell}>

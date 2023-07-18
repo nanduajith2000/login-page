@@ -175,9 +175,31 @@ const ConferenceTemplates = () => {
     // logic to edit template
   };
 
-  const handleDeleteTemplate = () => {
-    // logic to delete template
-  };
+  const handleDeleteTemplate = (TemplateID) => {
+    const token = getCookie("user");
+    console.log(token)
+    console.log(TemplateID)
+    API.deleteconferencetemplate(token, TemplateID)
+      .then((res) => {
+        // Handle success response if needed
+        console.log(res);
+        // Reload the conference template list after deletion
+        API.ConferenceTemplateList(token)
+          .then((res) => {
+            const templateArray = Object.values(res)
+              .filter((value) => typeof value === "object")
+              .map((template) => template);
+            setTemplateData(templateArray);
+          })
+          .catch((err) => {
+            console.log("Could not fetch template details. Please try again later.");
+          });
+      })
+      .catch((err) => {
+        // Handle error response if needed
+        console.log("Error deleting template: ", err);
+      });
+  }
 
   return (
     <div className={classes.root}>
@@ -280,7 +302,7 @@ const ConferenceTemplates = () => {
                       <IconButton onClick={handleEditTemplate}>
                         <Edit />
                       </IconButton>
-                      <IconButton onClick={handleDeleteTemplate}>
+                      <IconButton onClick={()=>handleDeleteTemplate(template.TemplateId)}>
                         <Delete />
                       </IconButton>
                     </TableCell>

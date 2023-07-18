@@ -56,7 +56,7 @@ def create_POST(URL, head, body):
     return data_dict
 
 
-def update_PUT(URL, head, body=None):
+def update_PUT(URL, head, body):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings()
 
@@ -118,7 +118,7 @@ def data_GET(URL, head):
     headers = {'content-type': 'application/json'}
     headers.update(head)
     print("\nHead IN\n",headers)
-
+    print("\nURL=\n",url)
 #     body_dict = body.dict()
     
     start = time.time()
