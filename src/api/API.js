@@ -30,14 +30,9 @@ class API {
       body: JSON.stringify({
         token: `${token}`,
         resultFields: ["Parties", "Length", "TemplateID"],
-        conditions: {
-          key: "TemplateName",
-          value: "t",
-          matching: "like",
-        },
         isAscend: false,
         pageIndex: 0,
-        pageSize: 15,
+        pageSize: 50,
       }),
     })
       .then((response) => response.json())
