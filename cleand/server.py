@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall,RollCall,ChairRights
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -13,7 +13,7 @@ import ssl1
 
 
 
-
+redis_client.select(0)
 
 msg1= "Enter Student ID"
 
@@ -509,8 +509,30 @@ def cancelinviteuser(cancel_invite:CancelInvite = Body(default=None)):
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
+@app.post("/user/isrollcalled")
+def isrollcalled(roll_call:RollCall=Body(default=None)):
+    URL="conferences/"+roll_call.conferenceID+"/participants/"+roll_call.participantID+"/isRollcalled"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(roll_call.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
 
+    BODY="isRollCalled ="+roll_call.isRollCalled
 
+    dict1 = ssl1.encoded_PUT(URL,head,BODY)
 
+    return dict1
 
+@app.post("/user/approvechairperson")
+def approvechairperson(approve_rights:ChairRights=Body(default=None)):
+    URL="conferences/"+approve_rights.conferenceID+"/moderator"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(approve_rights.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
 
+    BODY="participantID="+{approve_rights.participantID}+"&role="+approve_rights.role
+
+    dict1 = ssl1.encoded_PUT(URL,head,BODY)
+
+    return dict1

@@ -246,5 +246,17 @@ class CancelInvite(BaseModel):
      conferenceID:str
      phone:str
 
+class RollCall(BaseModel):
+     token:str
+     conferenceID:str
+     participantID:str
+     confToken:str
+     isRollCalled:bool
+
+class ChairRights(BaseModel):
+     token:str
+     conferenceID:str
+     participantID:str
+     role:str="chair"
 
 

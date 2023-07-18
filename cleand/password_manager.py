@@ -1,7 +1,7 @@
 from datetime import datetime,timedelta
 from app.redis1 import redis_client
 
-
+redis_client.select(1)
 
 
 def set_password(name):
