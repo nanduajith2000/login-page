@@ -44,9 +44,9 @@ class createConferenceInfo(BaseModel):
     timeZone:int
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
-    # cycleParams: Optional[CycleParams]=[]
-    # accessValidateType: Optional[int]=None
-    # isCycleType: Optional[bool]=None
+    cycleParams: Optional[CycleParams]=[]
+    accessValidateType: Optional[int]=0
+    isCycleType: Optional[bool]=False
     isAllowInvite:Optional [bool]=True
     isAutoInvite: Optional [bool]=True
 

@@ -1,21 +1,18 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
 import xml.parsers.expat
-from typing import Dict, Any
 from config import ERROR_MESSAGE
-
-
+from password_manager import set_password,is_password_expired
 
 from fastapi.middleware.cors import CORSMiddleware
-import redis
+from app.redis1 import redis_client
 import ssl1 
 
 
 
-redis_client = redis.Redis(host='localhost',port=6379,db=0)
 
 
 msg1= "Enter Student ID"
@@ -48,7 +45,14 @@ def user_login(user: UsersLoginSchema = Body(default=None)):
         if dict1["loginResult"]["result"]["resultDesc"]=="SUCCESS":
             jwt_token=signJWT(user.email)["access token"]
             redis_client.set(jwt_token,dict1["loginResult"]["profile"]["token"])
-            return {"message": "success","token":jwt_token,"userID":dict1["loginResult"]["profile"]["userID"]}
+#30 days expiery check
+            if is_password_expired(user.email):
+                expiry={"expiry":"EXPIRED"}
+            else:
+                expiry={"expiry":"VAILD"}
+            message={"message": "success","token":jwt_token,"userID":dict1["loginResult"]["profile"]["userID"]}
+            message.update(expiry)
+            return message
     except:
         if dict1["result"]["resultDesc"]=="NOT_FOUND":
             return{"message":"Invalid username or password"}
@@ -89,7 +93,7 @@ def CreateConferenceTemplate(conf_template: ConferenceTemplate =Body(default=Non
 
 @app.post("/user/modifyconferencetemplate")
 def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
-    URL="conferenceTemplate/"+mod_template.templateId
+    URL="conferenceTemplate/"+mod_template.templateID
     try:
         head = {'Authorization': "Basic " + redis_client.get(mod_template.token).decode("utf-8")}
     except AttributeError:
@@ -101,7 +105,7 @@ def mod_conftemp(mod_template:ConferenceTemplate = Body(default=None)):
 
 @app.post("/user/deleteconferencetemplate")
 def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None)):
-    URL="conferenceTemplate/"+del_template.templateId
+    URL="conferenceTemplate/"+del_template.templateID
     try:
         head = {'Authorization': "Basic " + redis_client.get(del_template.token).decode("utf-8")}
     except AttributeError:
@@ -296,6 +300,7 @@ def queryConferenceInfo(confInfo: QueryConfInfo=Body(default=None)):
 
     return dict1
 
+
 @app.post("/user/modifyuserpassword")
 def mod_userpass(mod_password:UserPasswordInfo = Body(default=None)):
     URL="modifyUserPassword"
@@ -306,6 +311,10 @@ def mod_userpass(mod_password:UserPasswordInfo = Body(default=None)):
     BODY= {"userPasswordInfo":mod_password.dict()}
     del BODY["userPasswordInfo"]["token"]
     dict1 = ssl1.update_PUT(URL,head,BODY)
+
+    if dict1["result"]["resultDesc"]=="SUCESS":
+        set_password(mod_password.account.name)
+
     return dict1
 
 @app.post("/user/inviteparticipants")
