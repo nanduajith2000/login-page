@@ -165,7 +165,7 @@ def logout(URL,head):
     headers.update(head)
 
 #   print (head)
-
+    print("\nURL\n=",url)
     start = time.time()
     r = requests.delete(url,headers=headers, verify=False)
     end = time.time()
