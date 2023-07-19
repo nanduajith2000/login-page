@@ -1,4 +1,11 @@
-import { Button, Divider, makeStyles } from "@material-ui/core";
+import { Button, 
+  Divider, 
+  makeStyles,  
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography} from "@material-ui/core";
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import HomeIcon from "@mui/icons-material/Home";
@@ -114,13 +121,14 @@ export default function Sidenav(props) {
     }
   }
 
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
   const handleLogout = () => {
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("user");
-    // window.location.reload();
-    // console.log(document.cookie);
-    const logoutConfirm = window.confirm("Are you sure you want to logout?");
-    if (logoutConfirm === true) {
+    setShowConfirmDialog(true);
+  };
+
+ const handleConfirmLogout = () => {
+      setShowConfirmDialog(false);
       function getCookie(cookieName) {
         const cookieString = document.cookie;
         const cookies = cookieString.split(":");
@@ -146,8 +154,12 @@ export default function Sidenav(props) {
           console.log(err);
           alert("Could not log out. Please try again later.");
         });
-    }
-  };
+      }
+
+      const handleCancelLogout = () => {
+          setShowConfirmDialog(false);
+        };
+
 
   return (
     <div className={classes.sidenavContainer}>
@@ -219,7 +231,33 @@ export default function Sidenav(props) {
       >
         <LogoutIcon className={classes.icon} />
         Log Out
-      </Button>
+      </Button> 
+      {/* Confirmation Dialog */}
+    <Dialog open={showConfirmDialog} onClose={handleCancelLogout}>
+      <DialogTitle>Confirm Logout</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Are you sure you want to log out?
+        </Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          className={classes.confirmButton}
+          variant="contained"
+          color="primary"
+          onClick={handleConfirmLogout}
+        >
+          Confirm
+        </Button>
+        <Button
+          variant="contained"
+          color="white"
+          onClick={handleCancelLogout}
+        >
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
     </div>
   );
 }
