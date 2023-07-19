@@ -393,10 +393,7 @@ class API {
       .then((data) => data);
   }
 
-  static deleteconferencetemplate(
-    token,
-    templateId
-  ) {
+  static deleteconferencetemplate(token, templateId) {
     const url = `${URL}/user/deleteconferencetemplate`;
 
     return fetch(url, {
@@ -406,13 +403,14 @@ class API {
       },
       body: JSON.stringify({
         token: `${token}`,
-        templateID: `${templateId}`
+        templateID: `${templateId}`,
       }),
     })
       .then((response) => response.json())
-      .then((data) => {console.log(data)});
+      .then((data) => {
+        console.log(data);
+      });
   }
-
 }
 
 export default API;
