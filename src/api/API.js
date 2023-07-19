@@ -137,7 +137,7 @@ class API {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => data);
   }
 
   static LeaveParticipant(token, conferenceID, participantID) {
@@ -372,7 +372,7 @@ class API {
       }),
     })
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => data);
   }
 
   static OnlineConferenceInfo(token, conID, subconfID) {
@@ -407,9 +407,7 @@ class API {
       }),
     })
       .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-      });
+      .then((data) => data);
   }
 }
 
