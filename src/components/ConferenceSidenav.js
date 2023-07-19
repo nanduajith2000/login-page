@@ -54,34 +54,65 @@ export default function Sidenav(props) {
     JSON.parse(localStorage.getItem("meetingDetails"))
   );
   const [participants, setParticipants] = useState(
-    JSON.parse(localStorage.getItem("meetingDetails")).attendees
+    Array.isArray(JSON.parse(localStorage.getItem("meetingDetails")).attendees)
+      ? JSON.parse(localStorage.getItem("meetingDetails")).attendees
+      : [JSON.parse(localStorage.getItem("meetingDetails")).attendees]
   );
+
+  let newArray = [];
+
+  participants.map((participant) => {
+    newArray.push({
+      attendeeName: participant.attendeeName,
+      conferenceRole: participant.conferenceRole,
+      addressEntry: [
+        {
+          address: participant.addressEntry.address,
+          type: participant.addressEntry.type,
+        },
+      ],
+    });
+  });
+
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
+      }
+    }
+
+    return null; // Return null if the cookie is not found
+  }
 
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
-    const { name, phone } = participant;
-    const token = localStorage.getItem("token");
+    const { attendeeName, addressEntry } = participant;
+    const credValue = localStorage.getItem("cred");
+    const token = getCookie("user");
     const conferenceID = localStorage.getItem("ConferenceID");
 
     const invitePara = [
       {
-        name: name,
-        phone: phone,
+        name: attendeeName,
+        phone: addressEntry[0].address,
       },
     ];
 
-    API.InviteParticipants(token, conferenceID, invitePara)
+    API.InviteParticipants(credValue, conferenceID, invitePara)
       .then((res) => {
-        console.log(res);
+        console.log("Invite Participants Response: ", res);
         // Handle the success response
       })
       .catch((err) => {
         console.log(err);
         // Handle the error response
       });
-
-    console.log(participant);
     setIsAddParticipantsOpen(false);
+    window.location.reload();
   };
 
   const handleAddGroups = () => {

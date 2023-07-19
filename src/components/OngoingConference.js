@@ -92,26 +92,50 @@ const OngoingConference = () => {
     JSON.parse(localStorage.getItem("meetingDetails"))
   );
 
-  let parsedAttendees = JSON.parse(
-    localStorage.getItem("meetingDetails")
-  ).attendees;
   const [participants, setParticipants] = useState([]);
 
   const [searchQuery, setSearchQuery] = useState("");
 
   const [inviteState, setInviteState] = useState([]);
-  const [participantsDetails, setParticipantsDetails] = useState([]);
-  const [updatedParticipants, setUpdatedParticipants] = useState([]);
 
-  const [callState, setCallState] = useState("");
+  const [participantsDetails, setParticipantsDetails] = useState([]);
+
+  const [updatedParticipants, setUpdatedParticipants] = useState();
+
+  function getParticipantID(participantName) {
+    const participant = participantsDetails.find(
+      (p) => p.name === participantName
+    );
+    return participant ? participant.subscribers.subscriber.callID : undefined;
+  }
 
   useEffect(() => {
-    if (!Array.isArray(parsedAttendees)) {
-      setParticipants([parsedAttendees]);
-    } else setParticipants(parsedAttendees);
-
     API.Login(meeting.conferenceKey.conferenceID, meeting.chair, "ConferenceID")
       .then((res) => {
+        API.OnlineConferenceInfo(
+          res.token,
+          meeting.conferenceKey.conferenceID,
+          0
+        )
+          .then((res) => {
+            setInviteState(
+              Array.isArray(
+                res.spellQueryconference.conference.inviteStates.inviteState
+              )
+                ? res.spellQueryconference.conference.inviteStates.inviteState
+                : [res.spellQueryconference.conference.inviteStates.inviteState]
+            );
+            setUpdatedParticipants(
+              Array.isArray(
+                res.spellQueryconference.conference.inviteStates.inviteState
+              )
+                ? res.spellQueryconference.conference.inviteStates.inviteState
+                : [res.spellQueryconference.conference.inviteStates.inviteState]
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
         if (res.message === "success") {
           localStorage.setItem("cred", res.token);
           localStorage.setItem(
@@ -129,66 +153,32 @@ const OngoingConference = () => {
             )
               .then((confInfoRes) => {
                 // Process the conference info response here
-                console.log("Conference Info: ", confInfoRes);
+                // console.log("Conference Info: ", confInfoRes);
 
                 // Extract inviteStates from conferenceResult
                 const conferenceDetails =
                   confInfoRes.spellQueryconference.conference;
-                let inviteState = conferenceDetails.inviteStates.inviteState;
                 let participantsDetails = conferenceDetails.participants
                   ? conferenceDetails.participants.participant
                   : [];
-                console.log("Invite states: ", inviteState);
-                if (!Array.isArray(inviteState)) {
-                  inviteState = inviteState ? [inviteState] : [];
-                }
+
+                // if (!Array.isArray(inviteState)) {
+                //   inviteState = inviteState ? [inviteState] : [];
+                // }
 
                 if (!Array.isArray(participantsDetails)) {
                   participantsDetails = participantsDetails
                     ? [participantsDetails]
                     : [];
                 }
-
-                // console.log("Invite state: ", inviteState);
-                // console.log("Participants details: ", participantsDetails);
-                inviteState.forEach((invite) => {
-                  if (invite.state === "200") {
-                    participantsDetails.forEach((participantDetail) => {
-                      if (
-                        invite.phone ===
-                        participantDetail.subscribers.subscriber.subscriberID
-                      ) {
-                        setParticipants((prevParticipants) =>
-                          prevParticipants.reduce((acc, participant) => {
-                            if (
-                              participant.addressEntry.address ===
-                                invite.phone &&
-                              !participant.participantID
-                            ) {
-                              return [
-                                ...acc,
-                                {
-                                  ...participant,
-                                  participantID:
-                                    participantDetail.subscribers.subscriber
-                                      .callID,
-                                },
-                              ];
-                            }
-                            return [...acc, participant];
-                          }, [])
-                        );
-                      }
-                    });
-                  }
-                });
+                setParticipantsDetails(participantsDetails);
               })
-
               .catch((err) => {
                 console.log(err);
                 // Handle errors here
               });
-          }, 5000); // 5 seconds interval
+          }, 5000);
+          // 5 seconds interval
 
           // Clean up the loop function when the component unmounts
           return () => clearInterval(loopFunction);
@@ -201,8 +191,19 @@ const OngoingConference = () => {
   }, []);
 
   useEffect(() => {
-    console.log("Participants: ", participants);
-  }, [participants]);
+    // Add the mapping operation here using updatedInviteState
+    const updatedInviteStateArray = inviteState.map((invite) => {
+      const participantID = getParticipantID(invite.name);
+
+      return {
+        ...invite,
+        participantID: participantID,
+      };
+    });
+
+    setUpdatedParticipants(updatedInviteStateArray);
+    // Rest of your code
+  }, [inviteState, getParticipantID]);
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -241,8 +242,8 @@ const OngoingConference = () => {
 
     const invitePara = [
       {
-        name: participant.attendeeName,
-        phone: participant.addressEntry.address,
+        name: participant.name,
+        phone: participant.phone,
         role: "general",
         isMute: false,
       },
@@ -285,20 +286,13 @@ const OngoingConference = () => {
     setSearchQuery(event.target.value);
   };
 
-  const filteredParticipants = participants
-    ? participants.filter(
+  const filteredParticipants = updatedParticipants
+    ? updatedParticipants.filter(
         (participant) =>
-          participant.attendeeName &&
-          participant.attendeeName
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
+          participant.name &&
+          participant.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : [];
-
-  // Determine the number of participants on call
-  const participantsOnCall = participants
-    ? participants.filter((participant) => participant.connected).length
-    : 0;
 
   return (
     <div className={classes.root}>
@@ -311,7 +305,7 @@ const OngoingConference = () => {
           {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          {participantsOnCall}/{participants ? participants.length : 0} on call
+          0/{participants ? participants.length : 0} on call
         </Typography>
         <div className={classes.section}>
           <TextField
@@ -355,10 +349,10 @@ const OngoingConference = () => {
                       />
                     </TableCell>
                     <TableCell className={classes.tableCell}>
-                      {participant.attendeeName}
+                      {participant.name}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
-                      {participant.addressEntry.address}
+                      {participant.phone}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton

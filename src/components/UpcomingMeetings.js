@@ -256,7 +256,7 @@ const UpcomingMeetings = () => {
     API.queryConferenceList(token)
       .then((res) => {
         console.log("Conference List: ", res);
-        if (res.message === "UNAUTHORIZED") {
+        if (res.conferenceList.result.resultDesc === "UNAUTHORIZED") {
           alert("Session expired. Please login again.");
           navigate("/");
         } else {
