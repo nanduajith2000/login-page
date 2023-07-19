@@ -176,9 +176,17 @@ const ConferenceTemplates = () => {
   };
 
   const handleDeleteTemplate = (TemplateID) => {
+    // Show a pop-up confirmation before proceeding with deletion
+    const confirmed = window.confirm("Are you sure you want to delete this template?");
+    
+    if (!confirmed) {
+      // If the user clicks "Cancel" in the confirmation pop-up, do nothing and return
+      return;
+    }
+  
     const token = getCookie("user");
-    console.log(token)
-    console.log(TemplateID)
+    console.log(token);
+    console.log(TemplateID);
     API.deleteconferencetemplate(token, TemplateID)
       .then((res) => {
         // Handle success response if needed
@@ -199,8 +207,8 @@ const ConferenceTemplates = () => {
         // Handle error response if needed
         console.log("Error deleting template: ", err);
       });
-  }
-
+  };
+  
   return (
     <div className={classes.root}>
       <Homenavbarlite />
