@@ -99,7 +99,6 @@ class ConferenceFilter(BaseModel):
 class TemplateList(BaseModel):
 	token:str
 	resultField:Optional[List[str]]=[]
-	conditions:Conditions
 	isAscend:bool
 	pageIndex:int
 	pageSize:int
@@ -138,6 +137,11 @@ class QueryConfInfo(BaseModel):
 class AccountInfo(BaseModel):
     name:str
     type:str
+
+class Usermodel(BaseModel):
+     token:str
+     account:AccountInfo
+     mobile:str
 
 class UserPasswordInfo(BaseModel):
     token: str
@@ -205,7 +209,6 @@ class Conditions(BaseModel):
 class ContactFilter(BaseModel):
     token:str
     resultField:Optional[ResultField]
-    conditions:Conditions
     isAscend:bool
     sortField:Optional[SortField]
     pageIndex:int
@@ -227,9 +230,7 @@ class EnableMute(BaseModel):
     participantID:str
     isMute:str
 
-class Account(BaseModel):
-     name:str
-     type:str
+
 
 class Usermodel(BaseModel):
      token:str
