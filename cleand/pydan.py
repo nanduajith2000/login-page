@@ -106,8 +106,8 @@ class TemplateList(BaseModel):
 class InvitePara(BaseModel):
     name: str
     phone: str
-    email: Optional[str]
-    sms: Optional[str]
+    email: str=""
+    sms: str=""
     role: Optional[str] = "general"
     isMute:Optional [bool] = False
 
@@ -141,7 +141,11 @@ class AccountInfo(BaseModel):
 class Usermodel(BaseModel):
      token:str
      account:AccountInfo
+     name:str
+     pin:str
      mobile:str
+     telephone:str
+     email:str
 
 class UserPasswordInfo(BaseModel):
     token: str
