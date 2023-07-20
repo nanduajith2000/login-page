@@ -4,15 +4,15 @@ from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
 import xml.parsers.expat
-from config import ERROR_MESSAGE
+from config import ERROR_MESSAGE,CONF_DETAILS
 from password_manager import set_password,is_password_expired
 
 from fastapi.middleware.cors import CORSMiddleware
-from app.redis1 import redis_client
 import ssl1 
 
 
-
+import redis
+redis_client = redis.Redis(host='localhost',port=6379,db=0)
 redis_client.select(0)
 
 msg1= "Enter Student ID"
@@ -113,7 +113,6 @@ def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None))
     
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
-
 
 @app.post("/user/templatelist")
 def templatelist(template_list: TemplateList = Body(default=None)):
@@ -231,17 +230,7 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
         return {"message":"no_upcoming_meetings"}
     
     data_list = dict1["conferenceList"]["page"]["data"]
-    keys_to_extract = [
-    "Subject",
-    "StartTime",
-    "EndTime",
-    "ScheduserName",
-    "accessNumber",
-    "ConferenceID",
-    "ChairpersonID",
-    "ConferenceState",
-    "factEndTime",
-    ]
+    keys_to_extract = CONF_DETAILS
 
     ans={"message": "success"}
     conf_details={"message":'GET_SUCCESS'}
@@ -449,12 +438,14 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
 
 @app.post("/user/modifyuser")
 def modifyuser(modify_user:Usermodel = Body(default=None)):
-    URL="modifyuser"
+    URL="modifyUser"
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_user.token).decode("utf-8")}
     except AttributeError:
         return ERROR_MESSAGE
+    
     BODY={"user":modify_user.dict()}
+    del BODY['user']['token']
     dict1=ssl1.update_PUT(URL,head,BODY)
     return dict1
 

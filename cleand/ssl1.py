@@ -5,12 +5,13 @@ import xmltodict
 import json
 import urllib.parse
 from urllib.parse import quote
+from config import BODY_ENCODE,URI
 
 
 requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
 requests.packages.urllib3.disable_warnings() 
 def login(URL,head):
-      url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
+      url = URI+URL
       headers = {'content-type': 'application/json'}
       headers.update(head)
 
@@ -32,14 +33,14 @@ def create_POST(URL, head, body):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings()
 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+    url = URI + URL
 
     headers = {'content-type': 'application/json'}
     headers.update(head)
 
 #     body_dict = body.dict()
     # print("\nBody IN\n",body)
-    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
+    body_xml = BODY_ENCODE + xmltodict.unparse( body, full_document=False)
     print("\nBody IN\n",body_xml)
 
     start = time.time()
@@ -60,24 +61,24 @@ def update_PUT(URL, head, body):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings()
 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+    url = URI + URL
 
     headers = {'content-type': 'application/json'}
     headers.update(head)
 
     # body_dict = body.dict()
     
-    body_xml = '<?xml version="1.0" encoding="UTF-8"?>' + xmltodict.unparse( body, full_document=False)
+    body_xml = BODY_ENCODE + xmltodict.unparse( body, full_document=False)
     print("\nBody IN\n",body_xml)
 
     start = time.time()
     r = requests.put(url, headers=headers, data=body_xml, verify=False)
     end = time.time()
 
-    # print("\nBody OUT\n",r.content)
+    print("\nBody OUT\n",r.content)
     data_dict = xmltodict.parse(r.content)
 
-    print("\nBody OUT\n",data_dict)
+    # print("\nBody OUT\n",data_dict)
     
     print("The time of execution is:", (end - start) * 10**3, "ms")
 
@@ -90,7 +91,7 @@ def encoded_PUT(URL,head,body):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     headers.update(head)
 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+    url = URI + URL
 
     # body_encoded = urllib.parse.urlencode(body)
     print ("\nBody in\n",body)
@@ -113,7 +114,7 @@ def data_GET(URL, head):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings()
 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/" + URL
+    url = URI + URL
 
     headers = {'content-type': 'application/json'}
     headers.update(head)
@@ -137,7 +138,7 @@ def remove_DELETE(URL,head):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings() 
     encoded_url=quote(URL)
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+encoded_url
+    url = URI+encoded_url
     headers = {'content-type': 'application/json'}
     headers.update(head)
     print("\nHeader\n",headers)
@@ -147,10 +148,10 @@ def remove_DELETE(URL,head):
     r = requests.delete(url,headers=headers, verify=False)
     end = time.time()
 
-    print("\nBODY OUT\n",r.content)
+    # print("\nBODY OUT\n",r.content)
     data_dict=xmltodict.parse(r.content)
 
-    # print(data_dict)
+    print("\nBody OUT\n",data_dict)
     print("The time of execution is :",
         (end-start) * 10**3, "ms")
       
@@ -160,7 +161,7 @@ def remove_DELETE(URL,head):
 def logout(URL,head):
     requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS = 'ALL:@SECLEVEL=1'
     requests.packages.urllib3.disable_warnings() 
-    url = "https://conference.ngn.bsnl.co.in/rest/V3R8C30/"+URL
+    url = URI+URL
     headers = {'content-type': 'application/json'}
     headers.update(head)
 

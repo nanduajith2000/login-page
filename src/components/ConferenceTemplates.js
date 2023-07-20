@@ -213,6 +213,10 @@
         .then((res) => {
           // Handle success response if needed
           console.log(res);
+          if (res.result.resultDesc === "FORBIDDEN"){
+            window.alert('You are unauthorized for this action.');
+            setShowConfirmDialog(false);
+          }else{
           // Reload the conference template list after deletion
           API.ConferenceTemplateList(token)
             .then((res) => {
@@ -225,7 +229,7 @@
             .catch((err) => {
               console.log("Could not fetch template details. Please try again later.");
             });
-        })
+        }})
         .catch((err) => {
           // Handle error response if needed
           console.log("Error deleting template: ", err);
