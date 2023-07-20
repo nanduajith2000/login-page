@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall,RollCall,ChairRights
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall,RollCall,ChairRights,GroupContact
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -535,4 +535,16 @@ def approvechairperson(approve_rights:ChairRights=Body(default=None)):
 
     dict1 = ssl1.encoded_PUT(URL,head,BODY)
 
+    return dict1
+
+@app.post("/user/groupcontact")
+def groupcontact(group_contact: GroupContact =Body(default=None)):
+    URL = "contactorGroup"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(group_contact.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
+    BODY = {'contactorGroup':group_contact.dict()}
+    del BODY['contactorGroup']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
     return dict1
