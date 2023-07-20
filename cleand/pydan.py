@@ -175,26 +175,26 @@ class Contactor(BaseModel):
      token:str
      name:str
      phone:str
-     mobile:str
-     otherPhone1:str
-     otherPhone2:str
-     otherPhone3:str
-     email:str
-     impu:str
-     description:str
+     mobile:Optional[str]
+     otherPhone1:Optional[str]
+     otherPhone2:Optional[str]
+     otherPhone3:Optional[str]
+     email:Optional[str]
+     impu:Optional[str]
+     description:Optional[str]
 
 class Contactor_mod(BaseModel):
      token:str
      contactorID:str
-     name:str
-     phone:str
-     mobile:str
-     otherPhone1:str
-     otherPhone2:str
-     otherPhone3:str
-     email:str
-     impu:str
-     description:str
+     name:Optional[str]
+     phone:Optional[str]
+     mobile:Optional[str]
+     otherPhone1:Optional[str]
+     otherPhone2:Optional[str]
+     otherPhone3:Optional[str]
+     email:Optional[str]
+     impu:Optional[str]
+     description:Optional[str]
 
 class Contactor_info(BaseModel):
      token:str
