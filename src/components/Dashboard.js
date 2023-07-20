@@ -1,5 +1,5 @@
 import React from "react";
-import Homenavbar from "./Homenavbar";
+import Homenavbarlite from "./Homenavbarlite";
 import UpcomingMeetings from "./UpcomingMeetings";
 import MeetingCalendar from "./MeetingCalendar";
 import "./Dashboard.css";
@@ -8,7 +8,7 @@ import PreviousConferences from "./PreviousConferences";
 export default function Dashboard() {
   return (
     <div className="dashboard-container">
-      <Homenavbar />
+      <Homenavbarlite />
       <div className="dashboard-sub-container">
         <UpcomingMeetings className="upcoming-meetings" />
         <MeetingCalendar className="calendar" />

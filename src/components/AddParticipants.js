@@ -24,12 +24,18 @@ export default function AddParticipants({ onAddParticipant }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const participant = {
-      id: Date.now(),
-      name: name,
-      number: phoneNumber,
-      selected: false,
-      connected: false,
-      muted: false,
+      attendeeName: `${name}`,
+      conferenceRole: "general",
+      addressEntry: [
+        {
+          address: `${phoneNumber}`,
+          type: "phone",
+        },
+      ],
+
+      isDefaultMute: "false",
+      regionID: "0",
+      type: "normal",
     };
     onAddParticipant(participant);
     setName("");

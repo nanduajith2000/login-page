@@ -256,7 +256,11 @@ const UpcomingMeetings = () => {
     API.queryConferenceList(token)
       .then((res) => {
         console.log("Conference List: ", res);
-        if (res.message === "UNAUTHORIZED") {
+        if (
+          res.conferenceList &&
+          res.conferenceList.result &&
+          res.conferenceList.result.resultDesc === "UNAUTHORIZED"
+        ) {
           alert("Session expired. Please login again.");
           navigate("/");
         } else {
@@ -290,6 +294,7 @@ const UpcomingMeetings = () => {
       })
       .catch((err) => {
         alert("Could not fetch meeting details. Please try again later.");
+        console.log(err);
         setLoading(false);
       });
   }, []);

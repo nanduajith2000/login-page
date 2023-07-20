@@ -261,9 +261,9 @@ const CreateConference = () => {
       prevParticipants.filter((participant) => participant.id !== id)
     );
   };
-  const handleDeleteContact = (id) => {
+  const handleDeleteContact = (name) => {
     setContacts((prevContacts) =>
-      prevContacts.filter((contact) => contact.id !== id)
+      prevContacts.filter((contact) => contact.attendeeName !== name)
     );
   };
 
@@ -626,7 +626,7 @@ const CreateConference = () => {
                   <Chip
                     key={contact.id}
                     label={contact.attendeeName}
-                    onDelete={() => handleDeleteContact(contact.id)}
+                    onDelete={() => handleDeleteContact(contact.attendeeName)}
                     className={classes.chip}
                   />
                 ))}

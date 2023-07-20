@@ -236,6 +236,14 @@ class EnableMute(BaseModel):
 
 
 
+class Usermodel(BaseModel):
+     token:str
+     account:Account
+     name:Optional[str]
+     pin:Optional[str]
+     mobile:str
+     telephone:Optional[str]
+     email:Optional[str]
 
 class OnlineConfInfo(BaseModel):
      token:str
