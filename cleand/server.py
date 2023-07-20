@@ -4,15 +4,15 @@ from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
 import xml.parsers.expat
-from config import ERROR_MESSAGE
+from config import ERROR_MESSAGE,CONF_DETAILS
 from password_manager import set_password,is_password_expired
 
 from fastapi.middleware.cors import CORSMiddleware
-from app.redis1 import redis_client
 import ssl1 
 
 
-
+import redis
+redis_client = redis.Redis(host='localhost',port=6379,db=0)
 redis_client.select(0)
 
 msg1= "Enter Student ID"
@@ -114,7 +114,6 @@ def delete_conferenc(del_template:DeleteConferencetemplate = Body(default=None))
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
 
-
 @app.post("/user/templatelist")
 def templatelist(template_list: TemplateList = Body(default=None)):
     URL = "conferenceTemplateList"
@@ -207,7 +206,10 @@ def prologconference(prolog_Conf:ProlongConf= Body(default=None)):
 
     return dict1
 
-
+'''This route has 2 api calls. One to get the List of conferences.
+From the list of conferences we get the conferenceID. 
+The second api call is to conferenceInfo using the conferenceID we got from the
+previous API call'''
 @app.post("/user/conferencelist")
 def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     URL = "conferenceList"
@@ -221,42 +223,30 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     
     BODY = {'conferenceFilter': conference_list.dict()}
     del BODY['conferenceFilter']['token']
-    dict1 = ssl1.create_POST(URL, head, BODY)
-    # return dict1
-    
-    if (dict1['conferenceList']["result"]["resultDesc"]!="SUCCESS"):
-        return dict1
 
+    dict1 = ssl1.create_POST(URL, head, BODY)
+
+    if(dict1["conferenceList"]["result"]["resultDesc"]!="SUCCESS"):
+        return dict1
+    
+    keys_to_extract = CONF_DETAILS
+    total=dict1["conferenceList"]["page"]["total"]
+    data_list = dict1["conferenceList"]["page"]["data"]
+    hasprev =  dict1["conferenceList"]["page"]["hasPrev"]
+    hasnext =  dict1["conferenceList"]["page"]["hasNext"]
+    
     if (dict1["conferenceList"]["page"]["total"]=="0"):
         return {"message":"no_upcoming_meetings"}
     
-    data_list = dict1["conferenceList"]["page"]["data"]
-    keys_to_extract = [
-    "Subject",
-    "StartTime",
-    "EndTime",
-    "ScheduserName",
-    "accessNumber",
-    "ConferenceID",
-    "ChairpersonID",
-    "ConferenceState",
-    "factEndTime",
-    ]
+    
 
-    ans={"message": "success"}
+    if(total=="1"):
+        data_list=[data_list]
+
     conf_details={"message":'GET_SUCCESS'}
 
     i=0
     for item in data_list:
-        if isinstance(item, str):
-            for entry in data_list["entry"]:
-                key = entry["key"]
-                value = entry["value"]
-                conf_details[key] = value
-            # conf_details.update(data_list)
-            i+=1
-            continue
-
         entry_list = item["entry"]
         extracted_dict = {}
         for entry in entry_list:
@@ -282,10 +272,15 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
         
         conf_details[i]=info
         # print(conf_details)
-        ans.update({i:extracted_dict})
-    conf_details["total"]=i
+
+    conf_details["total"]=total
+    conf_details["hasNext"]=hasnext
+    conf_details["hasPrev"]=hasprev
+    
 
     return conf_details
+    
+
 
 
 @app.post("/user/queryconferenceinfo")
@@ -449,12 +444,14 @@ def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None
 
 @app.post("/user/modifyuser")
 def modifyuser(modify_user:Usermodel = Body(default=None)):
-    URL="modifyuser"
+    URL="modifyUser"
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_user.token).decode("utf-8")}
     except AttributeError:
         return ERROR_MESSAGE
+    
     BODY={"user":modify_user.dict()}
+    del BODY['user']['token']
     dict1=ssl1.update_PUT(URL,head,BODY)
     return dict1
 

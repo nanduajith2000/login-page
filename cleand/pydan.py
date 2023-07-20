@@ -1,5 +1,6 @@
 from typing import Optional,List
 from pydantic import BaseModel
+from config import CONF_DETAILS
 
 class Student(BaseModel):
     name: str
@@ -40,7 +41,7 @@ class createConferenceInfo(BaseModel):
     size:int
     subject:str
     mediaTypes:str
-    startTime:Optional[str]="0"
+    startTime:Optional[str]
     timeZone:int
     language: str
     attendees:Optional[List[attendeeSchema]]=[]
@@ -85,11 +86,12 @@ class Conditions(BaseModel):
 	matching:str
 
 class Filter(BaseModel):
-	resultFields:Optional[List[str]]=[]
-	conditions:Conditions
-	isAscend:bool
-	pageIndex:int
-	pageSize:int
+    resultFields:List[str]=CONF_DETAILS
+    conditions:Optional[Conditions]
+    isAscend:bool
+    sortField:Optional[str]
+    pageIndex:int
+    pageSize:int
 
 class ConferenceFilter(BaseModel):
 	token:str
@@ -106,8 +108,8 @@ class TemplateList(BaseModel):
 class InvitePara(BaseModel):
     name: str
     phone: str
-    email: Optional[str]
-    sms: Optional[str]
+    email: str=""
+    sms: str=""
     role: Optional[str] = "general"
     isMute:Optional [bool] = False
 
@@ -141,7 +143,11 @@ class AccountInfo(BaseModel):
 class Usermodel(BaseModel):
      token:str
      account:AccountInfo
+     name:str
+     pin:str
      mobile:str
+     telephone:str
+     email:str
 
 class UserPasswordInfo(BaseModel):
     token: str
@@ -171,26 +177,26 @@ class Contactor(BaseModel):
      token:str
      name:str
      phone:str
-     mobile:str
-     otherPhone1:str
-     otherPhone2:str
-     otherPhone3:str
-     email:str
-     impu:str
-     description:str
+     mobile:Optional[str]
+     otherPhone1:Optional[str]
+     otherPhone2:Optional[str]
+     otherPhone3:Optional[str]
+     email:Optional[str]
+     impu:Optional[str]
+     description:Optional[str]
 
 class Contactor_mod(BaseModel):
      token:str
      contactorID:str
-     name:str
-     phone:str
-     mobile:str
-     otherPhone1:str
-     otherPhone2:str
-     otherPhone3:str
-     email:str
-     impu:str
-     description:str
+     name:Optional[str]
+     phone:Optional[str]
+     mobile:Optional[str]
+     otherPhone1:Optional[str]
+     otherPhone2:Optional[str]
+     otherPhone3:Optional[str]
+     email:Optional[str]
+     impu:Optional[str]
+     description:Optional[str]
 
 class Contactor_info(BaseModel):
      token:str
@@ -209,6 +215,7 @@ class Conditions(BaseModel):
 class ContactFilter(BaseModel):
     token:str
     resultField:Optional[ResultField]
+    conditions:Optional[Conditions]=[]
     isAscend:bool
     sortField:Optional[SortField]
     pageIndex:int
@@ -232,14 +239,6 @@ class EnableMute(BaseModel):
 
 
 
-class Usermodel(BaseModel):
-     token:str
-     account:Account
-     name:Optional[str]
-     pin:Optional[str]
-     mobile:str
-     telephone:Optional[str]
-     email:Optional[str]
 
 class OnlineConfInfo(BaseModel):
      token:str
