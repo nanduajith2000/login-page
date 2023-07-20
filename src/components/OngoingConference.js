@@ -13,6 +13,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
+import RingingCallIcon from "./RingingCallIcon";
 import { makeStyles } from "@material-ui/core/styles";
 import ConferenceSidenav from "./ConferenceSidenav";
 import API from "../api/API";
@@ -200,7 +201,7 @@ const OngoingConference = () => {
         participantID: participantID,
       };
     });
-
+    // console.log(updatedInviteStateArray);
     setUpdatedParticipants(updatedInviteStateArray);
     // Rest of your code
   }, [inviteState, getParticipantID]);
@@ -365,11 +366,21 @@ const OngoingConference = () => {
                         //   !participant.connected && participant.selected
                         // }
                       >
-                        {participant.participantID !== undefined ? (
-                          <CallEnd />
-                        ) : (
-                          <Call />
-                        )}
+                        {(() => {
+                          if (
+                            participant.participantID !== undefined &&
+                            participant.state !== "100"
+                          ) {
+                            return <CallEnd />;
+                          } else if (
+                            participant.participantID === undefined &&
+                            participant.state !== "100"
+                          ) {
+                            return <Call />;
+                          } else if (participant.state === "100") {
+                            return <RingingCallIcon />;
+                          }
+                        })()}
                       </IconButton>
                     </TableCell>
                     <TableCell className={classes.tableCell}>

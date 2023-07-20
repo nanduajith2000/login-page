@@ -46,8 +46,8 @@ class API {
     timeZone,
     language,
     subject,
-    startTime,
     autoInvite,
+    startTime,
     attendees
   ) {
     const url = `${URL}/user/createconference`;
@@ -409,6 +409,26 @@ class API {
       .then((response) => response.json())
       .then((data) => data);
   }
-}
 
+  static modifyuser(token, account, name, pin, mobile, telephone, email) {
+    const url = `${URL}/user/modifyuser`;
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        account: account,
+        name: `${name}`,
+        pin: `${pin}`,
+        mobile: `${mobile}`,
+        telephone: `${telephone}`,
+        email: `${email}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
+}
 export default API;

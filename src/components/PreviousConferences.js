@@ -30,6 +30,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#D9D9D9",
     borderRadius: 10,
   },
+  paginationContainer: {
+    display: "flex",
+    alignItems: "center",
+  },
+  pageIndex: {
+    fontFamily: "Poppins, sans-serif",
+    fontSize: "0.8rem",
+  },
   title: {
     textAlign: "auto",
     fontFamily: "Poppins, sans-serif",
@@ -114,16 +122,18 @@ const PreviousConferences = () => {
     return null; // Return null if the cookie is not found
   }
 
-  const [totalPages, setTotalPages] = React.useState(29);
+  const [totalPages, setTotalPages] = React.useState(1);
 
   // React.useEffect(() => {
   //   const token = getCookie("user");
 
   // },[]);
   const [pageIndex, setPageIndex] = React.useState(totalPages);
+  const [pageNumber, setPageNumber] = React.useState(1);
 
-  const handlePageChange = (newPageIndex) => {
+  const handlePageChange = (newPageIndex, newPageNumber) => {
     setPageIndex(newPageIndex);
+    setPageNumber(newPageNumber);
   };
 
   React.useEffect(() => {
@@ -149,6 +159,30 @@ const PreviousConferences = () => {
       });
   }, [pageIndex]);
 
+  React.useEffect(() => {
+    const token = getCookie("user");
+    setLoading(true);
+    API.queryConferencehistory(token, pageIndex)
+      .then((res) => {
+        console.log("Previous conferences: ", res);
+        // if (res.message === "UNAUTHORIZED") {
+        //   alert("Session expired. Please login again.");
+        //   navigate("/");
+        // } else {
+        setPageIndex(res.total / 10 + 1);
+        const meetingArray = Object.values(res)
+          .filter((value) => typeof value === "object")
+          .map((meeting) => meeting);
+        setMeetings(meetingArray.reverse());
+        // }
+        setLoading(false);
+      })
+      .catch((err) => {
+        alert("Could not fetch meeting history. Please try again later.");
+        setLoading(false);
+      });
+  }, []);
+
   function convertMillisecondsToHoursAndMinutes(milliseconds) {
     var hours = Math.floor(milliseconds / (1000 * 60 * 60));
     var minutes = Math.floor((milliseconds % (1000 * 60 * 60)) / (1000 * 60));
@@ -166,14 +200,15 @@ const PreviousConferences = () => {
           <IconButton
             className={classes.paginationButton}
             disabled={pageIndex === totalPages}
-            onClick={() => handlePageChange(pageIndex + 1)}
+            onClick={() => handlePageChange(pageIndex + 1, pageNumber - 1)}
           >
             <NavigateBefore />
           </IconButton>
+          <Typography className={classes.pageIndex}>{pageNumber}</Typography>
           <IconButton
             className={classes.paginationButton}
             disabled={pageIndex === 1}
-            onClick={() => handlePageChange(pageIndex - 1)}
+            onClick={() => handlePageChange(pageIndex - 1, pageNumber + 1)}
           >
             <NavigateNext />
           </IconButton>

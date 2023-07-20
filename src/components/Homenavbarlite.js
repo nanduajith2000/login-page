@@ -3,6 +3,7 @@ import { AppBar, Toolbar, IconButton, Button } from "@material-ui/core";
 import { ArrowBack, ArrowForward } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import { useNavigate } from "react-router-dom";
+import API from "../api/API";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Homenavbar = () => {
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
+      }
+    }
+
+    return null; // Return null if the cookie is not found
+  }
+  const token = getCookie("user");
   const classes = useStyles();
   const navigate = useNavigate();
 
@@ -48,7 +63,40 @@ const Homenavbar = () => {
   };
 
   const handleStartConference = () => {
-    window.open("/home/instantConference", "_blank");
+    API.createconference(
+      token,
+      3600000,
+      3,
+      48,
+      "en_US",
+      "Instant Conference",
+      false,
+      0
+    )
+      .then((res) => {
+        console.log("Creating instant conference: ", res);
+        API.ConferenceInfo(
+          token,
+          res.scheduleConferenceResult.conferenceInfo.conferenceKey
+            .conferenceID,
+          "0"
+        )
+          .then((res) => {
+            console.log("Conference info: ", res);
+            localStorage.setItem(
+              "meetingDetails",
+              JSON.stringify(res.conferenceResult.conferenceInfo)
+            );
+            window.open(`/home/instantConference`);
+          })
+          .catch((err) => {
+            console.log("Couldnt fetch conference info: ", err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Error creating conference");
+      });
   };
 
   return (

@@ -266,19 +266,6 @@ const UpcomingMeetings = () => {
         } else {
           if (res.message === "no_upcoming_meetings") {
             setIsEmpty(true);
-          } else if (res.total === 1) {
-            setIsSingleMeeting(true);
-            setSingleMeetingDetails({
-              startTime: res.StartTime,
-              endTime: res.factEndTime,
-              conferenceID: res.ConferenceID,
-              subject: res.Subject,
-              accessNumber: res.accessNumber,
-              length: res.Length,
-              size: res.totalSize,
-              creator: res.ScheduserName,
-              expanded: false,
-            });
           } else {
             const meetingArray = Object.values(res)
               .filter((value) => typeof value === "object")

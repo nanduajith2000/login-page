@@ -66,7 +66,7 @@ export default function Sidenav(props) {
 
   let newArray = [];
 
-  participants.map((participant) => {
+  participants?.map((participant) => {
     newArray.push({
       attendeeName: participant.attendeeName,
       conferenceRole: participant.conferenceRole,

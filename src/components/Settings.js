@@ -18,9 +18,6 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/core/styles";
 import Homenavbarlite from "./Homenavbarlite";
 import API from "../api/API";
-import { useNavigate } from "react-router-dom";
-
-// const modifyuserpassword = require("../api/ModifyUserPassword.js");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,11 +61,6 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.error.main,
     fontFamily: "Poppins, sans-serif",
   },
-  // changePasswordContainer: {
-  //   display: "flex",
-  //   flexDirection: "column",
-  //   alignItems: "center",
-  // },
 }));
 
 function Settings() {
@@ -145,8 +137,6 @@ function Settings() {
     setShowConfirmPassword(!showConfirmPassword);
   };
 
-  const navigate = useNavigate();
-
   const handlePasswordSave = () => {
     if (newPassword !== confirmPassword) {
       setPasswordMatchError(true);
@@ -168,10 +158,7 @@ function Settings() {
       )
         .then((res) => {
           console.log(res);
-          if (res.message === "UNAUTHORIZED") {
-            alert("Session expired. Please login again.");
-            navigate("/");
-          } else alert("Password changed successfully!");
+          alert("Password changed successfully!");
         })
         .catch((err) => {
           console.log(err);
@@ -289,18 +276,28 @@ function Settings() {
                   Allow conference chairperson to view personal contacts:
                 </Typography>
                 {isEditing ? (
-                  <FormControl fullWidth variant="outlined">
-                    <Select
-                      value={updatedAllowChairpersonView}
-                      onChange={(e) =>
-                        setUpdatedAllowChairpersonView(e.target.value)
+                  <Box display="flex">
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={updatedAllowChairpersonView === "Yes"}
+                          onChange={() => setUpdatedAllowChairpersonView("Yes")}
+                          color="primary"
+                        />
                       }
-                      className={classes.inputField}
-                    >
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </Select>
-                  </FormControl>
+                      label="Yes"
+                    />
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={updatedAllowChairpersonView === "No"}
+                          onChange={() => setUpdatedAllowChairpersonView("No")}
+                          color="primary"
+                        />
+                      }
+                      label="No"
+                    />
+                  </Box>
                 ) : (
                   <Typography variant="body1">
                     {allowChairpersonView}

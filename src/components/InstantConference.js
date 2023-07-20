@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Checkbox,
   Container,
@@ -13,8 +13,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Mic, Call, Search, CallEnd, MicOff } from "@material-ui/icons";
+import RingingCallIcon from "./RingingCallIcon";
 import { makeStyles } from "@material-ui/core/styles";
-import ConferenceSidenav from "./ConferenceSidenav";
+import InstantConferenceSidenav from "./InstantConferenceSidenav";
+import API from "../api/API";
+// const Login = require("../api/Login");
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -84,11 +87,129 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const InstantConference = (props) => {
-  const userID = localStorage.getItem("userID");
+const OngoingConference = () => {
   const classes = useStyles();
-  const [participants, setParticipants] = useState(props.participantsData);
+  const [meeting, setMeeting] = useState(
+    JSON.parse(localStorage.getItem("meetingDetails"))
+  );
+
+  const [participants, setParticipants] = useState([]);
+
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [inviteState, setInviteState] = useState([]);
+
+  const [participantsDetails, setParticipantsDetails] = useState([]);
+
+  const [updatedParticipants, setUpdatedParticipants] = useState();
+
+  function getParticipantID(participantName) {
+    const participant = participantsDetails.find(
+      (p) => p.name === participantName
+    );
+    return participant ? participant.subscribers.subscriber.callID : undefined;
+  }
+
+  useEffect(() => {
+    API.Login(
+      meeting.conferenceKey.conferenceID,
+      meeting.passwords[0].password,
+      "ConferenceID"
+    )
+      .then((res) => {
+        API.OnlineConferenceInfo(
+          res.token,
+          meeting.conferenceKey.conferenceID,
+          0
+        )
+          .then((res) => {
+            console.log("Conference info: ", res);
+            setInviteState(
+              Array.isArray(
+                res.spellQueryconference.conference.inviteStates.inviteState
+              )
+                ? res.spellQueryconference.conference.inviteStates.inviteState
+                : [res.spellQueryconference.conference.inviteStates.inviteState]
+            );
+            setUpdatedParticipants(
+              Array.isArray(
+                res.spellQueryconference.conference.inviteStates.inviteState
+              )
+                ? res.spellQueryconference.conference.inviteStates.inviteState
+                : [res.spellQueryconference.conference.inviteStates.inviteState]
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+        if (res.message === "success") {
+          localStorage.setItem("cred", res.token);
+          localStorage.setItem(
+            "ConferenceID",
+            meeting.conferenceKey.conferenceID
+          );
+          localStorage.setItem("Password", meeting.chair);
+
+          // Start the loop function after successful login
+          const loopFunction = setInterval(() => {
+            API.OnlineConferenceInfo(
+              res.token,
+              meeting.conferenceKey.conferenceID,
+              0
+            )
+              .then((confInfoRes) => {
+                // Process the conference info response here
+                // console.log("Conference Info: ", confInfoRes);
+
+                // Extract inviteStates from conferenceResult
+                const conferenceDetails =
+                  confInfoRes.spellQueryconference.conference;
+                let participantsDetails = conferenceDetails.participants
+                  ? conferenceDetails.participants.participant
+                  : [];
+
+                // if (!Array.isArray(inviteState)) {
+                //   inviteState = inviteState ? [inviteState] : [];
+                // }
+
+                if (!Array.isArray(participantsDetails)) {
+                  participantsDetails = participantsDetails
+                    ? [participantsDetails]
+                    : [];
+                }
+                setParticipantsDetails(participantsDetails);
+              })
+              .catch((err) => {
+                console.log(err);
+                // Handle errors here
+              });
+          }, 5000);
+          // 5 seconds interval
+
+          // Clean up the loop function when the component unmounts
+          return () => clearInterval(loopFunction);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // Handle errors here
+      });
+  }, []);
+
+  useEffect(() => {
+    // Add the mapping operation here using updatedInviteState
+    const updatedInviteStateArray = inviteState.map((invite) => {
+      const participantID = getParticipantID(invite.name);
+
+      return {
+        ...invite,
+        participantID: participantID,
+      };
+    });
+    // console.log(updatedInviteStateArray);
+    setUpdatedParticipants(updatedInviteStateArray);
+    // Rest of your code
+  }, [inviteState, getParticipantID]);
 
   const handleCheckedUser = (participantId) => {
     setParticipants((prevParticipants) => {
@@ -120,43 +241,77 @@ const InstantConference = (props) => {
     });
   };
 
-  const handleCall = (participantId) => {
-    setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => {
-        if (participant.id === participantId) {
-          return {
-            ...participant,
-            connected: !participant.connected,
-          };
-        }
-        return participant;
+  const handleCall = (participant) => {
+    const credValue = localStorage.getItem("cred");
+
+    console.log("Participant: ", participant);
+
+    const invitePara = [
+      {
+        name: participant.name,
+        phone: participant.phone,
+        role: "general",
+        isMute: false,
+      },
+    ];
+
+    console.log("Cred:", credValue);
+    API.InviteParticipants(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      invitePara
+    )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Could not call attendee. Please try again later.");
       });
-      return updatedParticipants;
-    });
+  };
+
+  const handleDisconnect = (participant) => {
+    const credValue = localStorage.getItem("cred");
+    console.log("PARTICIPANT ID: ", participant.participantID);
+
+    API.LeaveParticipant(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      participant.participantID
+    )
+      .then((res) => {
+        console.log("Disconnecting call... ", res);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Could not disconnect call. Please try again later.");
+      });
   };
 
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
 
-  // Filter participants based on search query
-  const filteredParticipants = participants.filter((participant) =>
-    participant.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredParticipants = updatedParticipants
+    ? updatedParticipants.filter(
+        (participant) =>
+          participant.name &&
+          participant.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   return (
     <div className={classes.root}>
-      <ConferenceSidenav
+      <InstantConferenceSidenav
         participants={participants}
         setParticipants={setParticipants}
       />
       <Container className={classes.container}>
         <Typography variant="h5" className={classes.title}>
-          {userID}'s Conference
+          {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          {participants.filter((participant) => participant.connected).length}/
-          {participants.length} on call
+          0/{participants ? participants.length : 0} on call
         </Typography>
         <div className={classes.section}>
           <TextField
@@ -203,34 +358,42 @@ const InstantConference = (props) => {
                       {participant.name}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
-                      {participant.number}
+                      {participant.phone}
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
-                        onClick={() => handleCall(participant.id)}
-                        disabled={
-                          !participant.connected && participant.selected
+                        onClick={() =>
+                          participant.participantID === undefined
+                            ? handleCall(participant)
+                            : handleDisconnect(participant)
                         }
+                        // disabled={
+                        //   !participant.connected && participant.selected
+                        // }
                       >
-                        {participant.connected ? (
-                          <CallEnd
-                            className={
-                              participant.connected
-                                ? classes.disconnectedCall
-                                : ""
-                            }
-                          />
-                        ) : (
-                          <Call />
-                        )}
+                        {(() => {
+                          if (
+                            participant.participantID !== undefined &&
+                            participant.state !== "100"
+                          ) {
+                            return <CallEnd />;
+                          } else if (
+                            participant.participantID === undefined &&
+                            participant.state !== "100"
+                          ) {
+                            return <Call />;
+                          } else if (participant.state === "100") {
+                            return <RingingCallIcon />;
+                          }
+                        })()}
                       </IconButton>
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
                         onClick={() => handleMute(participant.id)}
-                        disabled={
-                          !participant.connected && participant.selected
-                        }
+                        // disabled={
+                        //   !participant.connected && participant.selected
+                        // }
                       >
                         {participant.muted ? (
                           <MicOff
@@ -248,7 +411,7 @@ const InstantConference = (props) => {
               ) : (
                 <TableRow>
                   <TableCell className={classes.message} colSpan={5}>
-                    No participants found.
+                    No participants yet.
                   </TableCell>
                 </TableRow>
               )}
@@ -260,4 +423,4 @@ const InstantConference = (props) => {
   );
 };
 
-export default InstantConference;
+export default OngoingConference;
