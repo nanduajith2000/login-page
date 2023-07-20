@@ -230,13 +230,13 @@ class EnableMute(BaseModel):
     participantID:str
     isMute:str
 
-
+class AccountInfo(BaseMOdel):
+     name:str
+     type:str
 
 class Usermodel(BaseModel):
      token:str
-     account:Account
-     name:Optional[str]
-     pin:Optional[str]
+     account:AccountInfo
      mobile:str
      telephone:Optional[str]
      email:Optional[str]
@@ -264,4 +264,9 @@ class ChairRights(BaseModel):
      participantID:str
      role:str="chair"
 
-
+class GroupContact(BaseModel):
+     token:str
+     groupID:int
+     groupName:str
+     description:str
+     contactorName:List[str]
