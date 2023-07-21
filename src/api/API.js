@@ -1,4 +1,4 @@
-const URL = "http://35.154.233.185:8000";
+const URL = "http://218.248.233.138:8000";
 
 class API {
   static ConferenceInfo(token, conID, subconfID) {
@@ -29,7 +29,7 @@ class API {
       },
       body: JSON.stringify({
         token: `${token}`,
-        resultFields: ["Parties", "Length", "TemplateID"],
+        resultFields: ["Parties", "Length", "TemplateID", "Attendees"],
         isAscend: false,
         pageIndex: 0,
         pageSize: 50,
@@ -81,7 +81,8 @@ class API {
     size,
     timeZone,
     language,
-    templateName
+    templateName,
+    attendees
   ) {
     const url = `${URL}/user/createconferencetemplate`;
 
@@ -99,6 +100,7 @@ class API {
         language: `${language}`,
         templateName: `${templateName}`,
         mediaTypes: `Voice`,
+        attendees: attendees,
       }),
     })
       .then((response) => response.json())
@@ -430,5 +432,60 @@ class API {
       .then((response) => response.json())
       .then((data) => data);
   }
+  static querycontactorlist(token, pageIndex, key, value, matching) {
+    const url = `${URL}/user/listpersonalcontact`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conditions: {
+          key: `name`,
+          value: `.............`,
+          matching: `unequal`,
+        },
+        isAscend: "True",
+        pageIndex: `${pageIndex}`,
+        pageSize: 10000,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.contactorList.page.data);
+  }
+
+  static querypersonalcontactgrouplist(token, pageIndex) {
+    const url = `${URL}/user/listpersonalcontactgroup`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conditions: {
+          key: "name",
+          value: "..............",
+          matching: "unequal",
+        },
+        isAscend: "True",
+        pageIndex: `${pageIndex}`,
+        pageSize: 10000,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
 }
+
 export default API;
+
+// API.querypersonalcontactgrouplist(
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2OTAxMjM1OTMuMTUxMDgxOH0.yTQvhnelBDVGOhlYZJBJrpbvYBwHbQIq36Av3oPopY0",
+//   1
+// )
+//   .then((res) => console.log(res))
+//   .catch((err) => console.log(err));

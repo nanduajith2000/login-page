@@ -16,6 +16,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import UploadIcon from "@mui/icons-material/Upload";
 import Search from "@mui/icons-material/Search";
 import Homenavbarlite from "./Homenavbarlite";
+import API from "../../src/api/API";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -100,22 +101,21 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     width: "100%",
+    height: "40vh",
   },
   box: {
     width: "50%",
     backgroundColor: "#D9D9D9",
-    height: "50vh",
+
     marginRight: theme.spacing(2),
     borderRadius: 10,
-    display: "flex",
-    flexWrap: "wrap",
+
     gap: "0.1vw",
-    overflowY: "scroll",
+    overflowY: "auto", // Enable vertical scrolling when content exceeds the height
   },
   addedContact: {
     backgroundColor: "white",
     height: "10vh",
-    width: "10vw",
     borderRadius: 10,
     margin: "5px 8px",
     display: "flex",
@@ -158,11 +158,66 @@ const ContactsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phone, setPhone] = useState("");
   const [openGroupDialog, setOpenGroupDialog] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [groups, setGroups] = useState([]);
   const [groupName, setGroupName] = useState("");
+
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
+      }
+    }
+
+    return null; // Return null if the cookie is not found
+  }
+
+  const token = getCookie("user");
+
+  const handleSearch = (event) => {
+    const query = event.target.value.toLowerCase();
+
+    const filtered = contacts.filter((contact) =>
+      contact.entry[1].value.toLowerCase().includes(query)
+    );
+
+    setFilteredContacts(filtered);
+    setSearchQuery(query);
+  };
+
+  React.useEffect(() => {
+    API.querycontactorlist(token, 1)
+      .then((res) => {
+        setContacts(res);
+        setFilteredContacts(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    // API.querypersonalcontactgrouplist(token, 1)
+    //   .then((res) => {
+    //     setGroups(res);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+  }, []);
+
+  React.useEffect(() => {
+    console.log("CONTACTS", contacts);
+  }, [contacts]);
+  React.useEffect(() => {
+    console.log("GROUPS", groups);
+  }, [groups]);
+
+  const [filteredContacts, setFilteredContacts] = useState(contacts);
 
   const handleOpenDialog = () => {
     setOpenDialog(true);
@@ -171,7 +226,7 @@ const ContactsPage = () => {
   const handleCloseDialog = () => {
     setOpenDialog(false);
     setName("");
-    setPhoneNumber("");
+    setPhone("");
   };
   const handleOpenGroupDialog = () => {
     setOpenGroupDialog(true);
@@ -184,8 +239,10 @@ const ContactsPage = () => {
 
   const handleAddContact = () => {
     const newContact = {
-      name,
-      phoneNumber,
+      entry: [
+        { key: "name", value: `${name}` },
+        { key: "phone", value: `${phone}` },
+      ],
     };
 
     setContacts((prevContacts) => [...prevContacts, newContact]);
@@ -222,9 +279,7 @@ const ContactsPage = () => {
             placeholder="Search..."
             className={classes.searchInput}
             value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-            }}
+            onChange={handleSearch}
             InputProps={{
               startAdornment: <Search />,
               disableUnderline: true,
@@ -270,16 +325,16 @@ const ContactsPage = () => {
 
         <div className={classes.boxContainer}>
           <Box className={classes.box}>
-            {contacts.map((contact, index) => (
+            {filteredContacts.map((contact, index) => (
               <div key={index} className={classes.addedContact}>
                 <Typography variant="subtitle2" className={classes.contactName}>
-                  {contact.name}
+                  {contact.entry[1].value}
                 </Typography>
                 <Typography
                   variant="body2"
                   className={classes.contactPhoneNumber}
                 >
-                  {contact.phoneNumber}
+                  {contact.entry[2].value}
                 </Typography>
               </div>
             ))}
@@ -323,8 +378,8 @@ const ContactsPage = () => {
           />
           <TextField
             label="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             required
             fullWidth
             className={classes.textField}

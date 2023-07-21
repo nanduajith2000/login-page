@@ -257,9 +257,10 @@ const UpcomingMeetings = () => {
       .then((res) => {
         console.log("Conference List: ", res);
         if (
-          res.conferenceList &&
-          res.conferenceList.result &&
-          res.conferenceList.result.resultDesc === "UNAUTHORIZED"
+          (res.conferenceList &&
+            res.conferenceList.result &&
+            res.conferenceList.result.resultDesc === "UNAUTHORIZED") ||
+          res.message === "UNAUTHORIZED"
         ) {
           alert("Session expired. Please login again.");
           navigate("/");

@@ -9,6 +9,7 @@ import InstantConference from "../components/InstantConference";
 import OngoingConference from "../components/OngoingConference";
 import Settings from "../components/Settings";
 import EditConferencePage from "../components/EditConferencePage";
+import ScheduleTemplate from "../components/ScheduleTemplate";
 import { Routes, Route, useLocation } from "react-router-dom";
 import participantsData from "../data/participantsData";
 import { userDetailsContext } from "../App";
@@ -46,6 +47,7 @@ export default function Home(props) {
           />
           <Route path="/startConference" element={<OngoingConference />} />
           <Route path="/editConference" element={<EditConferencePage />} />
+          <Route path="/scheduletemplate" element={<ScheduleTemplate />} />
         </Routes>
       </userDetailsContextThree.Provider>
     </div>

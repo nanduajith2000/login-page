@@ -221,20 +221,7 @@ const OngoingConference = () => {
     });
   };
 
-  const handleMute = (participantId) => {
-    setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => {
-        if (participant.id === participantId) {
-          return {
-            ...participant,
-            muted: !participant.muted,
-          };
-        }
-        return participant;
-      });
-      return updatedParticipants;
-    });
-  };
+  const handleMute = (participant) => {};
 
   const handleCall = (participant) => {
     const credValue = localStorage.getItem("cred");
@@ -385,7 +372,7 @@ const OngoingConference = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
-                        onClick={() => handleMute(participant.id)}
+                        onClick={() => handleMute(participant)}
                         // disabled={
                         //   !participant.connected && participant.selected
                         // }
