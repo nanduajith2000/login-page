@@ -221,7 +221,39 @@ const OngoingConference = () => {
     });
   };
 
-  const handleMute = (participant) => {};
+  const handleMute = (participant) => {
+    const credValue = localStorage.getItem("cred");
+    API.MuteParticipant(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      participant.participantID,
+      "true"
+    )
+      .then((res) => {
+        console.log("Muting caller... ", res);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Could not mute call. Please try again later.");
+      });
+  };
+
+  const handleUnmute = (participant) => {
+    const credValue = localStorage.getItem("cred");
+    API.MuteParticipant(
+      credValue,
+      meeting.conferenceKey.conferenceID,
+      participant.participantID,
+      "false"
+    )
+      .then((res) => {
+        console.log("Unmuting caller... ", res);
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Could not unmute call. Please try again later.");
+      });
+  };
 
   const handleCall = (participant) => {
     const credValue = localStorage.getItem("cred");
