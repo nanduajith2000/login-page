@@ -1,4 +1,4 @@
-const URL = "http://35.154.233.185:8000";
+const URL = "http://218.248.233.138:8000";
 
 class API {
   static ConferenceInfo(token, conID, subconfID) {
@@ -425,6 +425,45 @@ class API {
         mobile: `${mobile}`,
         telephone: `${telephone}`,
         email: `${email}`,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
+
+  static querycontactorlist(token, conditions, isAscend, pageIndex, pageSize) {
+    const url = `${URL}/user/listpersonalcontact`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conditions: conditions,
+        isAscend: `${isAscend}`,
+        pageIndex: `${pageIndex}`,
+        pageSize: `${pageSize}`
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data);
+  }
+
+  static MuteParticipant(token, conferenceID, ParticipantID, isMute) {
+    const url = `${URL}/user/enablemute`;
+
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: `${token}`,
+        conferenceID:`${conferenceID}`,
+        ParticipantID:`${ParticipantID}`,
+        isMute:`${isMute}`
       }),
     })
       .then((response) => response.json())
