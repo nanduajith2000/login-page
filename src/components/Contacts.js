@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     width: "100%",
-    height: "40vh",
+    height: "80vh",
   },
   box: {
     width: "50%",

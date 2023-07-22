@@ -49,15 +49,15 @@ const Navbar = () => {
             </Typography>
           </div>
           <div className="buttonsWrapper">
-            <Link href="/" underline="none" className={classes.link}>
+            <Link href="." underline="none" className={classes.link}>
               Home
             </Link>
             <div className="separator" />
-            <Link href="/download" underline="none" className={classes.link}>
+            <Link href="./download" underline="none" className={classes.link}>
               Download
             </Link>
             <div className="separator" />
-            <Link href="/about" underline="none" className={classes.link}>
+            <Link href="./about" underline="none" className={classes.link}>
               About
             </Link>
           </div>
