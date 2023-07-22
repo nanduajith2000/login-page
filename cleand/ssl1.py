@@ -91,16 +91,17 @@ def encoded_PUT(URL,head,body):
     headers = {'content-type': 'application/x-www-form-urlencoded'}
     headers.update(head)
 
-    url = URI + URL
+    url_encoded = quote(URL)
 
-    # body_encoded = urllib.parse.urlencode(body)
+    url = URI + url_encoded
+
     print ("\nBody in\n",body)
 
     start = time.time()
     r = requests.put(url, headers=headers, data=body, verify=False)
     end = time.time()
 
-    # print("\ncontent out\n",r.content)
+    print("\ncontent out\n",r.content)
     data_dict = xmltodict.parse(r.content)
 
     print("\nBody OUT\n", data_dict)
