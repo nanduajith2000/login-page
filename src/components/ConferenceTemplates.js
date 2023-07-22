@@ -168,6 +168,18 @@ const ConferenceTemplates = () => {
   const handleSearch = (event) => {
     setSearchQuery(event.target.value);
   };
+  const [showParticipantDialog, setShowParticipantDialog] = useState(false);
+  const [selectedTemplateParticipants, setSelectedTemplateParticipants] =
+    useState([]);
+
+  const handleOpenParticipantDialog = (participants) => {
+    setSelectedTemplateParticipants(participants);
+    setShowParticipantDialog(true);
+  };
+
+  const handleCloseParticipantDialog = () => {
+    setShowParticipantDialog(false);
+  };
 
   const filteredTemplates = templateData.filter((template) => {
     const templateName = template.TemplateName.toLowerCase();
@@ -179,15 +191,17 @@ const ConferenceTemplates = () => {
     navigate("/home/createTemplate");
   };
 
-  const handleStartNow = () => {
+  const handleStartNow = (template) => {
     // logic to start conference
   };
 
-  const handleSchedule = () => {
+  const handleSchedule = (template) => {
     // logic to schedule conference
+    localStorage.setItem("templateDetails", JSON.stringify(template));
+    navigate("/home/scheduletemplate");
   };
 
-  const handleEditTemplate = () => {
+  const handleEditTemplate = (template) => {
     // logic to edit template
   };
 
@@ -320,7 +334,12 @@ const ConferenceTemplates = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       {template.Parties}{" "}
-                      <IconButton className={classes.infoButton}>
+                      <IconButton
+                        className={classes.infoButton}
+                        onClick={() =>
+                          handleOpenParticipantDialog(template.Participants)
+                        }
+                      >
                         <InfoOutlined />
                       </IconButton>
                     </TableCell>
@@ -328,14 +347,14 @@ const ConferenceTemplates = () => {
                       <Button
                         variant="contained"
                         className={classes.startButton}
-                        onClick={handleStartNow(template)}
+                        onClick={() => handleStartNow(template)}
                       >
                         Start now
                       </Button>
                       <Button
                         variant="contained"
                         className={classes.scheduleButton}
-                        onClick={handleSchedule}
+                        onClick={() => handleSchedule(template)}
                       >
                         Schedule
                       </Button>
@@ -380,6 +399,30 @@ const ConferenceTemplates = () => {
               onClick={handleCancelDelete}
             >
               Cancel
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={showParticipantDialog}
+          onClose={handleCloseParticipantDialog}
+        >
+          <DialogTitle>Participant Attendees</DialogTitle>
+          <DialogContent>
+            <List>
+              {selectedTemplateParticipants.map((participant, index) => (
+                <ListItem key={index}>
+                  <Typography>{participant}</Typography>
+                </ListItem>
+              ))}
+            </List>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleCloseParticipantDialog}
+            >
+              Close
             </Button>
           </DialogActions>
         </Dialog>

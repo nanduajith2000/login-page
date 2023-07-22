@@ -311,7 +311,8 @@ const OngoingConference = () => {
           {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          0/{participants ? participants.length : 0} on call
+          {participantsDetails ? participantsDetails.length : 0}/
+          {inviteState ? inviteState.length : 0} on call
         </Typography>
         <div className={classes.section}>
           <TextField

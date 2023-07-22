@@ -192,6 +192,10 @@ const OngoingConference = () => {
   }, []);
 
   useEffect(() => {
+    console.log(participantsDetails);
+  }, [participantsDetails]);
+
+  useEffect(() => {
     // Add the mapping operation here using updatedInviteState
     const updatedInviteStateArray = inviteState.map((invite) => {
       const participantID = getParticipantID(invite.name);
@@ -221,20 +225,39 @@ const OngoingConference = () => {
     });
   };
 
-  const handleMute = (participantId) => {
-    setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => {
-        if (participant.id === participantId) {
-          return {
-            ...participant,
-            muted: !participant.muted,
-          };
-        }
-        return participant;
-      });
-      return updatedParticipants;
-    });
+  const handleMute = (participant) => {
+    //   const credValue = localStorage.getItem("cred");
+    //   API.MuteParticipant(
+    //     credValue,
+    //     meeting.conferenceKey.conferenceID,
+    //     participant.participantID,
+    //     "true"
+    //   )
+    //     .then((res) => {
+    //       console.log("Muting caller... ", res);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       alert("Could not mute call. Please try again later.");
+    //     });
   };
+
+  // const handleUnmute = (participant) => {
+  //   const credValue = localStorage.getItem("cred");
+  //   API.MuteParticipant(
+  //     credValue,
+  //     meeting.conferenceKey.conferenceID,
+  //     participant.participantID,
+  //     "false"
+  //   )
+  //     .then((res) => {
+  //       console.log("Unmuting caller... ", res);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       alert("Could not unmute call. Please try again later.");
+  //     });
+  // };
 
   const handleCall = (participant) => {
     const credValue = localStorage.getItem("cred");
@@ -306,7 +329,8 @@ const OngoingConference = () => {
           {meeting.scheduserName}'s Conference
         </Typography>
         <Typography variant="subtitle2" className={classes.subtitle}>
-          0/{participants ? participants.length : 0} on call
+          {participantsDetails.length}/{inviteState ? inviteState.length : 0} on
+          call
         </Typography>
         <div className={classes.section}>
           <TextField
@@ -385,10 +409,10 @@ const OngoingConference = () => {
                     </TableCell>
                     <TableCell className={classes.tableCell}>
                       <IconButton
-                        onClick={() => handleMute(participant.id)}
-                        // disabled={
-                        //   !participant.connected && participant.selected
-                        // }
+                        onClick={() => handleMute(participant)}
+                        disabled={
+                          !participant.connected && participant.selected
+                        }
                       >
                         {participant.muted ? (
                           <MicOff
