@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import AddParticipants from "./AddParticipants";
-import { Button, makeStyles, Dialog, DialogTitle } from "@material-ui/core";
+import {
+  Button,
+  makeStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+} from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import GroupIcon from "@material-ui/icons/Group";
 import CallIcon from "@material-ui/icons/Call";
@@ -46,6 +54,7 @@ const useStyles = makeStyles(() => ({
 
 export default function Sidenav(props) {
   const [areAllParticipantsMuted, setAreAllParticipantsMuted] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isAddParticipantsOpen, setIsAddParticipantsOpen] = useState(false);
   const [areAllParticipantsConnected, setAreAllParticipantsConnected] =
     useState(false);
@@ -79,25 +88,10 @@ export default function Sidenav(props) {
     });
   });
 
-  function getCookie(cookieName) {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(":");
-
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.startsWith(cookieName + "=")) {
-        return cookie.substring(cookieName.length + 1);
-      }
-    }
-
-    return null; // Return null if the cookie is not found
-  }
-
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
     const { attendeeName, addressEntry } = participant;
     const credValue = localStorage.getItem("cred");
-    const token = getCookie("user");
     const conferenceID = localStorage.getItem("ConferenceID");
 
     const invitePara = [
@@ -113,11 +107,11 @@ export default function Sidenav(props) {
         // Handle the success response
       })
       .catch((err) => {
-        console.log(err);
+        console.log("Invite Participants error: ", err);
         // Handle the error response
       });
     setIsAddParticipantsOpen(false);
-    window.location.reload();
+    // window.location.reload();
   };
 
   const handleAddGroups = () => {
@@ -167,14 +161,25 @@ export default function Sidenav(props) {
   };
 
   const handleEndAll = () => {
-    props.setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => ({
-        ...participant,
-        connected: false,
-      }));
-      return updatedParticipants;
-    });
-    setAreAllParticipantsConnected(false);
+    setShowConfirmDialog(true);
+  };
+
+  const handleEndAllConfirm = () => {
+    setShowConfirmDialog(false);
+    const token = localStorage.getItem("cred");
+    API.EndConference(token, meeting.conferenceKey.conferenceID)
+      .then((res) => {
+        console.log("End conference response: ", res);
+        window.close();
+      })
+      .catch((err) => {
+        console.log("End conference error: ", err);
+        alert("Error in ending the conference");
+      });
+  };
+
+  const handleCancelLogout = () => {
+    setShowConfirmDialog(false);
   };
 
   return (
@@ -229,7 +234,7 @@ export default function Sidenav(props) {
         onClick={handleEndAll}
       >
         <CallEndIcon className={classes.icon} />
-        End All
+        End Call
       </Button>
       <Dialog
         className={classes.dialog}
@@ -238,6 +243,30 @@ export default function Sidenav(props) {
       >
         <DialogTitle>Add Participants</DialogTitle>
         <AddParticipants onAddParticipant={handleAddParticipants} />
+      </Dialog>
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onClose={handleCancelLogout}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to end the meeting?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            className={classes.confirmButton}
+            variant="contained"
+            color="primary"
+            onClick={handleEndAllConfirm}
+          >
+            Confirm
+          </Button>
+          <Button
+            variant="contained"
+            color="white"
+            onClick={handleCancelLogout}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

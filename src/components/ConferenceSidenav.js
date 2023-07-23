@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import AddParticipants from "./AddParticipants";
-import { Button, makeStyles, Dialog, DialogTitle } from "@material-ui/core";
+import {
+  Button,
+  makeStyles,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Typography,
+} from "@material-ui/core";
 import GroupAddIcon from "@material-ui/icons/GroupAdd";
 import GroupIcon from "@material-ui/icons/Group";
 import CallIcon from "@material-ui/icons/Call";
@@ -46,9 +54,8 @@ const useStyles = makeStyles(() => ({
 
 export default function Sidenav(props) {
   const [areAllParticipantsMuted, setAreAllParticipantsMuted] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isAddParticipantsOpen, setIsAddParticipantsOpen] = useState(false);
-  const [areAllParticipantsConnected, setAreAllParticipantsConnected] =
-    useState(false);
   const classes = useStyles();
   const [meeting, setMeeting] = useState(
     JSON.parse(localStorage.getItem("meetingDetails"))
@@ -63,6 +70,8 @@ export default function Sidenav(props) {
     : [];
 
   const [participants, setParticipants] = useState(defaultParticipants);
+  const [participantsDetails, setParticipantsDetails] = useState([]);
+  const [inviteState, setInviteState] = useState([]);
 
   let newArray = [];
 
@@ -79,25 +88,10 @@ export default function Sidenav(props) {
     });
   });
 
-  function getCookie(cookieName) {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(":");
-
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.startsWith(cookieName + "=")) {
-        return cookie.substring(cookieName.length + 1);
-      }
-    }
-
-    return null; // Return null if the cookie is not found
-  }
-
   const handleAddParticipants = (participant) => {
     // Append participant data to participantsData.json or perform necessary operations
     const { attendeeName, addressEntry } = participant;
     const credValue = localStorage.getItem("cred");
-    const token = getCookie("user");
     const conferenceID = localStorage.getItem("ConferenceID");
 
     const invitePara = [
@@ -125,15 +119,79 @@ export default function Sidenav(props) {
   };
 
   const handleCallAbsent = () => {
-    setIsAddParticipantsOpen(false);
-    props.setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => ({
-        ...participant,
-        connected: true,
-      }));
-      return updatedParticipants;
-    });
+    const token = localStorage.getItem("cred");
+    API.OnlineConferenceInfo(token, meeting.conferenceKey.conferenceID, 0)
+      .then((res) => {
+        console.log(res);
+        setInviteState(
+          Array.isArray(
+            res.spellQueryconference.conference.inviteStates.inviteState
+          )
+            ? res.spellQueryconference.conference.inviteStates.inviteState
+            : [res.spellQueryconference.conference.inviteStates.inviteState]
+        );
+        const conferenceDetails = res.spellQueryconference.conference;
+        let participantsDetails = conferenceDetails.participants
+          ? conferenceDetails.participants.participant
+          : [];
+
+        if (!Array.isArray(participantsDetails)) {
+          participantsDetails = participantsDetails
+            ? [participantsDetails]
+            : [];
+        }
+
+        setParticipantsDetails(participantsDetails);
+
+        // Check for absent participants and invite them
+        const absentParticipants = [];
+
+        for (const invite of inviteState) {
+          const inviteName = invite.name;
+          const invitePhone = invite.phone;
+          const participantFound = participantsDetails.some(
+            (participant) => participant.name === inviteName
+          );
+
+          if (!participantFound) {
+            absentParticipants.push({ name: inviteName, phone: invitePhone });
+          }
+        }
+        console.log("Absent participants: ", absentParticipants);
+
+        // Make an API call to invite absent participants
+        absentParticipants.forEach((participant) => {
+          const invitePara = [
+            {
+              name: participant.name,
+              phone: participant.phone,
+            },
+          ];
+
+          API.InviteParticipants(
+            token,
+            meeting.conferenceKey.conferenceID,
+            invitePara
+          )
+            .then((res) => {
+              console.log("Invite Participants Response: ", res);
+              // Handle the success response
+            })
+            .catch((err) => {
+              console.log(err);
+              // Handle the error response
+            });
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
+  React.useEffect(() => {
+    console.log(inviteState);
+    console.log(participantsDetails);
+  }, [inviteState, participantsDetails]);
 
   const handleUnmuteAll = () => {
     const token = localStorage.getItem("cred");
@@ -167,14 +225,25 @@ export default function Sidenav(props) {
   };
 
   const handleEndAll = () => {
-    props.setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => ({
-        ...participant,
-        connected: false,
-      }));
-      return updatedParticipants;
-    });
-    setAreAllParticipantsConnected(false);
+    setShowConfirmDialog(true);
+  };
+
+  const handleEndAllConfirm = () => {
+    setShowConfirmDialog(false);
+    const token = localStorage.getItem("cred");
+    API.EndConference(token, meeting.conferenceKey.conferenceID)
+      .then((res) => {
+        console.log("End conference response: ", res);
+        window.close();
+      })
+      .catch((err) => {
+        console.log("End conference error: ", err);
+        alert("Error in ending the conference");
+      });
+  };
+
+  const handleCancelLogout = () => {
+    setShowConfirmDialog(false);
   };
 
   return (
@@ -229,7 +298,7 @@ export default function Sidenav(props) {
         onClick={handleEndAll}
       >
         <CallEndIcon className={classes.icon} />
-        End All
+        End Call
       </Button>
       <Dialog
         className={classes.dialog}
@@ -238,6 +307,30 @@ export default function Sidenav(props) {
       >
         <DialogTitle>Add Participants</DialogTitle>
         <AddParticipants onAddParticipant={handleAddParticipants} />
+      </Dialog>
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onClose={handleCancelLogout}>
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <Typography>Are you sure you want to end the meeting?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            className={classes.confirmButton}
+            variant="contained"
+            color="primary"
+            onClick={handleEndAllConfirm}
+          >
+            Confirm
+          </Button>
+          <Button
+            variant="contained"
+            color="white"
+            onClick={handleCancelLogout}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

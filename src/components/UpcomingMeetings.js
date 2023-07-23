@@ -262,7 +262,9 @@ const UpcomingMeetings = () => {
             res.conferenceList.result.resultDesc === "UNAUTHORIZED") ||
           res.message === "UNAUTHORIZED"
         ) {
-          alert("Session expired. Please login again.");
+          alert(
+            "Session expired. Please login again or try clearing your cookies."
+          );
           navigate("/");
         } else {
           if (res.message === "no_upcoming_meetings") {
