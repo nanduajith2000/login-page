@@ -74,7 +74,6 @@ class ConferenceTemplate(BaseModel):
     size: int
     mediaTypes: str
     language: str
-    attendees:Optional[List[attendeeSchema]]=[]
     isAllowInvite:Optional [bool]=True
 
 class DeleteConferencetemplate(BaseModel):
@@ -90,7 +89,7 @@ class Filter(BaseModel):
     resultFields:List[str]=CONF_DETAILS
     conditions:Optional[Conditions]
     isAscend:bool
-    sortField:Optional[str]=""
+    sortField:Optional[str]
     pageIndex:int
     pageSize:int
 
@@ -237,6 +236,9 @@ class EnableMute(BaseModel):
     conferenceID:str
     participantID:str
     isMute:str
+
+
+
 
 class OnlineConfInfo(BaseModel):
      token:str

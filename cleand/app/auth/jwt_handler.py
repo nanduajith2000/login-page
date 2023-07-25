@@ -23,7 +23,7 @@ def token_response(token:str):
 def signJWT(userID : str)->Dict[str,str]:
     payload ={
         "userID":userID,
-        "expiry":time.time()+6000
+        "expiry":time.time()+200000
     }
     token = jwt.encode(payload,JWT_SECRET,algorithm=JWT_ALGORITHM)
     redis_client.set(token, 'valid') #ex will take value only as in seconds

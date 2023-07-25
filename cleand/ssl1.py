@@ -38,7 +38,7 @@ def create_POST(URL, head, body):
     headers = {'content-type': 'application/json'}
     headers.update(head)
 
-#     body_dict = body.dict()
+    #body_dict = body.dict()
     # print("\nBody IN\n",body)
     body_xml = BODY_ENCODE + xmltodict.unparse( body, full_document=False)
     print("\nBody IN\n",body_xml)
@@ -104,7 +104,7 @@ def encoded_PUT(URL,head,body):
     print("\ncontent out\n",r.content)
     data_dict = xmltodict.parse(r.content)
 
-    print("\nBody OUT\n", data_dict)
+    # print("\nBody OUT\n", data_dict)
 
     print("The time of execution is:", (end - start) * 10**3, "ms")
 

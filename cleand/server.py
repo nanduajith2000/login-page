@@ -229,16 +229,16 @@ def conferencelist(conference_list: ConferenceFilter = Body(default=None)):
     if(dict1["conferenceList"]["result"]["resultDesc"]!="SUCCESS"):
         return dict1
     
+    
+    
+    if (dict1["conferenceList"]["page"]["total"]=="0"):
+        return {"message":"no_upcoming_meetings"}
+    
     keys_to_extract = CONF_DETAILS
     total=dict1["conferenceList"]["page"]["total"]
     data_list = dict1["conferenceList"]["page"]["data"]
     hasprev =  dict1["conferenceList"]["page"]["hasPrev"]
     hasnext =  dict1["conferenceList"]["page"]["hasNext"]
-    
-    if (dict1["conferenceList"]["page"]["total"]=="0"):
-        return {"message":"no_upcoming_meetings"}
-    
-    
 
     if(total=="1"):
         data_list=[data_list]
