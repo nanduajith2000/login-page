@@ -438,7 +438,7 @@ def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
 #Begin group Management
 
 @app.post("/user/createpersonalcontactgroup")
-def createpersonalcontact(create_contactgroup: ContactorGroup = Body(default=None)):
+def createpersonalcontactgroup(create_contactgroup: ContactorGroup = Body(default=None)):
     URL = "contactorGroup"
     try:
         head = {'Authorization': "Basic " + redis_client.get(create_contactgroup.token).decode("utf-8")}
@@ -451,7 +451,7 @@ def createpersonalcontact(create_contactgroup: ContactorGroup = Body(default=Non
 
 @app.post("/user/modifypersonalcontactGroup")
 def modifypersonalcontactGroup(modify_contactGroup: Contactor_modGroup = Body(default=None)):
-    URL="contactor/"+modify_contactGroup.groupID
+    URL="contactorGroup/"+modify_contactGroup.groupID
     try:
         head = {'Authorization': "Basic " + redis_client.get(modify_contactGroup.token).decode("utf-8")}
     except AttributeError:
@@ -462,17 +462,18 @@ def modifypersonalcontactGroup(modify_contactGroup: Contactor_modGroup = Body(de
     return dict1  
 
 @app.post("/user/deletepersonalcontactGroup")
-def delete_contact(delete_contactGroup:ContactorGroup_info = Body(default=None)):
-    URL="contactor/"+delete_contact.groupID
+def delete_contactgroup(delete_contactGroup:ContactorGroup_info = Body(default=None)):
+    URL="contactorGroup/"+delete_contact.groupID
     try:
         head = {'Authorization': "Basic " + redis_client.get(delete_contactGroup.token).decode('utf8')}
     except AttributeError:
         return ERROR_MESSAGE
     dict1=ssl1.remove_DELETE(URL,head)
     return dict1
+
 @app.post("/user/listpersonalcontactGroup")
 def personalcontactGrouplist(contact_grouplist: ContactGroupFilter = Body(default=None)):
-    URL = "contactorList"
+    URL = "contactorGroupList"
     try:
         head = {'Authorization': "Basic " + redis_client.get(contact_grouplist.token).decode("utf-8")}
     except AttributeError:
@@ -484,12 +485,11 @@ def personalcontactGrouplist(contact_grouplist: ContactGroupFilter = Body(defaul
 
 @app.post("/user/querypersonalcontactGroupinfo")
 def query_personalcontactGroup(query_contactgroup:ContactorGroup_info = Body(default=None)):
-    URL="contactor/"+query_contactgroup.groupID
+    URL="contactorGroup/"+query_contactgroup.groupID
     try:
         head = {'Authorization': "Basic " + redis_client.get(query_contactgroup.token).decode('utf8')}
     except AttributeError:
         return ERROR_MESSAGE
-    
     dict1=ssl1.data_GET(URL,head)
     return dict1
 #End group management
