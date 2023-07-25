@@ -113,7 +113,7 @@ const OngoingConference = () => {
   useEffect(() => {
     API.Login(
       meeting.conferenceKey.conferenceID,
-      meeting.passwords[0].password,
+      meeting.passwords[1].password,
       "ConferenceID"
     )
       .then((res) => {
@@ -123,7 +123,7 @@ const OngoingConference = () => {
           0
         )
           .then((res) => {
-            console.log("Conference info: ", res);
+            // console.log("Conference info: ", res);
             setInviteState(
               Array.isArray(
                 res.spellQueryconference.conference.inviteStates.inviteState
@@ -255,7 +255,7 @@ const OngoingConference = () => {
       },
     ];
 
-    console.log("Cred:", credValue);
+    // console.log("Cred:", credValue);
     API.InviteParticipants(
       credValue,
       meeting.conferenceKey.conferenceID,
@@ -263,6 +263,7 @@ const OngoingConference = () => {
     )
       .then((res) => {
         console.log(res);
+        window.location.reload();
       })
       .catch((err) => {
         console.log(err);

@@ -178,7 +178,7 @@ const OngoingConference = () => {
                 console.log(err);
                 // Handle errors here
               });
-          }, 5000);
+          }, 2000);
           // 5 seconds interval
 
           // Clean up the loop function when the component unmounts
@@ -191,9 +191,9 @@ const OngoingConference = () => {
       });
   }, []);
 
-  useEffect(() => {
-    console.log(participantsDetails);
-  }, [participantsDetails]);
+  // useEffect(() => {
+  //   console.log(participantsDetails);
+  // }, [participantsDetails]);
 
   useEffect(() => {
     // Add the mapping operation here using updatedInviteState
@@ -391,19 +391,14 @@ const OngoingConference = () => {
                         // }
                       >
                         {(() => {
-                          if (
-                            participant.participantID !== undefined &&
-                            participant.state !== "100"
-                          ) {
+                          if (participant.participantID !== undefined) {
                             return <CallEnd />;
-                          } else if (
-                            participant.participantID === undefined &&
-                            participant.state !== "100"
-                          ) {
+                          } else if (participant.participantID === undefined) {
                             return <Call />;
-                          } else if (participant.state === "100") {
-                            return <RingingCallIcon />;
                           }
+                          // } else if (participant.state === "100") {
+                          //   return <RingingCallIcon />;
+                          // }
                         })()}
                       </IconButton>
                     </TableCell>
