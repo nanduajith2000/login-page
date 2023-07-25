@@ -1,5 +1,5 @@
 from fastapi import FastAPI,Body,Depends,Header
-from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall,RollCall,ChairRights
+from pydan import LogoutToken,createConferenceInfo,conferenceInfo,ConferenceTemplate,ConferenceFilter,TemplateList,ConferenceInvite,VerifyParticipant,ProlongConf,QueryConfInfo,UserPasswordInfo,FindUserPasswordInfo,IsAllMute,Contactor,LeaveParti,DeleteConferencetemplate,Contactor_mod,Contactor_info,ContactFilter,ResetConfPassword,RaiseHand,EnableMute,Usermodel,OnlineConfInfo,CancelInvite,RollCall,RollCall,ChairRights,ContactorGroup,Contactor_modGroup,ContactorGroup_info,ContactGroupFilter
 from app.model import UsersLoginSchema
 from app.auth.jwt_handler import signJWT,decodeJWT
 from app.auth.jwt_bearer import jwtBearer
@@ -373,6 +373,8 @@ def isallmute(is_mute: IsAllMute = Body(default=None)):
     dict1 = ssl1.encoded_PUT(URL, head, BODY)
     return dict1
 
+#Contact Management
+
 @app.post("/user/createpersonalcontact")
 def createpersonalcontact(create_contact: Contactor = Body(default=None)):
     URL = "contactor"
@@ -429,6 +431,68 @@ def query_personalcontact(query_contact:Contactor_info = Body(default=None)):
     
     dict1=ssl1.data_GET(URL,head)
     return dict1
+
+
+#End of contact Management
+
+#Begin group Management
+
+@app.post("/user/createpersonalcontactgroup")
+def createpersonalcontact(create_contactgroup: ContactorGroup = Body(default=None)):
+    URL = "contactorGroup"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(create_contactgroup.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
+    BODY = {'contactorGroup':create_contactgroup.dict()}
+    del BODY['contactor']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
+    return dict1 
+
+@app.post("/user/modifypersonalcontactGroup")
+def modifypersonalcontactGroup(modify_contactGroup: Contactor_modGroup = Body(default=None)):
+    URL="contactor/"+modify_contactGroup.groupID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(modify_contactGroup.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
+    BODY= {"contactorGroup":modify_contactGroup.dict()}
+    del BODY["contactor"]["token"]
+    dict1 = ssl1.update_PUT(URL,head,BODY)
+    return dict1  
+
+@app.post("/user/deletepersonalcontactGroup")
+def delete_contact(delete_contactGroup:ContactorGroup_info = Body(default=None)):
+    URL="contactor/"+delete_contact.groupID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(delete_contactGroup.token).decode('utf8')}
+    except AttributeError:
+        return ERROR_MESSAGE
+    dict1=ssl1.remove_DELETE(URL,head)
+    return dict1
+@app.post("/user/listpersonalcontactGroup")
+def personalcontactGrouplist(contact_grouplist: ContactGroupFilter = Body(default=None)):
+    URL = "contactorList"
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(contact_grouplist.token).decode("utf-8")}
+    except AttributeError:
+        return ERROR_MESSAGE
+    BODY = {'contactorFilter':contact_grouplist.dict()}
+    del BODY['contactorFilter']['token']
+    dict1 = ssl1.create_POST(URL, head, BODY)
+    return dict1
+
+@app.post("/user/querypersonalcontactGroupinfo")
+def query_personalcontactGroup(query_contactgroup:ContactorGroup_info = Body(default=None)):
+    URL="contactor/"+query_contactgroup.groupID
+    try:
+        head = {'Authorization': "Basic " + redis_client.get(query_contactgroup.token).decode('utf8')}
+    except AttributeError:
+        return ERROR_MESSAGE
+    
+    dict1=ssl1.data_GET(URL,head)
+    return dict1
+#End group management
 
 @app.post("/user/resetconferencepassword")
 def resetconferencepassword(reset_password:ResetConfPassword = Body(default=None)):

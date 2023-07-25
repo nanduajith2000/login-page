@@ -214,7 +214,30 @@ class Conditions(BaseModel):
 
 class ContactFilter(BaseModel):
     token:str
-    resultField:Optional[ResultField]
+    resultFields:Optional[ResultField]
+    conditions:Optional[Conditions]=[]
+    isAscend:bool
+    sortField:Optional[SortField]
+    pageIndex:int
+    pageSize:int
+class ContactorGroup(BaseModel):
+     token:str
+     groupID:int
+     groupName:str
+     Description:Optional[str]
+
+class Contactor_modGroup(BaseModel):
+     token:str
+     groupID:int
+     groupName:Optional[str]
+     Description:Optional[str]
+
+class ContactorGroup_info(BaseModel):
+     token:str
+     groupID:int
+class ContactGroupFilter(BaseModel):
+    token:str
+    resultFields:Optional[ResultField]
     conditions:Optional[Conditions]=[]
     isAscend:bool
     sortField:Optional[SortField]
@@ -236,8 +259,6 @@ class EnableMute(BaseModel):
     conferenceID:str
     participantID:str
     isMute:str
-
-
 
 
 class OnlineConfInfo(BaseModel):
