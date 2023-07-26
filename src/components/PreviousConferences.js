@@ -10,9 +10,14 @@ import {
   Typography,
   IconButton,
   CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
-import { NavigateNext, NavigateBefore } from "@material-ui/icons";
+import { NavigateNext, NavigateBefore, InfoOutlined } from "@material-ui/icons";
 import API from "../api/API";
 
 // const queryConferencehistory = require("../api/QueryConferenceHistory");
@@ -65,6 +70,36 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     height: "100%",
+  },
+  dialog: {
+    "& .MuiDialog-paperWidthSm": {
+      width: "50%",
+      textAlign: "center",
+    },
+  },
+  dialogContent: {
+    display: "flex",
+    flexDirection: "column",
+    fontFamily: "Poppins, sans-serif",
+    gap: "1em",
+  },
+  infobutton: {
+    width: "0.8em",
+  },
+  infoContainer: {
+    display: "flex",
+    alignItems: "center",
+    fontFamily: "Poppins, sans-serif",
+  },
+  infoHeader: {
+    fontWeight: "bold",
+    marginRight: "0.5em",
+  },
+  closeButton: {
+    fontFamily: "Poppins, sans-serif",
+    fontWeight: "bold",
+    color: "#0161b0",
+    textTransform: "none",
   },
 }));
 
@@ -189,6 +224,21 @@ const PreviousConferences = () => {
 
     return { hours: hours, minutes: minutes };
   }
+  const [openConferenceInfo, setOpenConferenceInfo] = React.useState(false);
+  const [conferenceInfo, setConferenceInfo] = React.useState({});
+
+  const handleConferenceInfo = (conference) => {
+    const token = getCookie("user");
+    API.ConferenceInfo(token, conference.conferenceKey.conferenceID, 0)
+      .then((res) => {
+        console.log(res);
+        setConferenceInfo(res.conferenceResult.conferenceInfo);
+        setOpenConferenceInfo(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <Container>
@@ -236,6 +286,9 @@ const PreviousConferences = () => {
               <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
                 Duration
               </TableCell>
+              <TableCell style={{ fontFamily: "Poppins, sans-serif" }}>
+                {""}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody className={classes.tableBody}>
@@ -279,12 +332,105 @@ const PreviousConferences = () => {
                         .minutes +
                       "m"}
                   </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() => {
+                        handleConferenceInfo(conference);
+                      }}
+                    >
+                      <InfoOutlined className={classes.infobutton} />
+                    </IconButton>
+                  </TableCell>
                 </TableRow>
               ))
             )}
           </TableBody>
         </Table>
       </Container>
+      {/* Dialog for displaying conference details */}
+      <Dialog
+        className={classes.dialog}
+        open={openConferenceInfo}
+        onClose={() => setOpenConferenceInfo(false)}
+      >
+        <DialogTitle>Conference Details</DialogTitle>
+        <DialogContent className={classes.dialogContent}>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>Subject:</Typography>{" "}
+            {conferenceInfo.subject}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>Start Time:</Typography>{" "}
+            {convertUTCMillisecondsToDate(conferenceInfo.startTime).day}-
+            {convertUTCMillisecondsToDate(conferenceInfo.startTime).month}-
+            {convertUTCMillisecondsToDate(conferenceInfo.startTime).year}{" "}
+            {convertUTCMillisecondsToDate(conferenceInfo.startTime).hours}:
+            {convertUTCMillisecondsToDate(conferenceInfo.startTime).minutes}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>Duration:</Typography>{" "}
+            {convertMillisecondsToHoursAndMinutes(conferenceInfo.length).hours}h{" "}
+            {
+              convertMillisecondsToHoursAndMinutes(conferenceInfo.length)
+                .minutes
+            }
+            m
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Conference ID:
+            </Typography>{" "}
+            {conferenceInfo.conferenceKey.conferenceID}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Access Number:
+            </Typography>{" "}
+            {conferenceInfo.accessNumber}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Chairperson Password:
+            </Typography>{" "}
+            {conferenceInfo.passwords[0].password}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Guest Password:
+            </Typography>{" "}
+            {conferenceInfo.passwords[1].password}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>Creator:</Typography>{" "}
+            {conferenceInfo.scheduserName}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Meeting Size:
+            </Typography>{" "}
+            {conferenceInfo.size}
+          </Typography>
+          <Typography className={classes.infoContainer}>
+            <Typography className={classes.infoHeader}>
+              Participants:
+            </Typography>{" "}
+            {conferenceInfo.attendees
+              ? conferenceInfo.attendees.map(
+                  (attendee) => attendee.attendeeName + ", "
+                )
+              : "None"}
+          </Typography>
+          {/* Add more details as needed */}
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setOpenConferenceInfo(false)}
+            className={classes.closeButton}
+          >
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

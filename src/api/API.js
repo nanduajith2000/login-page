@@ -483,8 +483,16 @@ class API {
 
 export default API;
 
+API.ConferenceInfo(
+  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2OTA1ODQ5NDYuNDgzODA0NX0.n5VN8lY8kKOxCfekR1MnIg5fxWGovYPItKQOcqfoJTw",
+  1231824444,
+  0
+)
+  .then((res) => console.log(res))
+  .catch((err) => console.log(err));
+
 // API.querypersonalcontactgrouplist(
-//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2OTAxMjM1OTMuMTUxMDgxOH0.yTQvhnelBDVGOhlYZJBJrpbvYBwHbQIq36Av3oPopY0",
+//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VySUQiOiJUZXN0X0JzbmwiLCJleHBpcnkiOjE2OTA1ODQ5NDYuNDgzODA0NX0.n5VN8lY8kKOxCfekR1MnIg5fxWGovYPItKQOcqfoJTw",
 //   1
 // )
 //   .then((res) => console.log(res))

@@ -72,6 +72,8 @@ export default function Sidenav(props) {
     : [];
 
   const [participants, setParticipants] = useState(defaultParticipants);
+  const [participantsDetails, setParticipantsDetails] = useState([]);
+  const [inviteState, setInviteState] = useState([]);
 
   let newArray = [];
 
@@ -119,14 +121,73 @@ export default function Sidenav(props) {
   };
 
   const handleCallAbsent = () => {
-    setIsAddParticipantsOpen(false);
-    props.setParticipants((prevParticipants) => {
-      const updatedParticipants = prevParticipants.map((participant) => ({
-        ...participant,
-        connected: true,
-      }));
-      return updatedParticipants;
-    });
+    const token = localStorage.getItem("cred");
+    API.OnlineConferenceInfo(token, meeting.conferenceKey.conferenceID, 0)
+      .then((res) => {
+        console.log(res);
+        setInviteState(
+          Array.isArray(
+            res.spellQueryconference.conference.inviteStates.inviteState
+          )
+            ? res.spellQueryconference.conference.inviteStates.inviteState
+            : [res.spellQueryconference.conference.inviteStates.inviteState]
+        );
+        const conferenceDetails = res.spellQueryconference.conference;
+        let participantsDetails = conferenceDetails.participants
+          ? conferenceDetails.participants.participant
+          : [];
+
+        if (!Array.isArray(participantsDetails)) {
+          participantsDetails = participantsDetails
+            ? [participantsDetails]
+            : [];
+        }
+
+        setParticipantsDetails(participantsDetails);
+
+        // Check for absent participants and invite them
+        const absentParticipants = [];
+
+        for (const invite of inviteState) {
+          const inviteName = invite.name;
+          const invitePhone = invite.phone;
+          const participantFound = participantsDetails.some(
+            (participant) => participant.name === inviteName
+          );
+
+          if (!participantFound) {
+            absentParticipants.push({ name: inviteName, phone: invitePhone });
+          }
+        }
+        console.log("Absent participants: ", absentParticipants);
+
+        // Make an API call to invite absent participants
+        absentParticipants.forEach((participant) => {
+          const invitePara = [
+            {
+              name: participant.name,
+              phone: participant.phone,
+            },
+          ];
+
+          API.InviteParticipants(
+            token,
+            meeting.conferenceKey.conferenceID,
+            invitePara
+          )
+            .then((res) => {
+              console.log("Invite Participants Response: ", res);
+              // Handle the success response
+            })
+            .catch((err) => {
+              console.log(err);
+              // Handle the error response
+            });
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleUnmuteAll = () => {
