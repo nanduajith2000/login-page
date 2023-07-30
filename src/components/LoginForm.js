@@ -33,6 +33,13 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     fontFamily: "Poppins, sans-serif",
   },
+  errorMessage: {
+    color: "red",
+    backgroundColor: "#ffebee", // Light red background color,
+    borderRadius:"15%",
+    padding: "10px",
+    textAlign: "center",
+  },
 }));
 
 const LoginForm = () => {
@@ -40,6 +47,7 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [showConferenceForm, setShowConferenceForm] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
+  const [loginStatus, setLoginStatus] = useState(""); // New state to track login status
 
   const webAccount = useContext(userDetailsContextTwo).webAccount;
   const setWebAccount = useContext(userDetailsContextTwo).setWebAccount;
@@ -85,11 +93,13 @@ const LoginForm = () => {
           localStorage.setItem("userPassword", password);
           console.log(document.cookie);
           navigate("/home");
-        } else alert("Invalid Credentials");
+        } else {
+          setLoginStatus("Invalid Credentials");
+        }
       })
       .catch((err) => {
         console.log(err);
-        alert("Something went wrong. Please try again.");
+        setLoginStatus("Something went wrong. Please try again.");
       });
   };
 
@@ -162,6 +172,12 @@ const LoginForm = () => {
     <Container maxWidth="xs" className={classes.container}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
+          {/* Display the loginStatus in red if it is set */}
+          {loginStatus && (
+            <Typography variant="body2" align="center" className={classes.errorMessage} style={{ color: "red" }}>
+              {loginStatus}
+            </Typography>
+          )}
           <Typography variant="h5" align="center" className={classes.textField}>
             Login
           </Typography>
@@ -257,6 +273,14 @@ const LoginForm = () => {
           </>
         ) : (
           <>
+          <Grid item xs={12}>
+              {/* Display the loginStatus in red if it is set */}
+              {loginStatus && (
+                <Typography variant="body2" align="center" className={classes.errorMessage} style={{ color: "red" }}>
+                  {loginStatus}
+                </Typography>
+              )}
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"

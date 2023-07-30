@@ -16,11 +16,24 @@ function LoginPage() {
   const webAccount = useContext(userDetailsContext).webAccount;
   const setWebAccount = useContext(userDetailsContext).setWebAccount;
   const location = useLocation();
+  const [apiSuccess, setApiSuccess] = useState(false);
 
   useEffect(() => {
     // Scroll to top on route change
     window.scrollTo(0, 0);
   }, [location]);
+
+  // Simulate the API response (Replace this with your actual API call)
+  const checkApiSuccess = () => {
+    // Assuming the API response is stored in a variable called "apiResponse"
+    const apiResponse = "Success"; // Replace this with the actual API response value
+    setApiSuccess(apiResponse === "Success");
+  };
+
+  useEffect(() => {
+    // Call the API check function when the component mounts
+    checkApiSuccess();
+  }, []);
 
   return (
     <div className="container">
@@ -35,18 +48,24 @@ function LoginPage() {
                 location.pathname === "/" ? "slide-in active" : "slide-in"
               }`}
             >
-              <userDetailsContextTwo.Provider
-                value={{
-                  webAccount,
-                  setWebAccount,
-                  password,
-                  setPassword,
-                  conferenceId,
-                  setConferenceId,
-                }}
-              >
-                <LoginForm className="login-form" />
-              </userDetailsContextTwo.Provider>
+              {apiSuccess ? (
+                <userDetailsContextTwo.Provider
+                  value={{
+                    webAccount,
+                    setWebAccount,
+                    password,
+                    setPassword,
+                    conferenceId,
+                    setConferenceId,
+                  }}
+                >
+                  <LoginForm className="login-form" />
+                </userDetailsContextTwo.Provider>
+              ) : (
+                <div className="login-error">
+                  Oops! Something went wrong with the API. Please try again later.
+                </div>
+              )}
               <PhotoCarousel className="carousel" />
             </div>
           }

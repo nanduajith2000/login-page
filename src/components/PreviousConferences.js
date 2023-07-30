@@ -380,7 +380,7 @@ const PreviousConferences = () => {
             <Typography className={classes.infoHeader}>
               Conference ID:
             </Typography>{" "}
-            {conferenceInfo.conferenceKey.conferenceID}
+            {conferenceInfo.conferenceKey?.conferenceID}
           </Typography>
           <Typography className={classes.infoContainer}>
             <Typography className={classes.infoHeader}>
@@ -392,13 +392,13 @@ const PreviousConferences = () => {
             <Typography className={classes.infoHeader}>
               Chairperson Password:
             </Typography>{" "}
-            {conferenceInfo.passwords[0].password}
+            {conferenceInfo.passwords && conferenceInfo.passwords[0]?.password}
           </Typography>
           <Typography className={classes.infoContainer}>
             <Typography className={classes.infoHeader}>
               Guest Password:
             </Typography>{" "}
-            {conferenceInfo.passwords[1].password}
+            {conferenceInfo.passwords && conferenceInfo.passwords[1]?.password}
           </Typography>
           <Typography className={classes.infoContainer}>
             <Typography className={classes.infoHeader}>Creator:</Typography>{" "}
