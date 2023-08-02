@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.fd670979.css",
-    "main.js": "/static/js/main.16e729c9.js",
+    "main.js": "/static/js/main.cefc86cf.js",
     "static/js/787.0bca8be2.chunk.js": "/static/js/787.0bca8be2.chunk.js",
     "static/media/photo3.jpg": "/static/media/photo3.2107532746087d017d57.jpg",
     "static/media/photo2.jpg": "/static/media/photo2.f04d216299e13e79fcda.jpg",
@@ -9,11 +9,11 @@
     "static/media/bsnl-logo.jpeg": "/static/media/bsnl-logo.bcf5fe2acbc1a4c891a2.jpeg",
     "index.html": "/index.html",
     "main.fd670979.css.map": "/static/css/main.fd670979.css.map",
-    "main.16e729c9.js.map": "/static/js/main.16e729c9.js.map",
+    "main.cefc86cf.js.map": "/static/js/main.cefc86cf.js.map",
     "787.0bca8be2.chunk.js.map": "/static/js/787.0bca8be2.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.fd670979.css",
-    "static/js/main.16e729c9.js"
+    "static/js/main.cefc86cf.js"
   ]
 }
