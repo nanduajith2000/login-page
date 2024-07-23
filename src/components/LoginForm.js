@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { userDetailsContext } from "../pages/LoginPage.js";
+import { userDetailsContextTwo } from "../pages/LoginPage.js";
 import {
   TextField,
   Button,
@@ -11,8 +11,10 @@ import {
 } from "@material-ui/core";
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
+import API from "../api/API.js";
+// const Login = require("../api/Login.js");
 
-const Login = require("../api/Login.js");
+// const ConferenceInfo = require("../api/ConferenceInfo.js");
 
 const useStyles = makeStyles((theme) => ({
   container: {
@@ -31,6 +33,13 @@ const useStyles = makeStyles((theme) => ({
   textField: {
     fontFamily: "Poppins, sans-serif",
   },
+  errorMessage: {
+    color: "red",
+    backgroundColor: "#ffebee", // Light red background color,
+    borderRadius:"15%",
+    padding: "10px",
+    textAlign: "center",
+  },
 }));
 
 const LoginForm = () => {
@@ -38,13 +47,28 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const [showConferenceForm, setShowConferenceForm] = useState(false);
   const [conferencePassword, setConferencePassword] = useState("");
+  const [loginStatus, setLoginStatus] = useState(""); // New state to track login status
 
-  const webAccount = useContext(userDetailsContext).webAccount;
-  const setWebAccount = useContext(userDetailsContext).setWebAccount;
-  const password = useContext(userDetailsContext).password;
-  const setPassword = useContext(userDetailsContext).setPassword;
-  const conferenceId = useContext(userDetailsContext).conferenceId;
-  const setConferenceId = useContext(userDetailsContext).setConferenceId;
+  const webAccount = useContext(userDetailsContextTwo).webAccount;
+  const setWebAccount = useContext(userDetailsContextTwo).setWebAccount;
+  const password = useContext(userDetailsContextTwo).password;
+  const setPassword = useContext(userDetailsContextTwo).setPassword;
+  const conferenceId = useContext(userDetailsContextTwo).conferenceId;
+  const setConferenceId = useContext(userDetailsContextTwo).setConferenceId;
+
+  function getCookie(cookieName) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(":");
+
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.startsWith(cookieName + "=")) {
+        return cookie.substring(cookieName.length + 1);
+      }
+    }
+
+    return null; // Return null if the cookie is not found
+  }
 
   const handleJoinConference = () => {
     setShowConferenceForm(true);
@@ -56,25 +80,104 @@ const LoginForm = () => {
 
   const handleLogin = () => {
     // Do something with the submitted login information
-    console.log("Web Account:", webAccount);
-    console.log("Password:", password);
-    const result = Login("V3R8C30", "WEB", webAccount, password);
-    if (result.message === "success") {
-      navigate("/dashboard");
-      console.log(result.token);
-    } else alert("Invalid Credentials");
+
+    API.Login(webAccount, password, "WEB")
+      .then((res) => {
+        console.log("Login response: ", res);
+
+        if (res.message === "success") {
+          // console.log(res.token);
+          document.cookie = "user=" + res.token + ": userID=" + res.userID;
+          localStorage.setItem("userID", webAccount);
+          console.log("Web account: ", localStorage.getItem("userID"));
+          localStorage.setItem("userPassword", password);
+          console.log(document.cookie);
+          navigate("/home");
+        } else {
+          setLoginStatus("Invalid Credentials");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoginStatus("Something went wrong. Please try again.");
+      });
   };
 
   const handleJoin = () => {
     // Do something with the submitted conference information
     console.log("Conference ID:", conferenceId);
     console.log("Conference Password:", conferencePassword);
+
+    API.Login(conferenceId, conferencePassword, "ConferenceID")
+      .then((res) => {
+        console.log("Join response: ", res);
+
+        if (res.message === "success") {
+          localStorage.setItem("cred", res.token);
+          console.log(document.cookie);
+          var token = localStorage.getItem("cred");
+          API.ConferenceInfo(token, conferenceId, "0")
+            .then((res) => {
+              if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Destroyed"
+              ) {
+                alert(
+                  "Conference has already ended. Please check your credentials and try again."
+                );
+              } else if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Schedule"
+              ) {
+                alert(
+                  "Conference has not started yet. Please check your credentials and try again."
+                );
+              } else if (
+                res.conferenceResult.conferenceInfo.conferenceState ===
+                "Created"
+              ) {
+                localStorage.setItem(
+                  "meetingDetails",
+                  JSON.stringify(res.conferenceResult.conferenceInfo)
+                );
+                console.log(
+                  "Joining the meeting: ",
+                  JSON.parse(localStorage.getItem("meetingDetails"))
+                );
+                window.open("/home/startConference");
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        } else alert("Invalid Credentials");
+      })
+      .catch((err) => {
+        console.log(err);
+        alert("Something went wrong. Please try again.");
+      });
+  };
+
+  const handleTextFieldKeyPress = (event) => {
+    if (event.key === "Enter") {
+      if (!showConferenceForm) {
+        handleLogin();
+      } else {
+        handleJoin();
+      }
+    }
   };
 
   return (
     <Container maxWidth="xs" className={classes.container}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
+          {/* Display the loginStatus in red if it is set */}
+          {loginStatus && (
+            <Typography variant="body2" align="center" className={classes.errorMessage} style={{ color: "red" }}>
+              {loginStatus}
+            </Typography>
+          )}
           <Typography variant="h5" align="center" className={classes.textField}>
             Login
           </Typography>
@@ -91,15 +194,16 @@ const LoginForm = () => {
                 onChange={(e) => setWebAccount(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -113,15 +217,16 @@ const LoginForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -168,6 +273,14 @@ const LoginForm = () => {
           </>
         ) : (
           <>
+          <Grid item xs={12}>
+              {/* Display the loginStatus in red if it is set */}
+              {loginStatus && (
+                <Typography variant="body2" align="center" className={classes.errorMessage} style={{ color: "red" }}>
+                  {loginStatus}
+                </Typography>
+              )}
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -178,15 +291,16 @@ const LoginForm = () => {
                 onChange={(e) => setConferenceId(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>
@@ -200,15 +314,16 @@ const LoginForm = () => {
                 onChange={(e) => setConferencePassword(e.target.value)}
                 InputProps={{
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
                 InputLabelProps={{
                   component: Typography,
                   style: {
-                    fontFamily: "Poppins, sans-serif", // Specify your desired font family
+                    fontFamily: "Poppins, sans-serif",
                   },
                 }}
+                onKeyDown={handleTextFieldKeyPress}
               />
             </Grid>
             <Grid item xs={12}>

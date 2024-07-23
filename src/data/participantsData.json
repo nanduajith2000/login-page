@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "number": "123-456-7890",
+    "selected": false,
+    "connected": false,
+    "muted": false
+  },
+  {
+    "id": 2,
+    "name": "Jane Smith",
+    "number": "987-654-3210",
+    "selected": false,
+    "connected": false,
+    "muted": false
+  },
+  {
+    "id": 3,
+    "name": "Alice Johnson",
+    "number": "555-123-4567",
+    "selected": false,
+    "connected": false,
+    "muted": false
+  }
+]

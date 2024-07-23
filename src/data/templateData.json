@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Template 1",
+    "duration": "1 hour",
+    "participants": ["Participant 1", "Participant 2", "Participant 3"]
+  },
+  {
+    "name": "Template 2",
+    "duration": "30 minutes",
+    "participants": ["Participant A", "Participant B"]
+  },
+  {
+    "name": "Template 3",
+    "duration": "2 hours",
+    "participants": ["Participant X", "Participant Y", "Participant Z"]
+  }
+]

@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Meeting 1",
+    "startTime": "2023-06-22T10:00:00Z",
+    "endTime": "2023-06-22T11:30:00Z",
+    "creator": "John Doe",
+    "accessNumber": "123456789",
+    "conferenceId": "ABC123",
+    "chairpersonPassword": "password1",
+    "guestPassword": "password2",
+    "numParticipants": 10,
+    "active": false
+  },
+  {
+    "id": 2,
+    "title": "Meeting 2",
+    "startTime": "2023-06-23T14:00:00Z",
+    "endTime": "2023-06-23T15:30:00Z",
+    "creator": "Jane Smith",
+    "accessNumber": "123456789",
+    "conferenceId": "ABC123",
+    "chairpersonPassword": "password1",
+    "guestPassword": "password2",
+    "numParticipants": 10,
+    "active": false
+  }
+]

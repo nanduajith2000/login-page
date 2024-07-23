@@ -1,0 +1,8 @@
+fastapi uvicorn pydantic xmltodict requests==2.25.1 python-decouple typing-extensions redis pyjwt websockets pyparsing
+
+
+docker run -d -it -p 80:80 -p 8000:8000 -p 443:443 -v /opt/mmvc/api:/opt/mmvc -v /opt/mmvc/html:/var/www/html --name MMVC-WEB01 mmvc 
+docker exec -it MMVC-WEB01 bash
+
+update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
+update-alternatives --install /usr/bin/python python /usr/bin/python3.11 2
